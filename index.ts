@@ -19,7 +19,7 @@ export async function prisma_pagination<
   const count = await table.count(query);
 
   if (pagination_query.skip > count)
-    throw new Error("Pagination execed the total of rows");
+    throw new Error("Pagination exceed the total of rows");
 
   const data: Result = await table.findMany(pagination_query);
   return { data, count };
