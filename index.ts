@@ -14,19 +14,20 @@ export async function prisma_pagination<
   if (pagination) {
     count = await table.count(query);
 
+    query =
+      pagination?.limit || pagination?.page
+        ? {
+            ...query,
+            take: pagination.limit,
+            skip: pagination.page * pagination?.limit,
+          }
+        : query;
+
     if (query.skip > count)
-      throw new Error("Pagination execed the total of rows");
+      throw new Error("Pagination exceed the total of rows");
   }
 
-  const data: Result = await table.findMany(
-    pagination?.limit || pagination?.page
-      ? {
-          ...query,
-          take: pagination.limit,
-          skip: pagination.page * pagination?.limit,
-        }
-      : query
-  );
+  const data: Result = await table.findMany(query);
 
   return { data, count };
 }
