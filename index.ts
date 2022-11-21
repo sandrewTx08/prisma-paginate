@@ -1,26 +1,32 @@
+import { PrismaPromise } from "@prisma/client";
+import { Options } from "../reponse";
+
 export async function prisma_pagination<
   Table extends {
-    findMany(...arg: any[]): any;
-    count(...arg: any[]): any;
+    findMany(...arg: any[]): PrismaPromise<any>;
+    count(...arg: any[]): PrismaPromise<number>;
   },
-  Query extends Parameters<Table["findMany"]>[0],
+  Query extends Omit<Parameters<Table["findMany"]>[0], "take" | "skip">,
   Result extends Awaited<ReturnType<Table["findMany"]>>
->(table: Table, query: Query, pagination?: {page: number, limit: number}) {
-  const pagination_query = {
-    ...query,
-    ...(pagination &&
-      pagination.limit &&
-      pagination.page && {
-        take: pagination.limit,
-        skip: pagination.page * pagination.limit,
-      }),
-  };
+>(table: Table, query: Query, pagination?: Options.Pagination) {
+  let count: number | undefined;
 
-  const count = await table.count(query);
+  if (pagination) {
+    count = await table.count(query);
 
-  if (pagination_query.skip > count)
-    throw new Error("Pagination exceed the total of rows");
+    if (query.skip > count)
+      throw new Error("Pagination execed the total of rows");
+  }
 
-  const data: Result = await table.findMany(pagination_query);
+  const data: Result = await table.findMany(
+    pagination?.limit || pagination?.page
+      ? {
+          ...query,
+          take: pagination.limit,
+          skip: pagination.page * pagination?.limit,
+        }
+      : query
+  );
+
   return { data, count };
 }
