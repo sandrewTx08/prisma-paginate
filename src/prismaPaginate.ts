@@ -58,21 +58,19 @@ function prismaPaginate<
         };
 
         if (query.skip > count) reject("Pagination exceed the total of rows");
-
-        if (callback) {
-          table.findMany(query).then(callback);
-          resolve();
-        } else {
-          table.findMany(query).then(resolve);
+        else {
+          if (callback) {
+            table.findMany(query).then(callback);
+            resolve();
+          } else {
+            table.findMany(query).then(resolve);
+          }
         }
       });
     } else if (typeof paginationOrCallback === "function") {
-      if (callback) {
-        table.findMany(query).then(callback);
-        resolve();
-      } else {
-        table.findMany(query).then(resolve);
-      }
+      table.findMany(query).then(paginationOrCallback);
+    } else {
+      table.findMany(query).then(resolve);
     }
   });
 }
