@@ -44,6 +44,14 @@ function prismaPaginate<
   },
   FindManyArgs extends Parameters<Model["findMany"]>[0],
   Result extends Awaited<ReturnType<Model["findMany"]>>
+>(model: Model, findManyArgs: FindManyArgs): Promise<Result>;
+function prismaPaginate<
+  Model extends {
+    findMany(...args: any[]): PrismaPromise<any>;
+    count(...args: any[]): PrismaPromise<number>;
+  },
+  FindManyArgs extends Parameters<Model["findMany"]>[0],
+  Result extends Awaited<ReturnType<Model["findMany"]>>
 >(
   model: Model,
   findManyArgs: FindManyArgs,
