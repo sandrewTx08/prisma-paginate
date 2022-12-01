@@ -52,49 +52,46 @@ function prismaPaginate<
     | ((error: Error | null, result: Result) => void),
   callback?: (error: Error | null, result: Result) => void
 ) {
-  return new Promise<Result | void>((resolve, reject) => {
+  return new Promise<Result>((resolve, reject) => {
     if (typeof paginationOrCallback === "object") {
-      model.count(findManyArgs).then((count) => {
-        findManyArgs = {
-          ...findManyArgs,
-          take: paginationOrCallback.limit,
-          skip: paginationOrCallback.page * paginationOrCallback.limit,
-        };
+      model
+        .count(findManyArgs)
+        .then((count) => {
+          findManyArgs = {
+            ...findManyArgs,
+            take: paginationOrCallback.limit,
+            skip: paginationOrCallback.page * paginationOrCallback.limit,
+          };
 
-        if (findManyArgs.skip > count)
-          reject("Pagination exceed the total of rows");
-        else {
-          if (callback) {
-            model
-              .findMany(findManyArgs)
-              .then((value) => {
-                callback(null, value);
-                resolve();
-              })
-              .catch((reason) => {
-                callback(reason, [] as Result);
-                resolve();
-              });
+          if (findManyArgs.skip > count) {
+            reject("Pagination exceed the total of rows");
           } else {
             model.findMany(findManyArgs).then(resolve);
           }
-        }
-      });
-    } else if (typeof paginationOrCallback === "function") {
-      model
-        .findMany(findManyArgs)
-        .then((value) => {
-          paginationOrCallback(null, value);
-          resolve();
         })
-        .catch((reason) => {
-          paginationOrCallback(reason, [] as Result);
-          resolve();
-        });
+        .catch(reject);
     } else {
       model.findMany(findManyArgs).then(resolve);
     }
-  });
+  })
+    .then((value) => {
+      if (callback) {
+        callback(null, value);
+      } else if (typeof paginationOrCallback === "function") {
+        paginationOrCallback(null, value);
+      } else {
+        return value;
+      }
+    })
+    .catch((reason) => {
+      if (callback) {
+        callback(reason, [] as Result);
+      } else if (typeof paginationOrCallback === "function") {
+        paginationOrCallback(reason, [] as Result);
+      } else {
+        return reason;
+      }
+    });
 }
 
 export default prismaPaginate;
