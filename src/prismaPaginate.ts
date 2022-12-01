@@ -1,66 +1,48 @@
 import { PrismaPromise } from "@prisma/client";
 
-function prismaPaginate<
-  Model extends {
-    findMany(...args: any[]): PrismaPromise<any>;
-    count(...args: any[]): PrismaPromise<number>;
-  },
-  FindManyArgs extends Parameters<Model["findMany"]>[0],
-  Result extends Awaited<ReturnType<Model["findMany"]>>
->(
-  model: Model,
-  findManyArgs: FindManyArgs,
-  pagination: { page: number; limit: number },
-  callback: (error: Error | null, result: Result) => void
+type ResultCallback<T extends Model> = (
+  error?: Error | null,
+  result?: ModelResult<T>
+) => void;
+
+type Model = {
+  findMany(...args: any[]): PrismaPromise<any>;
+  count(...args: any[]): PrismaPromise<number>;
+};
+
+type ModelArgs<T extends Model> = Parameters<T["findMany"]>[0];
+
+type ModelResult<T extends Model> = Awaited<ReturnType<T["findMany"]>>;
+
+type PaginationOptions = { page: number; limit: number };
+
+function prismaPaginate<T extends Model>(
+  model: T,
+  findManyArgs: ModelArgs<T>,
+  pagination: PaginationOptions,
+  callback: ResultCallback<T>
 ): void;
-function prismaPaginate<
-  Model extends {
-    findMany(...args: any[]): PrismaPromise<any>;
-    count(...args: any[]): PrismaPromise<number>;
-  },
-  FindManyArgs extends Parameters<Model["findMany"]>[0],
-  Result extends Awaited<ReturnType<Model["findMany"]>>
->(
-  model: Model,
-  findManyArgs: FindManyArgs,
-  callbackWithoutPagination: (error: Error | null, result: Result) => void
+function prismaPaginate<T extends Model>(
+  model: T,
+  findManyArgs: ModelArgs<T>,
+  callbackWithoutPagination: ResultCallback<T>
 ): void;
-function prismaPaginate<
-  Model extends {
-    findMany(...args: any[]): PrismaPromise<any>;
-    count(...args: any[]): PrismaPromise<number>;
-  },
-  FindManyArgs extends Parameters<Model["findMany"]>[0],
-  Result extends Awaited<ReturnType<Model["findMany"]>>
->(
+function prismaPaginate<T extends Model>(
+  model: T,
+  findManyArgs: ModelArgs<T>,
+  paginationWithoutCallback: PaginationOptions
+): Promise<ModelResult<T>>;
+function prismaPaginate<T extends Model>(
   model: Model,
-  findManyArgs: FindManyArgs,
-  paginationWithoutCallback: { page: number; limit: number }
-): Promise<Result>;
-function prismaPaginate<
-  Model extends {
-    findMany(...args: any[]): PrismaPromise<any>;
-    count(...args: any[]): PrismaPromise<number>;
-  },
-  FindManyArgs extends Parameters<Model["findMany"]>[0],
-  Result extends Awaited<ReturnType<Model["findMany"]>>
->(model: Model, findManyArgs: FindManyArgs): Promise<Result>;
-function prismaPaginate<
-  Model extends {
-    findMany(...args: any[]): PrismaPromise<any>;
-    count(...args: any[]): PrismaPromise<number>;
-  },
-  FindManyArgs extends Parameters<Model["findMany"]>[0],
-  Result extends Awaited<ReturnType<Model["findMany"]>>
->(
-  model: Model,
-  findManyArgs: FindManyArgs,
-  paginationOrCallback?:
-    | { page: number; limit: number }
-    | ((error: Error | null, result: Result) => void),
-  callback?: (error: Error | null, result: Result) => void
+  findManyArgs: ModelArgs<Model>
+): Promise<ModelResult<T>>;
+function prismaPaginate<T extends Model>(
+  model: T,
+  findManyArgs: ModelArgs<T>,
+  paginationOrCallback?: PaginationOptions | ResultCallback<T>,
+  callback?: ResultCallback<T>
 ) {
-  return new Promise<Result>((resolve, reject) => {
+  return new Promise<ModelResult<T>>((resolve, reject) => {
     if (typeof paginationOrCallback === "object") {
       model
         .count(findManyArgs)
@@ -93,9 +75,9 @@ function prismaPaginate<
     })
     .catch((reason) => {
       if (callback) {
-        callback(reason, [] as Result);
+        callback(reason);
       } else if (typeof paginationOrCallback === "function") {
-        paginationOrCallback(reason, [] as Result);
+        paginationOrCallback(reason);
       } else {
         throw reason;
       }
