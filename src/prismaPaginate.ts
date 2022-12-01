@@ -19,11 +19,11 @@ function prismaPaginate<
     count(...args: any[]): PrismaPromise<number>;
   },
   FindManyArgs extends Parameters<Model["findMany"]>[0],
-  R extends Awaited<ReturnType<Model["findMany"]>>
+  Result extends Awaited<ReturnType<Model["findMany"]>>
 >(
   model: Model,
   findManyArgs: FindManyArgs,
-  callbackWithoutPagination: (result: R) => void
+  callbackWithoutPagination: (result: Result) => void
 ): void;
 function prismaPaginate<
   Model extends {
