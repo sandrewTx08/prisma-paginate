@@ -89,7 +89,7 @@ function prismaPaginate<
       } else if (typeof paginationOrCallback === "function") {
         paginationOrCallback(reason, [] as Result);
       } else {
-        return reason;
+        throw reason;
       }
     });
 }
