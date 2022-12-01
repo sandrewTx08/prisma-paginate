@@ -1,70 +1,79 @@
 import { PrismaPromise } from "@prisma/client";
 
 function prismaPaginate<
-  Table extends {
+  T extends {
     findMany(...args: any[]): PrismaPromise<any>;
     count(...args: any[]): PrismaPromise<number>;
   },
-  Query extends Parameters<Table["findMany"]>[0],
-  Result extends ReturnType<Table["findMany"]>
+  Q extends Parameters<T["findMany"]>[0],
+  R extends Awaited<ReturnType<T["findMany"]>>
 >(
-  table: Table,
-  query: Query,
+  table: T,
+  query: Q,
   pagination: { page: number; limit: number },
-  callback?: (result: Result) => void
+  callback: (result: R) => void
 ): void;
 function prismaPaginate<
-  Table extends {
+  T extends {
     findMany(...args: any[]): PrismaPromise<any>;
     count(...args: any[]): PrismaPromise<number>;
   },
-  Query extends Parameters<Table["findMany"]>[0],
-  Result extends ReturnType<Table["findMany"]>
->(table: Table, query: Query, callback: (result: Result) => void): void;
+  Q extends Parameters<T["findMany"]>[0],
+  R extends Awaited<ReturnType<T["findMany"]>>
+>(table: T, query: Q, callbackWithoutPagination: (result: R) => void): void;
 function prismaPaginate<
-  Table extends {
+  T extends {
     findMany(...args: any[]): PrismaPromise<any>;
     count(...args: any[]): PrismaPromise<number>;
   },
-  Query extends Parameters<Table["findMany"]>[0],
-  Result extends ReturnType<Table["findMany"]>
+  Q extends Parameters<T["findMany"]>[0],
+  R extends Awaited<ReturnType<T["findMany"]>>
 >(
-  table: Table,
-  query: Query,
-  pagination?: { page: number; limit: number }
-): Promise<Result>;
+  table: T,
+  query: Q,
+  paginationWithoutCallback: { page: number; limit: number }
+): Promise<R>;
 function prismaPaginate<
-  Table extends {
+  T extends {
     findMany(...args: any[]): PrismaPromise<any>;
     count(...args: any[]): PrismaPromise<number>;
   },
-  Query extends Parameters<Table["findMany"]>[0],
-  Result extends ReturnType<Table["findMany"]>
+  Q extends Parameters<T["findMany"]>[0],
+  R extends Awaited<ReturnType<T["findMany"]>>
 >(
-  table: Table,
-  query: Query,
+  table: T,
+  query: Q,
   paginationOrCallback?:
     | { page: number; limit: number }
-    | ((result: Result) => void),
-  callback?: (result: Result) => void
+    | ((result: R) => void),
+  callback?: (result: R) => void
 ) {
-  return new Promise<Result>((resolve, rejects) => {
-    table.count(query).then((count) => {
-      query =
-        paginationOrCallback?.limit || paginationOrCallback?.page
-          ? {
-              ...query,
-              take: paginationOrCallback.limit,
-              skip: paginationOrCallback.page * paginationOrCallback?.limit,
-            }
-          : query;
+  return new Promise<R | void>((resolve, reject) => {
+    if (typeof paginationOrCallback === "object") {
+      table.count(query).then((count) => {
+        query = {
+          ...query,
+          take: paginationOrCallback.limit,
+          skip: paginationOrCallback.page * paginationOrCallback.limit,
+        };
 
-      if (paginationOrCallback) {
-        if (query.skip > count) rejects("Pagination exceed the total of rows");
+        if (query.skip > count) reject("Pagination exceed the total of rows");
+
+        if (callback) {
+          table.findMany(query).then(callback);
+          resolve();
+        } else {
+          table.findMany(query).then(resolve);
+        }
+      });
+    } else if (typeof paginationOrCallback === "function") {
+      if (callback) {
+        table.findMany(query).then(callback);
+        resolve();
+      } else {
+        table.findMany(query).then(resolve);
       }
-
-      table.findMany(query).then(resolve);
-    });
+    }
   });
 }
 
