@@ -11,7 +11,7 @@ function prismaPaginate<
   model: Model,
   findManyArgs: FindManyArgs,
   pagination: { page: number; limit: number },
-  callback: (result: Result) => void
+  callback: (error: Error | null, result: Result) => void
 ): void;
 function prismaPaginate<
   Model extends {
@@ -23,7 +23,7 @@ function prismaPaginate<
 >(
   model: Model,
   findManyArgs: FindManyArgs,
-  callbackWithoutPagination: (result: Result) => void
+  callbackWithoutPagination: (error: Error | null, result: Result) => void
 ): void;
 function prismaPaginate<
   Model extends {
@@ -49,8 +49,8 @@ function prismaPaginate<
   findManyArgs: FindManyArgs,
   paginationOrCallback?:
     | { page: number; limit: number }
-    | ((result: Result) => void),
-  callback?: (result: Result) => void
+    | ((error: Error | null, result: Result) => void),
+  callback?: (error: Error | null, result: Result) => void
 ) {
   return new Promise<Result | void>((resolve, reject) => {
     if (typeof paginationOrCallback === "object") {
@@ -65,15 +65,32 @@ function prismaPaginate<
           reject("Pagination exceed the total of rows");
         else {
           if (callback) {
-            model.findMany(findManyArgs).then(callback);
-            resolve();
+            model
+              .findMany(findManyArgs)
+              .then((value) => {
+                callback(null, value);
+                resolve();
+              })
+              .catch((reason) => {
+                callback(reason, [] as Result);
+                resolve();
+              });
           } else {
             model.findMany(findManyArgs).then(resolve);
           }
         }
       });
     } else if (typeof paginationOrCallback === "function") {
-      model.findMany(findManyArgs).then(paginationOrCallback);
+      model
+        .findMany(findManyArgs)
+        .then((value) => {
+          paginationOrCallback(null, value);
+          resolve();
+        })
+        .catch((reason) => {
+          paginationOrCallback(reason, [] as Result);
+          resolve();
+        });
     } else {
       model.findMany(findManyArgs).then(resolve);
     }
