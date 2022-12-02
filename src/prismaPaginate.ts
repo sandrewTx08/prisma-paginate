@@ -30,10 +30,6 @@ function prismaPaginate<T extends Model>(
   paginationWithoutCallback: PaginationOptions
 ): Promise<ModelResult<T>>;
 function prismaPaginate<T extends Model>(
-  model: Model,
-  findManyArgs: ModelArgs<Model>
-): Promise<ModelResult<T>>;
-function prismaPaginate<T extends Model>(
   model: T,
   findManyArgs: ModelArgs<T>,
   paginationOrCallback?: PaginationOptions | ResultCallback<T>,
