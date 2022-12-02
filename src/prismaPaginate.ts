@@ -1,20 +1,17 @@
 import { PrismaPromise } from "@prisma/client";
+import { PaginationExceed } from "./errors";
 
-type ResultCallback<T extends Model> = (
+export type ResultCallback<T extends Model> = (
   error?: Error | null,
   result?: ModelResult<T>
 ) => void;
-
-type Model = {
+export type Model = {
   findMany(...args: any[]): PrismaPromise<any>;
   count(...args: any[]): PrismaPromise<number>;
 };
-
-type ModelArgs<T extends Model> = Parameters<T["findMany"]>[0];
-
-type ModelResult<T extends Model> = Awaited<ReturnType<T["findMany"]>>;
-
-type PaginationOptions = { page: number; limit: number };
+export type ModelArgs<T extends Model> = Parameters<T["findMany"]>[0];
+export type ModelResult<T extends Model> = Awaited<ReturnType<T["findMany"]>>;
+export type PaginationOptions = { page: number; limit: number };
 
 function prismaPaginate<T extends Model>(
   model: T,
@@ -54,7 +51,7 @@ function prismaPaginate<T extends Model>(
           };
 
           if (findManyArgs.skip > count) {
-            reject("Pagination exceed the total of rows");
+            reject(new PaginationExceed(paginationOrCallback));
           } else {
             model.findMany(findManyArgs).then(resolve);
           }
