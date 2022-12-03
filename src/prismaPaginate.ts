@@ -5,9 +5,9 @@ export type ResultCallback<T extends Model> = (
   error?: Error | null,
   result?: ModelResult<T>
 ) => void;
-export type Model = {
-  findMany(...args: any[]): PrismaPromise<any>;
-  count(...args: any[]): PrismaPromise<number>;
+export type Model<T = any, D = any> = {
+  findMany(args: D): PrismaPromise<T>;
+  count(args: D): PrismaPromise<number>;
 };
 export type ModelArgs<T extends Model> = Parameters<T["findMany"]>[0];
 export type ModelResult<T extends Model> = Awaited<ReturnType<T["findMany"]>>;
@@ -28,6 +28,10 @@ function prismaPaginate<T extends Model>(
   model: T,
   findManyArgs: ModelArgs<T>,
   paginationWithoutCallback: PaginationOptions
+): Promise<ModelResult<T>>;
+function prismaPaginate<T extends Model>(
+  model: T,
+  findManyArgs: ModelArgs<T>
 ): Promise<ModelResult<T>>;
 function prismaPaginate<T extends Model>(
   model: T,
