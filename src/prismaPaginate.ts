@@ -1,13 +1,12 @@
-import { PrismaPromise } from "@prisma/client";
 import { PaginationExceed } from "./errors";
 
 export type ResultCallback<T extends Model> = (
   error?: Error | null,
   result?: ModelResult<T>
 ) => void;
-export type Model<T = any, D = any> = {
-  findMany(args: D): PrismaPromise<T>;
-  count(args: D): PrismaPromise<number>;
+export type Model = {
+  findMany(...args: any[]): Promise<any>;
+  count(...args: any[]): Promise<number>;
 };
 export type ModelArgs<T extends Model> = Parameters<T["findMany"]>[0];
 export type ModelResult<T extends Model> = Awaited<ReturnType<T["findMany"]>>;

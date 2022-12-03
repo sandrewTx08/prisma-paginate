@@ -8,4 +8,4 @@ export const model = {
     data.find(({ id }) => where.id == id)
   ),
   count: jest.fn(async () => data.length),
-} as unknown as Model<Data, { where: Data }>;
+} as unknown as Model;
