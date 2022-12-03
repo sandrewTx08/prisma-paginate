@@ -8,26 +8,22 @@ import {
 import { prismaPaginate } from "./prismaPaginate";
 
 class PrismaPaginate<T extends Model> {
-  _page: number;
-  _limit: number;
+  page: number;
+  limit: number;
 
-  constructor(
-    public model: T,
-    public findManyArgs: ModelArgs<T>,
-    { page, limit }: PaginationArgs
-  ) {
-    this._page = page;
-    this._limit = limit;
+  constructor(public model: T, { page, limit }: PaginationArgs) {
+    this.page = page;
+    this.limit = limit;
   }
 
   get pagination(): PaginationArgs {
-    return { limit: this._limit, page: this._page };
+    return { limit: this.limit, page: this.page };
   }
 
-  query(callback?: CallbackResult<T, Partial<Pagination>>) {
+  query(findManyArgs: ModelArgs<T>, callback?: CallbackResult<T, Pagination>) {
     return callback
-      ? prismaPaginate(this.model, this.findManyArgs, this.pagination, callback)
-      : prismaPaginate(this.model, this.findManyArgs, this.pagination);
+      ? prismaPaginate(this.model, findManyArgs, this.pagination, callback)
+      : prismaPaginate(this.model, findManyArgs, this.pagination);
   }
 }
 
