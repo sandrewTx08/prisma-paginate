@@ -7,6 +7,24 @@ import {
   ModelResult,
 } from "./model";
 
+function paginateArgs<T extends Model>(
+  count: number,
+  findManyArgs: ModelArgs<T>,
+  pagination: PaginationOptions
+) {
+  findManyArgs = {
+    ...findManyArgs,
+    take: pagination.limit,
+    skip: pagination.limit * pagination.page,
+  };
+
+  if (findManyArgs.skip > count) {
+    throw new PaginationExceed(pagination);
+  } else {
+    return findManyArgs;
+  }
+}
+
 function prismaPaginate<T extends Model>(
   model: T,
   findManyArgs: ModelArgs<T>,
@@ -38,17 +56,8 @@ function prismaPaginate<T extends Model>(
       model
         .count(findManyArgs)
         .then((count) => {
-          findManyArgs = {
-            ...findManyArgs,
-            take: paginationOrCallback.limit,
-            skip: paginationOrCallback.page * paginationOrCallback.limit,
-          };
-
-          if (findManyArgs.skip > count) {
-            reject(new PaginationExceed(paginationOrCallback));
-          } else {
-            model.findMany(findManyArgs).then(resolve);
-          }
+          const args = paginateArgs(count, findManyArgs, paginationOrCallback);
+          model.findMany(args).then(resolve);
         })
         .catch(reject);
     } else {
@@ -75,4 +84,4 @@ function prismaPaginate<T extends Model>(
     });
 }
 
-export default prismaPaginate;
+export { prismaPaginate };

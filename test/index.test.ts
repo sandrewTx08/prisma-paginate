@@ -1,4 +1,4 @@
-import prismaPaginate from "../src";
+import { prismaPaginate, PrismaPaginate } from "../src";
 import { data, model } from "./utils";
 
 describe("return value", () => {
@@ -32,5 +32,18 @@ describe("return value", () => {
         expect(result).toBe(data[0]);
       })
     ).toBeInstanceOf(Promise);
+  });
+
+  it("PrismaPaginationWithoutCallback", () => {
+    expect(
+      new PrismaPaginate(model, { where: { id: 1 } }).query()
+    ).toBeInstanceOf(Promise);
+  });
+
+  it("PrismaPaginationCallback", () => {
+    new PrismaPaginate(model, { where: { id: 1 } }).query((error, result) => {
+      expect(error).toBe(null);
+      expect(result).toBe(data[0]);
+    });
   });
 });

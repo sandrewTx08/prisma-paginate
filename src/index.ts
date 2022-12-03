@@ -1,1 +1,2 @@
-export { default } from "./prismaPaginate";
+export { prismaPaginate } from "./prismaPaginate";
+export { PrismaPaginate } from "./prismaPaginateClass";

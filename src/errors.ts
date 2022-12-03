@@ -1,4 +1,4 @@
-import { PaginationOptions } from "./prismaPaginate";
+import { PaginationOptions } from "./model";
 
 export class PaginationExceed extends Error {
   constructor(public options: PaginationOptions) {
