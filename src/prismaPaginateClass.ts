@@ -1,9 +1,9 @@
 import {
   Model,
   ModelArgs,
-  PaginationOptions,
-  ResultCallback,
-  ModelResult,
+  PaginationArgs,
+  CallbackResult,
+  PaginateReturn,
 } from "./model";
 import { prismaPaginate } from "./prismaPaginate";
 
@@ -11,12 +11,12 @@ class PrismaPaginate<T extends Model> {
   constructor(
     public model: T,
     public findManyArgs: ModelArgs<T>,
-    public pagination?: PaginationOptions
+    public pagination?: PaginationArgs
   ) {}
 
-  query(): Promise<ModelResult<T>>;
-  query(callback: ResultCallback<T>): void;
-  query(callback?: ResultCallback<T>) {
+  query(): Promise<PaginateReturn<T>>;
+  query(callback: CallbackResult<T>): void;
+  query(callback?: CallbackResult<T>) {
     return callback
       ? prismaPaginate(this.model, this.findManyArgs, callback)
       : prismaPaginate(this.model, this.findManyArgs);
