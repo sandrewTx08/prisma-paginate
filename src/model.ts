@@ -3,14 +3,13 @@ type Model = {
   count(...args: any[]): Promise<number>;
 };
 type ModelArgs<T extends Model> = Parameters<T["findMany"]>[0];
-type CallbackResult<T extends Model> = (
+type CallbackResult<T extends Model, P = {}> = (
   error: Error | null,
-  result?: PaginateReturn<T>
+  result?: PaginateReturn<T, P>
 ) => void;
 type ModelReturnAwaited<T extends Model> = Awaited<ReturnType<T["findMany"]>>;
-type PaginateReturn<T extends Model> = Partial<Pagination> & {
-  result: ModelReturnAwaited<T>;
-};
+type ModelReturn<T extends Model> = { result: ModelReturnAwaited<T> };
+type PaginateReturn<T extends Model, P = {}> = P & ModelReturn<T>;
 type PaginationArgs = { page: number; limit: number };
 type Pagination = PaginationArgs & {
   totalPages: number;
@@ -26,4 +25,5 @@ export {
   PaginationArgs,
   CallbackResult,
   ModelReturnAwaited,
+  Pagination,
 };

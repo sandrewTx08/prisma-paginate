@@ -6,13 +6,14 @@ import {
   PaginateReturn,
   CallbackResult,
   ModelReturnAwaited,
+  Pagination,
 } from "./model";
 
 function paginateArgs<T extends Model>(
   count: number,
   findManyArgs: ModelArgs<T>,
   pagination: PaginationArgs
-) {
+): ModelArgs<T> {
   findManyArgs = {
     ...findManyArgs,
     take: pagination.limit,
@@ -30,7 +31,7 @@ function paginateReturn<T extends Model>(
   result: ModelReturnAwaited<T>,
   count?: number,
   pagination?: PaginationArgs
-): PaginateReturn<T> {
+): PaginateReturn<T, any> {
   if (count && pagination) {
     const totalPages = Math.round(count / pagination.limit),
       { limit, page } = pagination,
@@ -55,7 +56,7 @@ function prismaPaginate<T extends Model>(
   model: T,
   findManyArgs: ModelArgs<T>,
   pagination: PaginationArgs,
-  callback: CallbackResult<T>
+  callback: CallbackResult<T, Pagination>
 ): void;
 function prismaPaginate<T extends Model>(
   model: T,
@@ -66,18 +67,22 @@ function prismaPaginate<T extends Model>(
   model: T,
   findManyArgs: ModelArgs<T>,
   paginationWithoutCallback: PaginationArgs
-): Promise<PaginateReturn<T>>;
+): Promise<PaginateReturn<T, Pagination>>;
 function prismaPaginate<T extends Model>(
   model: T,
   findManyArgs: ModelArgs<T>
 ): Promise<PaginateReturn<T>>;
-function prismaPaginate<T extends Model>(
+function prismaPaginate<
+  T extends Model,
+  PC extends PaginationArgs | CallbackResult<T, P>,
+  P extends PC extends PaginationArgs ? Pagination : Partial<Pagination>
+>(
   model: T,
   findManyArgs: ModelArgs<T>,
-  paginationOrCallback?: PaginationArgs | CallbackResult<T>,
-  callback?: CallbackResult<T>
+  paginationOrCallback?: PC,
+  callback?: CallbackResult<T, P>
 ) {
-  return new Promise<PaginateReturn<T>>((resolve, reject) => {
+  return new Promise<PaginateReturn<T, P>>((resolve, reject) => {
     if (typeof paginationOrCallback === "object") {
       model
         .count(findManyArgs)
