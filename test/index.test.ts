@@ -1,4 +1,5 @@
 import { prismaPaginate } from "../src";
+import { PaginationExceed } from "../src/errors";
 import { db, model } from "./utils";
 
 describe("callback", () => {
@@ -40,7 +41,7 @@ describe("callback", () => {
     });
   });
 
-  it("withPagination page > totalPage", () => {
+  it("withPagination page == totalPage", () => {
     prismaPaginate(model, {}, { page: 3, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.count).toBe(db.length);
@@ -49,6 +50,13 @@ describe("callback", () => {
       expect(result?.limit).toBe(1);
       expect(result?.page).toBe(3);
       expect(result?.totalPages).toBe(db.length);
+    });
+  });
+
+  it("withPagination page > totalPage", () => {
+    prismaPaginate(model, {}, { page: 4, limit: 1 }, (error, result) => {
+      expect(error).toBeInstanceOf(PaginationExceed);
+      expect(result).toBe(undefined);
     });
   });
 });
@@ -100,7 +108,7 @@ describe("promise", () => {
     });
   });
 
-  it("withPagination page > totalPage", () => {
+  it("withPagination page == totalPage", () => {
     prismaPaginate(model, {}, { page: 3, limit: 1 }).then((result) => {
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(false);
@@ -109,5 +117,16 @@ describe("promise", () => {
       expect(result?.page).toBe(3);
       expect(result?.totalPages).toBe(db.length);
     });
+  });
+
+  it("withPagination page > totalPage", () => {
+    prismaPaginate(model, {}, { page: 4, limit: 1 }).then(
+      (result) => {
+        expect(result?.count).toBe(db.length);
+      },
+      (error) => {
+        expect(error).toBeInstanceOf(PaginationExceed);
+      }
+    );
   });
 });
