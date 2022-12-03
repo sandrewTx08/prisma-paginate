@@ -1,17 +1,7 @@
-import prismaPaginate, { Model } from "./prismaPaginate";
-import { jest } from "@jest/globals";
+import prismaPaginate from "../src";
+import { data, model } from "./utils";
 
 describe("return value", () => {
-  const data = [{ id: 1 }, { id: 2 }, { id: 3 }] as const;
-  type Data = Partial<typeof data[0]>;
-
-  const model = {
-    findMany: jest.fn(async ({ where }: { where: Data }) =>
-      data.find(({ id }) => where.id == id)
-    ),
-    count: jest.fn(async () => data.length),
-  } as unknown as Model<Data, { where: Data }>;
-
   it("callback", () => {
     prismaPaginate(model, { where: { id: 1 } }, (error, result) => {
       expect(error).toBe(null);
