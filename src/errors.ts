@@ -1,7 +1,9 @@
-import { PaginationArgs } from "./model";
+import { Pagination } from "./types";
 
-export class PaginationExceed extends Error {
-  constructor(public options: PaginationArgs) {
-    super("Pagination exceed the total of rows");
+class ErrorTotalPages extends Error {
+  constructor(public pagination: Pagination.Result) {
+    super("Pagination options exceed total pages");
   }
 }
+
+export { ErrorTotalPages };

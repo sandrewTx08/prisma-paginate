@@ -1,106 +1,52 @@
-import { PaginationExceed } from "./errors";
-import {
-  Model,
-  ModelArgs,
-  PaginationArgs,
-  PaginateReturn,
-  CallbackResult,
-  ModelReturnAwaited,
-  Pagination,
-} from "./model";
+import { Model, Pagination, Result } from "./types";
+import { Paginate } from "./paginate";
 
-function paginateArgs<T extends Model>(
-  count: number,
-  findManyArgs: ModelArgs<T>,
-  pagination: PaginationArgs
-): ModelArgs<T> {
-  findManyArgs = {
-    ...findManyArgs,
-    take: pagination.limit,
-    skip: pagination.limit * pagination.page,
-  };
-
-  if (findManyArgs.skip > count) {
-    throw new PaginationExceed(pagination);
-  } else {
-    return findManyArgs;
-  }
-}
-
-function paginateReturn<T extends Model>(
-  result: ModelReturnAwaited<T>,
-  count?: number,
-  pagination?: PaginationArgs
-): PaginateReturn<T, any> {
-  if (count && pagination) {
-    const totalPages = Math.round(count / pagination.limit),
-      { limit, page } = pagination,
-      hasNextPage = page < totalPages,
-      hasPrevPage = page * limit > 0 || !hasNextPage;
-
-    return {
-      count,
-      totalPages,
-      hasNextPage,
-      hasPrevPage,
-      page,
-      limit,
-      result,
-    };
-  } else {
-    return { result };
-  }
-}
-
-function prismaPaginate<T extends Model>(
-  model: T,
-  findManyArgs: ModelArgs<T>,
-  pagination: PaginationArgs,
-  callback: CallbackResult<T, Pagination>
+function paginate<Model extends Model.Object>(
+  model: Model,
+  findManyArgs: Model.Args<Model>,
+  pagination: Pagination.Args,
+  callback: Result.Callback<Model, Result.WithPagination<Model>>
 ): void;
-function prismaPaginate<T extends Model>(
-  model: T,
-  findManyArgs: ModelArgs<T>,
-  callbackWithoutPagination: CallbackResult<T>
+function paginate<Model extends Model.Object>(
+  model: Model,
+  findManyArgs: Model.Args<Model>,
+  callbackWithoutPagination: Result.Callback<
+    Model,
+    Result.WithoutPagination<Model>
+  >
 ): void;
-function prismaPaginate<T extends Model>(
-  model: T,
-  findManyArgs: ModelArgs<T>,
-  paginationWithoutCallback: PaginationArgs
-): Promise<PaginateReturn<T, Pagination>>;
-function prismaPaginate<T extends Model>(
-  model: T,
-  findManyArgs: ModelArgs<T>
-): Promise<PaginateReturn<T>>;
-function prismaPaginate<
-  T extends Model,
-  PC extends PaginationArgs | CallbackResult<T, P>,
-  P extends PC extends PaginationArgs ? Pagination : Partial<Pagination>
+function paginate<Model extends Model.Object>(
+  model: Model,
+  findManyArgs: Model.Args<Model>,
+  paginationWithoutCallback: Pagination.Args
+): Promise<Result.WithPagination<Model>>;
+function paginate<Model extends Model.Object>(
+  model: Model,
+  findManyArgs: Model.Args<Model>
+): Promise<Result.WithoutPagination<Model>>;
+function paginate<
+  Model extends Model.Object,
+  PaginationOrCallback extends Pagination.Args | Result.Callback<Model, Result>,
+  Result extends PaginationOrCallback extends Pagination.Args
+    ? Result.WithPagination<Model>
+    : Result.WithoutPagination<Model>
 >(
-  model: T,
-  findManyArgs: ModelArgs<T>,
-  paginationOrCallback?: PC,
-  callback?: CallbackResult<T, P>
+  model: Model,
+  findManyArgs: Model.Args<Model>,
+  paginationOrCallback?: PaginationOrCallback,
+  callback?: Result.Callback<Model, Result>
 ) {
-  return new Promise<PaginateReturn<T, P>>((resolve, reject) => {
+  return new Promise<Result>((resolve, reject) => {
     if (typeof paginationOrCallback === "object") {
-      model
-        .count(findManyArgs)
-        .then((count) => {
-          const args = paginateArgs(count, findManyArgs, paginationOrCallback);
-          model
-            .findMany(args)
-            .then((result) =>
-              paginateReturn(result, count, paginationOrCallback)
-            )
-            .then(resolve);
-        })
-        .catch(reject);
+      model.count(findManyArgs).then((count) => {
+        const paginate = new Paginate<Model>(count, paginationOrCallback);
+        model
+          .findMany(paginate.args(findManyArgs))
+          .then((result) => paginate.result(result) as Result)
+          .then(resolve);
+      }, reject);
     } else {
-      model
-        .findMany(findManyArgs)
-        .then((result) => paginateReturn(result))
-        .then(resolve);
+      model.findMany(findManyArgs).then(resolve);
     }
   }).then(
     (value) => {
@@ -124,4 +70,4 @@ function prismaPaginate<
   );
 }
 
-export { prismaPaginate };
+export { paginate };

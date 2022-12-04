@@ -1,9 +1,9 @@
-import { Model } from "../src/model";
+import { Model } from "../src/types";
 
-const db = [{ id: 1 }, { id: 2 }, { id: 3 }] as const;
+const db = new Array(3);
 const model = {
   findMany: async (..._: any[]) => db,
-  count: async (..._: any[]) => db.length,
-} as unknown as Model;
+  count: async (..._: any[]) => 3,
+} as unknown as Model.Object;
 
 export { db, model };

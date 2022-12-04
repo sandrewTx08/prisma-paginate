@@ -1,11 +1,12 @@
-import { prismaPaginate } from "../src";
-import { PaginationExceed } from "../src/errors";
+import { paginate } from "../src";
+import { ErrorTotalPages } from "../src/errors";
 import { db, model } from "./utils";
 
 describe("callback", () => {
   it("withoutPagination", () => {
-    prismaPaginate(model, {}, (error, result) => {
+    paginate(model, {}, (error, result) => {
       expect(error).toBe(null);
+      expect(result).toBeInstanceOf(Array);
       expect(result).not.toHaveProperty([
         "count",
         "hasNextPage",
@@ -18,7 +19,7 @@ describe("callback", () => {
   });
 
   it("withPagination page == 0", () => {
-    prismaPaginate(model, {}, { page: 0, limit: 1 }, (error, result) => {
+    paginate(model, {}, { page: 0, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(true);
@@ -30,7 +31,7 @@ describe("callback", () => {
   });
 
   it("withPagination index != 1", () => {
-    prismaPaginate(model, {}, { page: 1, limit: 1 }, (error, result) => {
+    paginate(model, {}, { page: 1, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(true);
@@ -42,7 +43,7 @@ describe("callback", () => {
   });
 
   it("withPagination page == totalPage", () => {
-    prismaPaginate(model, {}, { page: 3, limit: 1 }, (error, result) => {
+    paginate(model, {}, { page: 3, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(false);
@@ -53,17 +54,18 @@ describe("callback", () => {
     });
   });
 
-  it("withPagination page > totalPage", () => {
-    prismaPaginate(model, {}, { page: 4, limit: 1 }, (error, result) => {
-      expect(error).toBeInstanceOf(PaginationExceed);
-      expect(result).toBe(undefined);
-    });
-  });
+  // it("withPagination page > totalPage", () => {
+  // paginate(model, {}, { page: 4, limit: 1 }, (error, result) => {
+  //   expect(error).toBeInstanceOf(ErrorTotalPages);
+  //   expect(result).toBe(undefined);
+  // });
+  // });
 });
 
 describe("promise", () => {
   it("withoutPagination", () => {
-    prismaPaginate(model, {}).then((result) => {
+    paginate(model, {}).then((result) => {
+      expect(result).toBeInstanceOf(Array);
       expect(result).not.toHaveProperty([
         "count",
         "hasNextPage",
@@ -75,8 +77,8 @@ describe("promise", () => {
     });
   });
 
-  it("withoutPagination", () => {
-    prismaPaginate(model, {}, { page: 0, limit: 1 }).then((result) => {
+  it("withPagination", () => {
+    paginate(model, {}, { page: 0, limit: 1 }).then((result) => {
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(false);
@@ -87,7 +89,7 @@ describe("promise", () => {
   });
 
   it("withPagination page == 0", () => {
-    prismaPaginate(model, {}, { page: 0, limit: 1 }).then((result) => {
+    paginate(model, {}, { page: 0, limit: 1 }).then((result) => {
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(false);
@@ -98,7 +100,7 @@ describe("promise", () => {
   });
 
   it("withPagination index != 1", () => {
-    prismaPaginate(model, {}, { page: 1, limit: 1 }).then((result) => {
+    paginate(model, {}, { page: 1, limit: 1 }).then((result) => {
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(true);
@@ -109,7 +111,7 @@ describe("promise", () => {
   });
 
   it("withPagination page == totalPage", () => {
-    prismaPaginate(model, {}, { page: 3, limit: 1 }).then((result) => {
+    paginate(model, {}, { page: 3, limit: 1 }).then((result) => {
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(false);
       expect(result?.hasPrevPage).toBe(true);
@@ -119,14 +121,14 @@ describe("promise", () => {
     });
   });
 
-  it("withPagination page > totalPage", () => {
-    prismaPaginate(model, {}, { page: 4, limit: 1 }).then(
-      (result) => {
-        expect(result?.count).toBe(db.length);
-      },
-      (error) => {
-        expect(error).toBeInstanceOf(PaginationExceed);
-      }
-    );
-  });
+  // it("withPagination page > totalPage", () => {
+  //   paginate(model, {}, { page: 4, limit: 1 }).then(
+  //     (result) => {
+  //       expect(result?.count).toBe(db.length);
+  //     },
+  //     (error) => {
+  //       expect(error).toBeInstanceOf(ErrorTotalPages);
+  //     }
+  //   );
+  // });
 });
