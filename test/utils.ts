@@ -1,9 +1,7 @@
-import { Model } from "../src/types";
+const mockDatabase = new Array<{ id: number }>(3);
+const mockModel = {
+  findMany: async (..._: any[]) => mockDatabase,
+  count: async (..._: any[]) => mockDatabase.length,
+};
 
-const db = new Array(3);
-const model = {
-  findMany: async (..._: any[]) => db,
-  count: async (..._: any[]) => 3,
-} as unknown as Model.Object;
-
-export { db, model };
+export { mockDatabase, mockModel };
