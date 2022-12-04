@@ -3,7 +3,7 @@ import { ErrorTotalPages } from "../src/errors";
 import { db, model } from "./utils";
 
 describe("callback", () => {
-  it("withoutPagination", () => {
+  it("without pagination", () => {
     paginate(model, {}, (error, result) => {
       expect(error).toBe(null);
       expect(result).toBeInstanceOf(Array);
@@ -18,7 +18,7 @@ describe("callback", () => {
     });
   });
 
-  it("withPagination page == 0", () => {
+  it("page == 0", () => {
     paginate(model, {}, { page: 0, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.count).toBe(db.length);
@@ -30,7 +30,7 @@ describe("callback", () => {
     });
   });
 
-  it("withPagination page == 1", () => {
+  it("page == 1", () => {
     paginate(model, {}, { page: 1, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.count).toBe(db.length);
@@ -42,7 +42,7 @@ describe("callback", () => {
     });
   });
 
-  it("withPagination index == 2", () => {
+  it("index == 2", () => {
     paginate(model, {}, { page: 2, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.count).toBe(db.length);
@@ -54,7 +54,7 @@ describe("callback", () => {
     });
   });
 
-  it("withPagination page == totalPage", () => {
+  it("page == totalPage", () => {
     paginate(model, {}, { page: 3, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.count).toBe(db.length);
@@ -66,7 +66,7 @@ describe("callback", () => {
     });
   });
 
-  // it("withPagination page > totalPage", () => {
+  // it("page > totalPage", () => {
   //   paginate(model, {}, { page: 4, limit: 1 }, (error, result) => {
   //     expect(error).toBeInstanceOf(ErrorTotalPages);
   //     expect(result).toBe(undefined);
@@ -75,7 +75,7 @@ describe("callback", () => {
 });
 
 describe("promise", () => {
-  it("withoutPagination", () => {
+  it("without pagination", () => {
     paginate(model, {}).then((result) => {
       expect(result).toBeInstanceOf(Array);
       expect(result).not.toHaveProperty([
@@ -89,7 +89,7 @@ describe("promise", () => {
     });
   });
 
-  it("withPagination page == 0", () => {
+  it("page == 0", () => {
     paginate(model, {}, { page: 0, limit: 1 }).then((result) => {
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(true);
@@ -100,7 +100,7 @@ describe("promise", () => {
     });
   });
 
-  it("withPagination page == 1", () => {
+  it("page == 1", () => {
     paginate(model, {}, { page: 1, limit: 1 }).then((result) => {
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(true);
@@ -111,7 +111,7 @@ describe("promise", () => {
     });
   });
 
-  it("withPagination index == 2", () => {
+  it("index == 2", () => {
     paginate(model, {}, { page: 2, limit: 1 }).then((result) => {
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(true);
@@ -122,7 +122,7 @@ describe("promise", () => {
     });
   });
 
-  it("withPagination page == totalPage", () => {
+  it("page == totalPage", () => {
     paginate(model, {}, { page: 3, limit: 1 }).then((result) => {
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(false);
@@ -133,7 +133,7 @@ describe("promise", () => {
     });
   });
 
-  // it("withPagination page > totalPage", () => {
+  // it("page > totalPage", () => {
   //   paginate(model, {}, { page: 4, limit: 1 }).then(
   //     (result) => {
   //       expect(result?.count).toBe(db.length);
