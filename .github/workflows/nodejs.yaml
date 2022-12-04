@@ -17,7 +17,9 @@ jobs:
         node-version: [14.x, 16.x, 18.x]
 
     services:
-      image: postgres
+      postgres:
+        image: postgres
+
         env:
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
@@ -28,6 +30,9 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
+        ports:
+          - 5432:5432
 
     steps:
       - uses: actions/checkout@v3
