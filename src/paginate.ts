@@ -8,7 +8,11 @@ class Paginate<T extends Model.Object> {
     findManyArgs = {
       ...findManyArgs,
       take: this.pagination.limit,
-      skip: this.pagination.limit * this.pagination.page,
+      skip:
+        this.pagination.limit *
+        (this.pagination.page > 0
+          ? this.pagination.page - 1
+          : this.pagination.page),
     };
 
     return findManyArgs;
@@ -16,23 +20,24 @@ class Paginate<T extends Model.Object> {
 
   result(result: Model.FindManyReturn<T>): Result.WithPagination<T> {
     const totalPages = Math.round(this.count / this.pagination.limit),
-      { limit, page } = this.pagination,
-      hasNextPage = page < totalPages,
-      hasPrevPage = page * limit > 0 || !hasNextPage,
-      pagination = {
+      { limit } = this.pagination,
+      add_page = this.pagination.page > 0,
+      page = add_page ? this.pagination.page - 1 : 1,
+      hasNextPage = (add_page ? page + 1 : page) < totalPages,
+      hasPrevPage = limit * (add_page ? this.pagination.page - 1 : 0) > 0,
+      pagination: Pagination.Result = {
         count: this.count,
         totalPages,
         hasNextPage,
         hasPrevPage,
-        page,
+        page: add_page ? page + 1 : page,
         limit,
-        result,
       };
 
-    if (page > totalPages) {
+    if (limit * this.pagination.page > this.count) {
       throw new ErrorTotalPages(pagination);
     } else {
-      return pagination;
+      return { ...pagination, result };
     }
   }
 }

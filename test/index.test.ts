@@ -25,19 +25,31 @@ describe("callback", () => {
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(false);
       expect(result?.limit).toBe(1);
-      expect(result?.page).toBe(0);
+      expect(result?.page).toBe(1);
       expect(result?.totalPages).toBe(db.length);
     });
   });
 
-  it("withPagination index != 1", () => {
+  it("withPagination page == 1", () => {
     paginate(model, {}, { page: 1, limit: 1 }, (error, result) => {
+      expect(error).toBe(null);
+      expect(result?.count).toBe(db.length);
+      expect(result?.hasNextPage).toBe(true);
+      expect(result?.hasPrevPage).toBe(false);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(1);
+      expect(result?.totalPages).toBe(db.length);
+    });
+  });
+
+  it("withPagination index == 2", () => {
+    paginate(model, {}, { page: 2, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(true);
       expect(result?.limit).toBe(1);
-      expect(result?.page).toBe(1);
+      expect(result?.page).toBe(2);
       expect(result?.totalPages).toBe(db.length);
     });
   });
@@ -55,10 +67,10 @@ describe("callback", () => {
   });
 
   // it("withPagination page > totalPage", () => {
-  // paginate(model, {}, { page: 4, limit: 1 }, (error, result) => {
-  //   expect(error).toBeInstanceOf(ErrorTotalPages);
-  //   expect(result).toBe(undefined);
-  // });
+  //   paginate(model, {}, { page: 4, limit: 1 }, (error, result) => {
+  //     expect(error).toBeInstanceOf(ErrorTotalPages);
+  //     expect(result).toBe(undefined);
+  //   });
   // });
 });
 
@@ -77,35 +89,35 @@ describe("promise", () => {
     });
   });
 
-  it("withPagination", () => {
-    paginate(model, {}, { page: 0, limit: 1 }).then((result) => {
-      expect(result?.count).toBe(db.length);
-      expect(result?.hasNextPage).toBe(true);
-      expect(result?.hasPrevPage).toBe(false);
-      expect(result?.limit).toBe(1);
-      expect(result?.page).toBe(0);
-      expect(result?.totalPages).toBe(db.length);
-    });
-  });
-
   it("withPagination page == 0", () => {
     paginate(model, {}, { page: 0, limit: 1 }).then((result) => {
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(false);
       expect(result?.limit).toBe(1);
-      expect(result?.page).toBe(0);
+      expect(result?.page).toBe(1);
       expect(result?.totalPages).toBe(db.length);
     });
   });
 
-  it("withPagination index != 1", () => {
+  it("withPagination page == 1", () => {
     paginate(model, {}, { page: 1, limit: 1 }).then((result) => {
+      expect(result?.count).toBe(db.length);
+      expect(result?.hasNextPage).toBe(true);
+      expect(result?.hasPrevPage).toBe(false);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(1);
+      expect(result?.totalPages).toBe(db.length);
+    });
+  });
+
+  it("withPagination index == 2", () => {
+    paginate(model, {}, { page: 2, limit: 1 }).then((result) => {
       expect(result?.count).toBe(db.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(true);
       expect(result?.limit).toBe(1);
-      expect(result?.page).toBe(1);
+      expect(result?.page).toBe(2);
       expect(result?.totalPages).toBe(db.length);
     });
   });
