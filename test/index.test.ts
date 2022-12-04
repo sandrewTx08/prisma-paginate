@@ -21,6 +21,7 @@ describe("callback", () => {
   it("page == 0", () => {
     paginate(mockModel, {}, { page: 0, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
+      expect(result).toBeDefined();
       expect(result?.count).toBe(mockDatabase.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(false);
@@ -33,6 +34,7 @@ describe("callback", () => {
   it("page == 1", () => {
     paginate(mockModel, {}, { page: 1, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
+      expect(result).toBeDefined();
       expect(result?.count).toBe(mockDatabase.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(false);
@@ -45,6 +47,7 @@ describe("callback", () => {
   it("index == 2", () => {
     paginate(mockModel, {}, { page: 2, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
+      expect(result).toBeDefined();
       expect(result?.count).toBe(mockDatabase.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(true);
@@ -91,6 +94,7 @@ describe("promise", () => {
 
   it("page == 0", () => {
     paginate(mockModel, {}, { page: 0, limit: 1 }).then((result) => {
+      expect(result.result).toBeDefined();
       expect(result?.count).toBe(mockDatabase.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(false);
@@ -102,6 +106,7 @@ describe("promise", () => {
 
   it("page == 1", () => {
     paginate(mockModel, {}, { page: 1, limit: 1 }).then((result) => {
+      expect(result.result).toBeDefined();
       expect(result?.count).toBe(mockDatabase.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(false);
@@ -113,6 +118,7 @@ describe("promise", () => {
 
   it("index == 2", () => {
     paginate(mockModel, {}, { page: 2, limit: 1 }).then((result) => {
+      expect(result.result).toBeDefined();
       expect(result?.count).toBe(mockDatabase.length);
       expect(result?.hasNextPage).toBe(true);
       expect(result?.hasPrevPage).toBe(true);
@@ -124,6 +130,7 @@ describe("promise", () => {
 
   it("page == totalPage", () => {
     paginate(mockModel, {}, { page: 3, limit: 1 }).then((result) => {
+      expect(result.result).toBeDefined();
       expect(result?.count).toBe(mockDatabase.length);
       expect(result?.hasNextPage).toBe(false);
       expect(result?.hasPrevPage).toBe(true);
