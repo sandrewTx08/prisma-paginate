@@ -1,6 +1,15 @@
+import { PrismaClient } from "@prisma/client";
 import { paginate } from "../src";
 import { ErrorTotalPages } from "../src/errors";
 import { mockDatabase, mockModel } from "./utils";
+
+describe("prisma", () => {
+  const { model } = new PrismaClient();
+
+  beforeAll((done) => {
+    model.createMany({ data: [{ id: 1 }, { id: 2 }, { id: 3 }] }).then(done);
+  });
+});
 
 describe("callback", () => {
   it("without pagination", () => {
