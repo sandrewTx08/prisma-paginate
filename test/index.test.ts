@@ -6,11 +6,11 @@ import { mockDatabase, mockModel } from "./utils";
 describe("prisma", () => {
   const { model } = new PrismaClient();
 
-  beforeAll((done) => {
+  beforeEach((done) => {
     model.createMany({ data: [{ id: 1 }, { id: 2 }, { id: 3 }] }).finally(done);
   });
 
-  afterAll((done) => {
+  afterEach((done) => {
     model.deleteMany({ where: { id: { in: [1, 2, 3] } } }).finally(done);
   });
 
