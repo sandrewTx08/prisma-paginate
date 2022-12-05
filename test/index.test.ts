@@ -7,23 +7,14 @@ describe("prisma", () => {
   const { model } = new PrismaClient();
 
   beforeAll((done) => {
-    model.createMany({ data: [{ id: 1 }, { id: 2 }, { id: 3 }] }).then(done);
+    model.createMany({ data: [{ id: 1 }, { id: 2 }, { id: 3 }] }).finally(done);
+  });
+
+  afterAll((done) => {
+    model.deleteMany({ where: { id: { in: [1, 2, 3] } } }).finally(done);
   });
 
   it("without pagination", () => {
-    paginate(model, {}, (error, result) => {
-      expect(error).toBe(null);
-      expect(result).toBeInstanceOf(Array);
-      expect(result).not.toHaveProperty([
-        "count",
-        "hasNextPage",
-        "hasPrevPage",
-        "limit",
-        "page",
-        "totalPages",
-      ]);
-    });
-
     paginate(mockModel, {}, (error, result) => {
       expect(error).toBe(null);
       expect(result).toBeInstanceOf(Array);
@@ -37,7 +28,7 @@ describe("prisma", () => {
       ]);
     });
 
-    paginate(model, {}).then((result) => {
+    paginate(mockModel, {}).then((result) => {
       expect(result).toBeInstanceOf(Array);
       expect(result).not.toHaveProperty([
         "count",
@@ -49,7 +40,20 @@ describe("prisma", () => {
       ]);
     });
 
-    paginate(mockModel, {}).then((result) => {
+    paginate(model, {}, (error, result) => {
+      expect(error).toBe(null);
+      expect(result).toBeInstanceOf(Array);
+      expect(result).not.toHaveProperty([
+        "count",
+        "hasNextPage",
+        "hasPrevPage",
+        "limit",
+        "page",
+        "totalPages",
+      ]);
+    });
+
+    paginate(model, {}).then((result) => {
       expect(result).toBeInstanceOf(Array);
       expect(result).not.toHaveProperty([
         "count",
@@ -83,6 +87,23 @@ describe("prisma", () => {
       expect(result?.page).toBe(1);
       expect(result?.totalPages).toBe(mockDatabase.length);
     });
+
+    paginate(model, {}, { page: 0, limit: 1 }, (error, result) => {
+      expect(error).toBe(null);
+      expect(result).toBeDefined();
+      expect(result?.hasNextPage).toBe(true);
+      expect(result?.hasPrevPage).toBe(false);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(1);
+    });
+
+    paginate(model, {}, { page: 0, limit: 1 }).then((result) => {
+      expect(result.result).toBeDefined();
+      expect(result?.hasNextPage).toBe(true);
+      expect(result?.hasPrevPage).toBe(false);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(1);
+    });
   });
 
   it("page == 1", () => {
@@ -105,6 +126,23 @@ describe("prisma", () => {
       expect(result?.limit).toBe(1);
       expect(result?.page).toBe(1);
       expect(result?.totalPages).toBe(mockDatabase.length);
+    });
+
+    paginate(model, {}, { page: 1, limit: 1 }, (error, result) => {
+      expect(error).toBe(null);
+      expect(result).toBeDefined();
+      expect(result?.hasNextPage).toBe(true);
+      expect(result?.hasPrevPage).toBe(false);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(1);
+    });
+
+    paginate(model, {}, { page: 1, limit: 1 }).then((result) => {
+      expect(result.result).toBeDefined();
+      expect(result?.hasNextPage).toBe(true);
+      expect(result?.hasPrevPage).toBe(false);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(1);
     });
   });
 
@@ -129,6 +167,23 @@ describe("prisma", () => {
       expect(result?.page).toBe(2);
       expect(result?.totalPages).toBe(mockDatabase.length);
     });
+
+    paginate(model, {}, { page: 2, limit: 1 }, (error, result) => {
+      expect(error).toBe(null);
+      expect(result).toBeDefined();
+      expect(result?.hasNextPage).toBe(true);
+      expect(result?.hasPrevPage).toBe(true);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(2);
+    });
+
+    paginate(model, {}, { page: 2, limit: 1 }).then((result) => {
+      expect(result.result).toBeDefined();
+      expect(result?.hasNextPage).toBe(true);
+      expect(result?.hasPrevPage).toBe(true);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(2);
+    });
   });
 
   it("page == totalPage", () => {
@@ -150,6 +205,22 @@ describe("prisma", () => {
       expect(result?.limit).toBe(1);
       expect(result?.page).toBe(3);
       expect(result?.totalPages).toBe(mockDatabase.length);
+    });
+
+    paginate(model, {}, { page: 3, limit: 1 }, (error, result) => {
+      expect(error).toBe(null);
+      expect(result?.hasNextPage).toBe(false);
+      expect(result?.hasPrevPage).toBe(true);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(3);
+    });
+
+    paginate(model, {}, { page: 3, limit: 1 }).then((result) => {
+      expect(result.result).toBeDefined();
+      expect(result?.hasNextPage).toBe(false);
+      expect(result?.hasPrevPage).toBe(true);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(3);
     });
   });
 
