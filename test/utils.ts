@@ -1,7 +1,7 @@
-const mockDatabase = new Array<{ id: number }>(3);
+const mockResult = new Array<{ id: number }>(3);
 const mockModel = {
-  findMany: async (..._: any[]) => mockDatabase,
-  count: async (..._: any[]) => mockDatabase.length,
+  findMany: async (..._: any[]) => mockResult,
+  count: async (..._: any[]) => mockResult.length,
 };
 
-export { mockDatabase, mockModel };
+export { mockResult, mockModel };

@@ -36,7 +36,7 @@ function paginate<
   paginationOrCallback?: PaginationOrCallback,
   callback?: Result.Callback<Model, Result>
 ) {
-  return new Promise<Result>((resolve, reject) => {
+  const result = new Promise<Result>((resolve, reject) => {
     if (typeof paginationOrCallback === "object") {
       model.count(findManyArgs).then((count) => {
         const paginate = new Paginate<Model>(count, paginationOrCallback);
@@ -48,7 +48,9 @@ function paginate<
     } else {
       model.findMany(findManyArgs).then(resolve);
     }
-  }).then(
+  });
+
+  result.then(
     (value) => {
       if (callback) {
         callback(null, value);
@@ -68,6 +70,10 @@ function paginate<
       }
     }
   );
+
+  if (!(callback || typeof paginationOrCallback === "function")) {
+    return result;
+  }
 }
 
 export { paginate };
