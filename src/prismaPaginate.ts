@@ -1,6 +1,53 @@
 import { PrismaModel, Pagination, Result } from "./types";
 import { Paginate } from "./paginate";
 
+export interface UndefinedModel<Model extends PrismaModel.Properties> {
+  (
+    model: Model,
+    findManyArgs: PrismaModel.Arguments<Model>,
+    pagination: Pagination.Options,
+    callback: Result.Callback<Model, Result.WithPagination<Model>>
+  ): void;
+  (
+    model: Model,
+    findManyArgs: PrismaModel.Arguments<Model>,
+    callbackWithoutPagination: Result.Callback<
+      Model,
+      Result.WithoutPagination<Model>
+    >
+  ): void;
+  (
+    model: Model,
+    findManyArgs: PrismaModel.Arguments<Model>,
+    paginationWithoutCallback: Pagination.Options
+  ): Promise<Result.WithPagination<Model>>;
+  (model: Model, findManyArgs: PrismaModel.Arguments<Model>): Promise<
+    Result.WithoutPagination<Model>
+  >;
+}
+
+export interface DefinedModel<Model extends PrismaModel.Properties> {
+  (
+    findManyArgs: PrismaModel.Arguments<Model>,
+    pagination: Pagination.Options,
+    callback: Result.Callback<Model, Result.WithPagination<Model>>
+  ): void;
+  (
+    findManyArgs: PrismaModel.Arguments<Model>,
+    callbackWithoutPagination: Result.Callback<
+      Model,
+      Result.WithoutPagination<Model>
+    >
+  ): void;
+  (
+    findManyArgs: PrismaModel.Arguments<Model>,
+    paginationWithoutCallback: Pagination.Options
+  ): Promise<Result.WithPagination<Model>>;
+  (findManyArgs: PrismaModel.Arguments<Model>): Promise<
+    Result.WithoutPagination<Model>
+  >;
+}
+
 export function paginateUndefinedModel<Model extends PrismaModel.Properties>(
   model: Model,
   findManyArgs: PrismaModel.Arguments<Model>,
@@ -156,7 +203,7 @@ export function paginateDefinedModel<
 
 export default function paginate<Model extends PrismaModel.Properties>(
   model: Model
-): typeof paginateDefinedModel;
+): DefinedModel<Model>;
 export default function paginate(): typeof paginateUndefinedModel;
 export default function paginate<Model extends PrismaModel.Properties>(
   model?: Model
