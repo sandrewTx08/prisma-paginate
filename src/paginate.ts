@@ -40,10 +40,14 @@ export class Paginate<Model extends PrismaModel.Properties> {
         this.model.count(findManyArgs).then((count) => {
           const paginate = new Paginate(this.model);
           this.model
-            .findMany(paginate.args(paginationOrCallback, findManyArgs))
+            .findMany(paginate.findManyArgs(paginationOrCallback, findManyArgs))
             .then(
               (result) =>
-                paginate.result(paginationOrCallback, count, result) as Result
+                paginate.paginateResult(
+                  paginationOrCallback,
+                  count,
+                  result
+                ) as Result
             )
             .then(resolve);
         }, reject);
@@ -120,10 +124,14 @@ export class Paginate<Model extends PrismaModel.Properties> {
         model.count(findManyArgs).then((count) => {
           const paginate = new Paginate(model);
           model
-            .findMany(paginate.args(paginationOrCallback, findManyArgs))
+            .findMany(paginate.findManyArgs(paginationOrCallback, findManyArgs))
             .then(
               (result) =>
-                paginate.result(paginationOrCallback, count, result) as Result
+                paginate.paginateResult(
+                  paginationOrCallback,
+                  count,
+                  result
+                ) as Result
             )
             .then(resolve);
         }, reject);
@@ -158,20 +166,22 @@ export class Paginate<Model extends PrismaModel.Properties> {
     }
   }
 
-  args(
-    pagination: Pagination.Options,
+  private findManyArgs(
+    paginationOptions: Pagination.Options,
     findManyArgs: PrismaModel.Arguments<Model>
   ): PrismaModel.Arguments<Model> {
     return {
       ...findManyArgs,
-      take: pagination.limit,
+      take: paginationOptions.limit,
       skip:
-        pagination.limit *
-        (pagination.page > 0 ? pagination.page - 1 : pagination.page),
+        paginationOptions.limit *
+        (paginationOptions.page > 0
+          ? paginationOptions.page - 1
+          : paginationOptions.page),
     };
   }
 
-  result(
+  private paginateResult(
     paginationOptions: Pagination.Options,
     count: number,
     result: PrismaModel.FindManyReturn<Model>
