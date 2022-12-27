@@ -1,48 +1,50 @@
-import { Model, Pagination, Result } from "./types";
+import { PrismaModel, Pagination, Result } from "./types";
 import { Paginate } from "./paginate";
 
-function paginate<Model extends Model.Object>(
+export function paginate<Model extends PrismaModel.Properties>(
   model: Model,
-  findManyArgs: Model.Args<Model>,
-  pagination: Pagination.Args,
+  findManyArgs: PrismaModel.Arguments<Model>,
+  pagination: Pagination.Options,
   callback: Result.Callback<Model, Result.WithPagination<Model>>
 ): void;
-function paginate<Model extends Model.Object>(
+export function paginate<Model extends PrismaModel.Properties>(
   model: Model,
-  findManyArgs: Model.Args<Model>,
+  findManyArgs: PrismaModel.Arguments<Model>,
   callbackWithoutPagination: Result.Callback<
     Model,
     Result.WithoutPagination<Model>
   >
 ): void;
-function paginate<Model extends Model.Object>(
+export function paginate<Model extends PrismaModel.Properties>(
   model: Model,
-  findManyArgs: Model.Args<Model>,
-  paginationWithoutCallback: Pagination.Args
+  findManyArgs: PrismaModel.Arguments<Model>,
+  paginationWithoutCallback: Pagination.Options
 ): Promise<Result.WithPagination<Model>>;
-function paginate<Model extends Model.Object>(
+export function paginate<Model extends PrismaModel.Properties>(
   model: Model,
-  findManyArgs: Model.Args<Model>
+  findManyArgs: PrismaModel.Arguments<Model>
 ): Promise<Result.WithoutPagination<Model>>;
-function paginate<
-  Model extends Model.Object,
-  PaginationOrCallback extends Pagination.Args | Result.Callback<Model, Result>,
-  Result extends PaginationOrCallback extends Pagination.Args
+export function paginate<
+  Model extends PrismaModel.Properties,
+  PaginationOrCallback extends
+    | Pagination.Options
+    | Result.Callback<Model, Result>,
+  Result extends PaginationOrCallback extends Pagination.Options
     ? Result.WithPagination<Model>
     : Result.WithoutPagination<Model>
 >(
   model: Model,
-  findManyArgs: Model.Args<Model>,
+  findManyArgs: PrismaModel.Arguments<Model>,
   paginationOrCallback?: PaginationOrCallback,
   callback?: Result.Callback<Model, Result>
 ) {
   const result = new Promise<Result>((resolve, reject) => {
     if (typeof paginationOrCallback === "object") {
       model.count(findManyArgs).then((count) => {
-        const paginate = new Paginate<Model>(count, paginationOrCallback);
+        const paginate = new Paginate<Model>(paginationOrCallback);
         model
           .findMany(paginate.args(findManyArgs))
-          .then((result) => paginate.result(result) as Result)
+          .then((result) => paginate.result(count, result) as Result)
           .then(resolve);
       }, reject);
     } else {
@@ -75,5 +77,3 @@ function paginate<
     return result;
   }
 }
-
-export { paginate };

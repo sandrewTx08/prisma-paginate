@@ -1,5 +1,5 @@
 import { paginate } from "../src";
-import { ErrorTotalPages } from "../src/errors";
+import { TotalPagesExceed } from "../src/errors";
 import {
   mockModelResult,
   mockModel,
