@@ -1,4 +1,4 @@
-import { paginate } from "../src";
+import { Paginate } from "../src";
 import { TotalPagesExceed } from "../src/errors";
 import {
   mockModelResult,
@@ -10,6 +10,8 @@ import {
 } from "./utils";
 
 describe("prisma", () => {
+  const paginate = Paginate();
+
   beforeEach((done) => {
     modelCreate().finally(done);
   });
