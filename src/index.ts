@@ -1,1 +1,1 @@
-export { default as Paginate } from "./prismaPaginate";
+export { Paginate } from "./paginate";

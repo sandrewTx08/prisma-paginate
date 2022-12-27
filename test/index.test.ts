@@ -10,7 +10,7 @@ import {
 } from "./utils";
 
 describe("prisma", () => {
-  const paginate = Paginate();
+  const { paginate } = Paginate;
 
   beforeEach((done) => {
     modelCreate().finally(done);
