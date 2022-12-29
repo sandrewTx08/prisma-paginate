@@ -22,12 +22,12 @@ export namespace Pagination {
 export namespace Result {
   export type WithoutPagination<T extends PrismaModel.Properties> =
     PrismaModel.FindManyReturn<T>;
-  export type WithPagination<T extends PrismaModel.Properties> =
+  export type Pagination<T extends PrismaModel.Properties> =
     Pagination.Value & {
       result: PrismaModel.FindManyReturn<T>;
     };
   export type Callback<
     T extends PrismaModel.Properties,
-    P extends WithoutPagination<T> | WithPagination<T>
-  > = (error: Error | null, result?: P) => void;
+    R extends WithoutPagination<T> | Pagination<T>
+  > = (error: Error | null, result?: R) => void;
 }

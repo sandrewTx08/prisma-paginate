@@ -7,7 +7,7 @@ export class Paginate<Model extends PrismaModel.Properties> {
   paginate(
     findManyArgs: PrismaModel.Arguments<Model>,
     pagination: Pagination.Options,
-    callback: Result.Callback<Model, Result.WithPagination<Model>>
+    callback: Result.Callback<Model, Result.Pagination<Model>>
   ): void;
   paginate(
     findManyArgs: PrismaModel.Arguments<Model>,
@@ -18,32 +18,30 @@ export class Paginate<Model extends PrismaModel.Properties> {
   ): void;
   paginate(
     findManyArgs: PrismaModel.Arguments<Model>,
-    paginationWithoutCallback: Pagination.Options
-  ): Promise<Result.WithPagination<Model>>;
+    pagination: Pagination.Options
+  ): Promise<Result.Pagination<Model>>;
   paginate(
     findManyArgs: PrismaModel.Arguments<Model>
   ): Promise<Result.WithoutPagination<Model>>;
   paginate<
-    PaginationOrCallback extends
-      | Pagination.Options
-      | Result.Callback<Model, Result>,
+    PaginationOrCallback extends Pagination.Options | Callback,
+    Callback extends Result.Callback<Model, Result>,
     Result extends PaginationOrCallback extends Pagination.Options
-      ? Result.WithPagination<Model>
+      ? Result.Pagination<Model>
       : Result.WithoutPagination<Model>
   >(
     findManyArgs: PrismaModel.Arguments<Model>,
     paginationOrCallback?: PaginationOrCallback,
-    callback?: Result.Callback<Model, Result>
+    callback?: Callback
   ) {
     const result = new Promise<Result>((resolve, reject) => {
       if (typeof paginationOrCallback === "object") {
         this.model.count(findManyArgs).then((count) => {
-          const paginate = new Paginate(this.model);
           this.model
-            .findMany(paginate.findManyArgs(paginationOrCallback, findManyArgs))
+            .findMany(this.findManyArgs(findManyArgs, paginationOrCallback))
             .then(
               (result) =>
-                paginate.paginateResult(
+                this.paginateResult(
                   paginationOrCallback,
                   count,
                   result
@@ -86,7 +84,7 @@ export class Paginate<Model extends PrismaModel.Properties> {
     model: Model,
     findManyArgs: PrismaModel.Arguments<Model>,
     pagination: Pagination.Options,
-    callback: Result.Callback<Model, Result.WithPagination<Model>>
+    callback: Result.Callback<Model, Result.Pagination<Model>>
   ): void;
   static paginate<Model extends PrismaModel.Properties>(
     model: Model,
@@ -99,76 +97,35 @@ export class Paginate<Model extends PrismaModel.Properties> {
   static paginate<Model extends PrismaModel.Properties>(
     model: Model,
     findManyArgs: PrismaModel.Arguments<Model>,
-    paginationWithoutCallback: Pagination.Options
-  ): Promise<Result.WithPagination<Model>>;
+    pagination: Pagination.Options
+  ): Promise<Result.Pagination<Model>>;
   static paginate<Model extends PrismaModel.Properties>(
     model: Model,
     findManyArgs: PrismaModel.Arguments<Model>
   ): Promise<Result.WithoutPagination<Model>>;
   static paginate<
     Model extends PrismaModel.Properties,
-    PaginationOrCallback extends
-      | Pagination.Options
-      | Result.Callback<Model, Result>,
+    PaginationOrCallback extends Pagination.Options | Callback,
+    Callback extends Result.Callback<Model, Result>,
     Result extends PaginationOrCallback extends Pagination.Options
-      ? Result.WithPagination<Model>
+      ? Result.Pagination<Model>
       : Result.WithoutPagination<Model>
   >(
     model: Model,
     findManyArgs: PrismaModel.Arguments<Model>,
     paginationOrCallback?: PaginationOrCallback,
-    callback?: Result.Callback<Model, Result>
+    callback?: Callback
   ) {
-    const result = new Promise<Result>((resolve, reject) => {
-      if (typeof paginationOrCallback === "object") {
-        model.count(findManyArgs).then((count) => {
-          const paginate = new Paginate(model);
-          model
-            .findMany(paginate.findManyArgs(paginationOrCallback, findManyArgs))
-            .then(
-              (result) =>
-                paginate.paginateResult(
-                  paginationOrCallback,
-                  count,
-                  result
-                ) as Result
-            )
-            .then(resolve);
-        }, reject);
-      } else {
-        model.findMany(findManyArgs).then(resolve);
-      }
-    });
-
-    result.then(
-      (value) => {
-        if (callback) {
-          callback(null, value);
-        } else if (typeof paginationOrCallback === "function") {
-          paginationOrCallback(null, value);
-        } else {
-          return value;
-        }
-      },
-      (reason) => {
-        if (callback) {
-          callback(reason);
-        } else if (typeof paginationOrCallback === "function") {
-          paginationOrCallback(reason);
-        } else {
-          throw reason;
-        }
-      }
+    return (
+      new Paginate(model)
+        // @ts-ignore
+        .paginate(findManyArgs, paginationOrCallback, callback)
     );
-
-    if (!(callback || typeof paginationOrCallback === "function")) {
-      return result;
-    }
   }
 
   private findManyArgs(
-    paginationOptions: Pagination.Options,
-    findManyArgs: PrismaModel.Arguments<Model>
+    findManyArgs: PrismaModel.Arguments<Model>,
+    paginationOptions: Pagination.Options
   ): PrismaModel.Arguments<Model> {
     return {
       ...findManyArgs,
@@ -185,7 +142,7 @@ export class Paginate<Model extends PrismaModel.Properties> {
     paginationOptions: Pagination.Options,
     count: number,
     result: PrismaModel.FindManyReturn<Model>
-  ): Result.WithPagination<Model> {
+  ): Result.Pagination<Model> {
     const totalPages = Math.round(count / paginationOptions.limit);
     const add_page = paginationOptions.page > 0;
     const page = add_page ? paginationOptions.page - 1 : 1;
