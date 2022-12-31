@@ -1,8 +1,12 @@
 {
   "name": "prisma-paginate",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Paginate ORM Prisma",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "test": "jest",
     "build": "tsc",
@@ -12,7 +16,7 @@
     "type": "git",
     "url": "git+https://github.com/sandrewTx08/prisma-paginate.git"
   },
-  "author": "",
+  "author": "sandrewTx08",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/sandrewTx08/prisma-paginate/issues"

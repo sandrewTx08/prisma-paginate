@@ -1,5 +1,9 @@
 # prisma-paginate
 
-# Docs
+# Install
 
-sandrewtx08.github.io/prisma-paginate/
+`npm install prisma-paginate`
+
+# Documentation and usage
+
+http://sandrewtx08.github.io/prisma-paginate/
