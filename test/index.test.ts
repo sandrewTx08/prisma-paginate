@@ -1,5 +1,5 @@
 import PrismaPaginate from "../src";
-import { TotalPagesExceed } from "../src/errors";
+import { ExceedCount } from "../src/errors";
 import { Paginate } from "../src/paginate";
 import {
   mockModelResult,
@@ -605,21 +605,21 @@ describe("prisma", () => {
   });
 
   // it("page > totalPage", (done) => {
-  //   Paginate()(model, {}, { page: 4, limit: 1 }, (error, result) => {
-  //     expect(error).toBeInstanceOf(TotalPagesExceed);
+  //   PrismaPaginate()(model, {}, { page: 4, limit: 1 }, (error, result) => {
+  //     expect(error).toBeInstanceOf(ExceedCount);
   //     expect(result).toBe(undefined);
   //     done();
   //   });
   // });
 
   // it("page > totalPage", (done) => {
-  //   Paginate()(model, {}, { page: 4, limit: 1 })
+  //   PrismaPaginate()(model, {}, { page: 4, limit: 1, exceedCount: true })
   //     .then(
   //       (result) => {
   //         expect(result?.count).toBe(modelResult.length);
   //       },
   //       (error) => {
-  //         expect(error).toBeInstanceOf(TotalPagesExceed);
+  //         expect(error).toBeInstanceOf(ExceedCount);
   //       }
   //     )
   //     .finally(done);

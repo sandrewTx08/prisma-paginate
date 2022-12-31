@@ -1,7 +1,7 @@
 import { Pagination } from "./types";
 
-export class TotalPagesExceed extends Error {
+export class ExceedCount extends Error {
   constructor(public pagination: Pagination.Value) {
-    super("Pagination options exceed total pages");
+    super("Pagination options exceed count of rows");
   }
 }

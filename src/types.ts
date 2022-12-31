@@ -1,3 +1,5 @@
+import { ExceedCount } from "./errors";
+
 export namespace PrismaModel {
   export type Properties = {
     findMany(...args: any[]): Promise<any>;
@@ -10,7 +12,15 @@ export namespace PrismaModel {
 }
 
 export namespace Pagination {
-  export type Options = { page: number; limit: number };
+  export type Options = {
+    page: number;
+    limit: number;
+    /**
+     * Throw error if options is greater than count {@link ExceedCount}
+     * @default false
+     */
+    exceedCount?: boolean;
+  };
   export type Value = Options & {
     totalPages: number;
     hasPrevPage: boolean;

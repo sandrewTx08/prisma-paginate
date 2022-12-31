@@ -1,4 +1,4 @@
-import { TotalPagesExceed } from "./errors";
+import { ExceedCount } from "./errors";
 import { PrismaModel, Pagination, Result, ByModel, WithModel } from "./types";
 
 export class Paginate<Model extends PrismaModel.Properties> {
@@ -91,8 +91,13 @@ export class Paginate<Model extends PrismaModel.Properties> {
       limit: paginationOptions.limit,
     };
 
-    if (paginationOptions.limit * paginationOptions.page > count) {
-      throw new TotalPagesExceed(pagination);
+    if (
+      paginationOptions.exceedCount === undefined
+        ? false
+        : paginationOptions.exceedCount &&
+          paginationOptions.limit * paginationOptions.page > count
+    ) {
+      throw new ExceedCount(pagination);
     } else {
       return { ...pagination, result };
     }
