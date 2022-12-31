@@ -1,5 +1,6 @@
 import PrismaPaginate from "../src";
 import { TotalPagesExceed } from "../src/errors";
+import { Paginate } from "../src/paginate";
 import {
   mockModelResult,
   mockModel,
@@ -16,6 +17,35 @@ describe("prisma", () => {
 
   afterEach((done) => {
     modelDelete().finally(done);
+  });
+
+  it("paginate args", () => {
+    const paginate = new Paginate(mockModel);
+
+    expect(paginate.findManyArgs({}, { page: 0, limit: 2 })).toStrictEqual({
+      take: 2,
+      skip: 0,
+    });
+    expect(paginate.findManyArgs({}, { page: 1, limit: 2 })).toStrictEqual({
+      take: 2,
+      skip: 0,
+    });
+    expect(paginate.findManyArgs({}, { page: 2, limit: 2 })).toStrictEqual({
+      take: 2,
+      skip: 2,
+    });
+    expect(paginate.findManyArgs({}, { page: 3, limit: 2 })).toStrictEqual({
+      take: 2,
+      skip: 4,
+    });
+    expect(paginate.findManyArgs({}, { page: 4, limit: 2 })).toStrictEqual({
+      take: 2,
+      skip: 6,
+    });
+    expect(paginate.findManyArgs({}, { page: 5, limit: 2 })).toStrictEqual({
+      take: 2,
+      skip: 8,
+    });
   });
 
   it("without pagination", (done) => {
