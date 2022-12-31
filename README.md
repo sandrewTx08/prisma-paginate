@@ -2,4 +2,4 @@
 
 # Docs
 
-https://github.com/sandrewTx08/prisma-paginate
+sandrewtx08.github.io/prisma-paginate/
