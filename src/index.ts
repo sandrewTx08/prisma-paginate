@@ -1,1 +1,3 @@
-export { Paginate } from "./paginate";
+import * as PrismaPaginate from "./paginate";
+export { PrismaPaginate };
+export default PrismaPaginate.default;

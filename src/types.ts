@@ -31,3 +31,52 @@ export namespace Result {
     R extends WithoutPagination<T> | Pagination<T>
   > = (error: Error | null, result?: R) => void;
 }
+
+export interface ByModel {
+  <Model extends PrismaModel.Properties>(
+    model: Model,
+    findManyArgs: PrismaModel.Arguments<Model>,
+    pagination: Pagination.Options,
+    callback: Result.Callback<Model, Result.Pagination<Model>>
+  ): void;
+  <Model extends PrismaModel.Properties>(
+    model: Model,
+    findManyArgs: PrismaModel.Arguments<Model>,
+    callback: Result.Callback<Model, Result.WithoutPagination<Model>>
+  ): void;
+  <Model extends PrismaModel.Properties>(
+    model: Model,
+    findManyArgs: PrismaModel.Arguments<Model>,
+    pagination: Pagination.Options
+  ): Promise<Result.Pagination<Model>>;
+  <Model extends PrismaModel.Properties>(
+    model: Model,
+    findManyArgs: PrismaModel.Arguments<Model>
+  ): Promise<Result.WithoutPagination<Model>>;
+  <Model extends PrismaModel.Properties>(
+    model: Model,
+    findManyArgs: PrismaModel.Arguments<Model>
+  ): Promise<Result.WithoutPagination<Model>>;
+}
+
+export interface WithModel<Model extends PrismaModel.Properties> {
+  (
+    findManyArgs: PrismaModel.Arguments<Model>,
+    pagination: Pagination.Options,
+    callback: Result.Callback<Model, Result.Pagination<Model>>
+  ): void;
+  (
+    findManyArgs: PrismaModel.Arguments<Model>,
+    callback: Result.Callback<Model, Result.WithoutPagination<Model>>
+  ): void;
+  (
+    findManyArgs: PrismaModel.Arguments<Model>,
+    pagination: Pagination.Options
+  ): Promise<Result.Pagination<Model>>;
+  (findManyArgs: PrismaModel.Arguments<Model>): Promise<
+    Result.WithoutPagination<Model>
+  >;
+  (findManyArgs: PrismaModel.Arguments<Model>): Promise<
+    Result.WithoutPagination<Model>
+  >;
+}

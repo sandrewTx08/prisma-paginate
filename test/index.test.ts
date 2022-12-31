@@ -1,4 +1,4 @@
-import { Paginate } from "../src";
+import PrismaPaginate from "../src";
 import { TotalPagesExceed } from "../src/errors";
 import {
   mockModelResult,
@@ -19,8 +19,7 @@ describe("prisma", () => {
   });
 
   it("without pagination", (done) => {
-    new Paginate(model)
-      .paginate({})
+    PrismaPaginate(model)({})
       .then((result) => {
         expect(result).toStrictEqual(modelResult);
         expect(result).not.toHaveProperty([
@@ -36,7 +35,7 @@ describe("prisma", () => {
   });
 
   it("without pagination", (done) => {
-    new Paginate(model).paginate({}, (error, result) => {
+    PrismaPaginate(model)({}, (error, result) => {
       expect(error).toBe(null);
       expect(result).toStrictEqual(modelResult);
       expect(result).not.toHaveProperty([
@@ -52,8 +51,7 @@ describe("prisma", () => {
   });
 
   it("without pagination", (done) => {
-    new Paginate(mockModel)
-      .paginate({})
+    PrismaPaginate(mockModel)({})
       .then((result) => {
         expect(result).toBeInstanceOf(Array);
         expect(result).not.toHaveProperty([
@@ -69,7 +67,7 @@ describe("prisma", () => {
   });
 
   it("without pagination", (done) => {
-    Paginate.paginate(mockModel, {})
+    PrismaPaginate()(mockModel, {})
       .then((result) => {
         expect(result).toBeInstanceOf(Array);
         expect(result).not.toHaveProperty([
@@ -85,7 +83,7 @@ describe("prisma", () => {
   });
 
   it("without pagination", (done) => {
-    new Paginate(mockModel).paginate({}, (error, result) => {
+    PrismaPaginate(mockModel)({}, (error, result) => {
       expect(error).toBe(null);
       expect(result).toBeInstanceOf(Array);
       expect(result).not.toHaveProperty([
@@ -101,8 +99,7 @@ describe("prisma", () => {
   });
 
   it("without pagination", (done) => {
-    new Paginate(model)
-      .paginate({})
+    PrismaPaginate(model)({})
       .then((result) => {
         expect(result).toStrictEqual(modelResult);
         expect(result).not.toHaveProperty([
@@ -118,7 +115,7 @@ describe("prisma", () => {
   });
 
   it("without pagination", (done) => {
-    Paginate.paginate(model, {}, (error, result) => {
+    PrismaPaginate()(model, {}, (error, result) => {
       expect(error).toBe(null);
       expect(result).toStrictEqual(modelResult);
       expect(result).not.toHaveProperty([
@@ -134,7 +131,7 @@ describe("prisma", () => {
   });
 
   it("without pagination", (done) => {
-    Paginate.paginate(mockModel, {}, (error, result) => {
+    PrismaPaginate()(mockModel, {}, (error, result) => {
       expect(error).toBe(null);
       expect(result).toBeInstanceOf(Array);
       expect(result).not.toHaveProperty([
@@ -150,7 +147,7 @@ describe("prisma", () => {
   });
 
   it("page == 0", (done) => {
-    Paginate.paginate(mockModel, {}, { page: 0, limit: 1 }, (error, result) => {
+    PrismaPaginate()(mockModel, {}, { page: 0, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toBeInstanceOf(Array);
       expect(result?.count).toBe(mockModelResult.length);
@@ -164,7 +161,7 @@ describe("prisma", () => {
   });
 
   it("page == 0", (done) => {
-    Paginate.paginate(mockModel, {}, { page: 0, limit: 1 })
+    PrismaPaginate()(mockModel, {}, { page: 0, limit: 1 })
       .then((result) => {
         expect(result.result).toBeDefined();
         expect(result.count).toBe(mockModelResult.length);
@@ -178,7 +175,7 @@ describe("prisma", () => {
   });
 
   it("page == 0", (done) => {
-    Paginate.paginate(model, {}, { page: 0, limit: 1 }, (error, result) => {
+    PrismaPaginate()(model, {}, { page: 0, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toStrictEqual([{ id: 1 }]);
       expect(result?.hasNextPage).toBe(true);
@@ -190,7 +187,7 @@ describe("prisma", () => {
   });
 
   it("page == 0", (done) => {
-    Paginate.paginate(model, {}, { page: 0, limit: 1 })
+    PrismaPaginate()(model, {}, { page: 0, limit: 1 })
       .then((result) => {
         expect(result.result).toStrictEqual([{ id: 1 }]);
         expect(result.hasNextPage).toBe(true);
@@ -202,26 +199,21 @@ describe("prisma", () => {
   });
 
   it("page == 0", (done) => {
-    new Paginate(mockModel).paginate(
-      {},
-      { page: 0, limit: 1 },
-      (error, result) => {
-        expect(error).toBe(null);
-        expect(result?.result).toBeInstanceOf(Array);
-        expect(result?.count).toBe(mockModelResult.length);
-        expect(result?.hasNextPage).toBe(true);
-        expect(result?.hasPrevPage).toBe(false);
-        expect(result?.limit).toBe(1);
-        expect(result?.page).toBe(1);
-        expect(result?.totalPages).toBe(mockModelResult.length);
-        done();
-      }
-    );
+    PrismaPaginate(mockModel)({}, { page: 0, limit: 1 }, (error, result) => {
+      expect(error).toBe(null);
+      expect(result?.result).toBeInstanceOf(Array);
+      expect(result?.count).toBe(mockModelResult.length);
+      expect(result?.hasNextPage).toBe(true);
+      expect(result?.hasPrevPage).toBe(false);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(1);
+      expect(result?.totalPages).toBe(mockModelResult.length);
+      done();
+    });
   });
 
   it("page == 0", (done) => {
-    new Paginate(mockModel)
-      .paginate({}, { page: 0, limit: 1 })
+    PrismaPaginate(mockModel)({}, { page: 0, limit: 1 })
       .then((result) => {
         expect(result.result).toBeDefined();
         expect(result.count).toBe(mockModelResult.length);
@@ -235,7 +227,7 @@ describe("prisma", () => {
   });
 
   it("page == 0", (done) => {
-    new Paginate(model).paginate({}, { page: 0, limit: 1 }, (error, result) => {
+    PrismaPaginate(model)({}, { page: 0, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toStrictEqual([{ id: 1 }]);
       expect(result?.hasNextPage).toBe(true);
@@ -247,8 +239,7 @@ describe("prisma", () => {
   });
 
   it("page == 0", (done) => {
-    new Paginate(model)
-      .paginate({}, { page: 0, limit: 1 })
+    PrismaPaginate(model)({}, { page: 0, limit: 1 })
       .then((result) => {
         expect(result.result).toStrictEqual([{ id: 1 }]);
         expect(result.hasNextPage).toBe(true);
@@ -260,7 +251,7 @@ describe("prisma", () => {
   });
 
   it("page == 1", (done) => {
-    Paginate.paginate(mockModel, {}, { page: 1, limit: 1 }, (error, result) => {
+    PrismaPaginate()(mockModel, {}, { page: 1, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toBeInstanceOf(Array);
       expect(result?.count).toBe(mockModelResult.length);
@@ -274,7 +265,7 @@ describe("prisma", () => {
   });
 
   it("page == 1", (done) => {
-    Paginate.paginate(mockModel, {}, { page: 1, limit: 1 })
+    PrismaPaginate()(mockModel, {}, { page: 1, limit: 1 })
       .then((result) => {
         expect(result.result).toBeDefined();
         expect(result.count).toBe(mockModelResult.length);
@@ -288,7 +279,7 @@ describe("prisma", () => {
   });
 
   it("page == 1", (done) => {
-    Paginate.paginate(model, {}, { page: 1, limit: 1 }, (error, result) => {
+    PrismaPaginate()(model, {}, { page: 1, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toStrictEqual([{ id: 1 }]);
       expect(result?.hasNextPage).toBe(true);
@@ -300,7 +291,7 @@ describe("prisma", () => {
   });
 
   it("page == 1", (done) => {
-    Paginate.paginate(model, {}, { page: 1, limit: 1 })
+    PrismaPaginate()(model, {}, { page: 1, limit: 1 })
       .then((result) => {
         expect(result.result).toStrictEqual([{ id: 1 }]);
         expect(result.hasNextPage).toBe(true);
@@ -312,26 +303,21 @@ describe("prisma", () => {
   });
 
   it("page == 1", (done) => {
-    new Paginate(mockModel).paginate(
-      {},
-      { page: 1, limit: 1 },
-      (error, result) => {
-        expect(error).toBe(null);
-        expect(result?.result).toBeInstanceOf(Array);
-        expect(result?.count).toBe(mockModelResult.length);
-        expect(result?.hasNextPage).toBe(true);
-        expect(result?.hasPrevPage).toBe(false);
-        expect(result?.limit).toBe(1);
-        expect(result?.page).toBe(1);
-        expect(result?.totalPages).toBe(mockModelResult.length);
-        done();
-      }
-    );
+    PrismaPaginate(mockModel)({}, { page: 1, limit: 1 }, (error, result) => {
+      expect(error).toBe(null);
+      expect(result?.result).toBeInstanceOf(Array);
+      expect(result?.count).toBe(mockModelResult.length);
+      expect(result?.hasNextPage).toBe(true);
+      expect(result?.hasPrevPage).toBe(false);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(1);
+      expect(result?.totalPages).toBe(mockModelResult.length);
+      done();
+    });
   });
 
   it("page == 1", (done) => {
-    new Paginate(mockModel)
-      .paginate({}, { page: 1, limit: 1 })
+    PrismaPaginate(mockModel)({}, { page: 1, limit: 1 })
       .then((result) => {
         expect(result.result).toBeDefined();
         expect(result.count).toBe(mockModelResult.length);
@@ -345,7 +331,7 @@ describe("prisma", () => {
   });
 
   it("page == 1", (done) => {
-    new Paginate(model).paginate({}, { page: 1, limit: 1 }, (error, result) => {
+    PrismaPaginate(model)({}, { page: 1, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toStrictEqual([{ id: 1 }]);
       expect(result?.hasNextPage).toBe(true);
@@ -357,8 +343,7 @@ describe("prisma", () => {
   });
 
   it("page == 1", (done) => {
-    new Paginate(model)
-      .paginate({}, { page: 1, limit: 1 })
+    PrismaPaginate(model)({}, { page: 1, limit: 1 })
       .then((result) => {
         expect(result.result).toStrictEqual([{ id: 1 }]);
         expect(result.hasNextPage).toBe(true);
@@ -370,7 +355,7 @@ describe("prisma", () => {
   });
 
   it("index == 2", (done) => {
-    Paginate.paginate(mockModel, {}, { page: 2, limit: 1 }, (error, result) => {
+    PrismaPaginate()(mockModel, {}, { page: 2, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toBeInstanceOf(Array);
       expect(result?.count).toBe(mockModelResult.length);
@@ -384,7 +369,7 @@ describe("prisma", () => {
   });
 
   it("index == 2", (done) => {
-    Paginate.paginate(mockModel, {}, { page: 2, limit: 1 })
+    PrismaPaginate()(mockModel, {}, { page: 2, limit: 1 })
       .then((result) => {
         expect(result.result).toBeDefined();
         expect(result.count).toBe(mockModelResult.length);
@@ -398,7 +383,7 @@ describe("prisma", () => {
   });
 
   it("index == 2", (done) => {
-    Paginate.paginate(model, {}, { page: 2, limit: 1 }, (error, result) => {
+    PrismaPaginate()(model, {}, { page: 2, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toStrictEqual([{ id: 2 }]);
       expect(result?.hasNextPage).toBe(true);
@@ -410,7 +395,7 @@ describe("prisma", () => {
   });
 
   it("index == 2", (done) => {
-    Paginate.paginate(model, {}, { page: 2, limit: 1 })
+    PrismaPaginate()(model, {}, { page: 2, limit: 1 })
       .then((result) => {
         expect(result.result).toStrictEqual([{ id: 2 }]);
         expect(result.hasNextPage).toBe(true);
@@ -422,26 +407,21 @@ describe("prisma", () => {
   });
 
   it("index == 2", (done) => {
-    new Paginate(mockModel).paginate(
-      {},
-      { page: 2, limit: 1 },
-      (error, result) => {
-        expect(error).toBe(null);
-        expect(result?.result).toBeInstanceOf(Array);
-        expect(result?.count).toBe(mockModelResult.length);
-        expect(result?.hasNextPage).toBe(true);
-        expect(result?.hasPrevPage).toBe(true);
-        expect(result?.limit).toBe(1);
-        expect(result?.page).toBe(2);
-        expect(result?.totalPages).toBe(mockModelResult.length);
-        done();
-      }
-    );
+    PrismaPaginate(mockModel)({}, { page: 2, limit: 1 }, (error, result) => {
+      expect(error).toBe(null);
+      expect(result?.result).toBeInstanceOf(Array);
+      expect(result?.count).toBe(mockModelResult.length);
+      expect(result?.hasNextPage).toBe(true);
+      expect(result?.hasPrevPage).toBe(true);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(2);
+      expect(result?.totalPages).toBe(mockModelResult.length);
+      done();
+    });
   });
 
   it("index == 2", (done) => {
-    new Paginate(mockModel)
-      .paginate({}, { page: 2, limit: 1 })
+    PrismaPaginate(mockModel)({}, { page: 2, limit: 1 })
       .then((result) => {
         expect(result.result).toBeDefined();
         expect(result.count).toBe(mockModelResult.length);
@@ -455,7 +435,7 @@ describe("prisma", () => {
   });
 
   it("index == 2", (done) => {
-    new Paginate(model).paginate({}, { page: 2, limit: 1 }, (error, result) => {
+    PrismaPaginate(model)({}, { page: 2, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toStrictEqual([{ id: 2 }]);
       expect(result?.hasNextPage).toBe(true);
@@ -467,8 +447,7 @@ describe("prisma", () => {
   });
 
   it("index == 2", (done) => {
-    new Paginate(model)
-      .paginate({}, { page: 2, limit: 1 })
+    PrismaPaginate(model)({}, { page: 2, limit: 1 })
       .then((result) => {
         expect(result.result).toStrictEqual([{ id: 2 }]);
         expect(result.hasNextPage).toBe(true);
@@ -480,7 +459,7 @@ describe("prisma", () => {
   });
 
   it("page == totalPage", (done) => {
-    Paginate.paginate(mockModel, {}, { page: 3, limit: 1 }, (error, result) => {
+    PrismaPaginate()(mockModel, {}, { page: 3, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toBeInstanceOf(Array);
       expect(result?.count).toBe(mockModelResult.length);
@@ -494,7 +473,7 @@ describe("prisma", () => {
   });
 
   it("page == totalPage", (done) => {
-    Paginate.paginate(mockModel, {}, { page: 3, limit: 1 })
+    PrismaPaginate()(mockModel, {}, { page: 3, limit: 1 })
       .then((result) => {
         expect(result.result).toBeDefined();
         expect(result.count).toBe(mockModelResult.length);
@@ -508,7 +487,7 @@ describe("prisma", () => {
   });
 
   it("page == totalPage", (done) => {
-    Paginate.paginate(model, {}, { page: 3, limit: 1 }, (error, result) => {
+    PrismaPaginate()(model, {}, { page: 3, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toStrictEqual([{ id: 3 }]);
       expect(result?.hasNextPage).toBe(false);
@@ -520,8 +499,7 @@ describe("prisma", () => {
   });
 
   it("page == totalPage", (done) => {
-    new Paginate(model)
-      .paginate({}, { page: 3, limit: 1 })
+    PrismaPaginate(model)({}, { page: 3, limit: 1 })
       .then((result) => {
         expect(result.result).toStrictEqual([{ id: 3 }]);
         expect(result.hasNextPage).toBe(false);
@@ -533,26 +511,21 @@ describe("prisma", () => {
   });
 
   it("page == totalPage", (done) => {
-    new Paginate(mockModel).paginate(
-      {},
-      { page: 3, limit: 1 },
-      (error, result) => {
-        expect(error).toBe(null);
-        expect(result?.result).toBeInstanceOf(Array);
-        expect(result?.count).toBe(mockModelResult.length);
-        expect(result?.hasNextPage).toBe(false);
-        expect(result?.hasPrevPage).toBe(true);
-        expect(result?.limit).toBe(1);
-        expect(result?.page).toBe(3);
-        expect(result?.totalPages).toBe(mockModelResult.length);
-        done();
-      }
-    );
+    PrismaPaginate(mockModel)({}, { page: 3, limit: 1 }, (error, result) => {
+      expect(error).toBe(null);
+      expect(result?.result).toBeInstanceOf(Array);
+      expect(result?.count).toBe(mockModelResult.length);
+      expect(result?.hasNextPage).toBe(false);
+      expect(result?.hasPrevPage).toBe(true);
+      expect(result?.limit).toBe(1);
+      expect(result?.page).toBe(3);
+      expect(result?.totalPages).toBe(mockModelResult.length);
+      done();
+    });
   });
 
   it("page == totalPage", (done) => {
-    new Paginate(mockModel)
-      .paginate({}, { page: 3, limit: 1 })
+    PrismaPaginate(mockModel)({}, { page: 3, limit: 1 })
       .then((result) => {
         expect(result.result).toBeDefined();
         expect(result.count).toBe(mockModelResult.length);
@@ -566,7 +539,7 @@ describe("prisma", () => {
   });
 
   it("page == totalPage", (done) => {
-    new Paginate(model).paginate({}, { page: 3, limit: 1 }, (error, result) => {
+    PrismaPaginate(model)({}, { page: 3, limit: 1 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toStrictEqual([{ id: 3 }]);
       expect(result?.hasNextPage).toBe(false);
@@ -578,8 +551,7 @@ describe("prisma", () => {
   });
 
   it("page == totalPage", (done) => {
-    new Paginate(model)
-      .paginate({}, { page: 3, limit: 1 })
+    PrismaPaginate(model)({}, { page: 3, limit: 1 })
       .then((result) => {
         expect(result.result).toStrictEqual([{ id: 3 }]);
         expect(result.hasNextPage).toBe(false);
@@ -591,7 +563,7 @@ describe("prisma", () => {
   });
 
   // it("page > totalPage", (done) => {
-  //   Paginate.paginate(model, {}, { page: 4, limit: 1 }, (error, result) => {
+  //   Paginate()(model, {}, { page: 4, limit: 1 }, (error, result) => {
   //     expect(error).toBeInstanceOf(TotalPagesExceed);
   //     expect(result).toBe(undefined);
   //     done();
@@ -599,7 +571,7 @@ describe("prisma", () => {
   // });
 
   // it("page > totalPage", (done) => {
-  //   Paginate.paginate(model, {}, { page: 4, limit: 1 })
+  //   Paginate()(model, {}, { page: 4, limit: 1 })
   //     .then(
   //       (result) => {
   //         expect(result?.count).toBe(modelResult.length);
