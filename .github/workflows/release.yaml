@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup node
+        uses: actions/setup-node@v3
+          with:
+            node-version: 16
+            cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build documentation
+        run: npm run docs
+
+      - name: Deploy documentation to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GH_PA_TOKEN }}
+          publish_dir: ./docs
