@@ -6,8 +6,8 @@ on:
       - master
 
 jobs:
-  release:
-    name: Release
+  publish:
+    name: NPM Publish
     runs-on: ubuntu-latest
 
     steps:
@@ -27,7 +27,7 @@ jobs:
           cache: "npm"
           registry-url: https://registry.npmjs.org
 
-      - name: NPM Publish
+      - name: Publish to NPM
         run: npm publish --access public
         working-directory: ./
         env:
