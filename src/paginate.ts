@@ -17,7 +17,9 @@ export class Paginate<Model extends PrismaModel.Properties> {
       if (typeof paginationOrCallback === "object") {
         this.model.count(findManyArgs).then((count) => {
           this.model
-            .findMany(this.findManyArgs(findManyArgs, paginationOrCallback))
+            .findMany(
+              this.paginateFindManyArgs(findManyArgs, paginationOrCallback)
+            )
             .then((result) =>
               this.paginateResult(paginationOrCallback, count, result)
             )
@@ -54,7 +56,7 @@ export class Paginate<Model extends PrismaModel.Properties> {
     }
   }
 
-  findManyArgs(
+  paginateFindManyArgs(
     findManyArgs: PrismaModel.Arguments<Model>,
     paginationOptions: Pagination.Options
   ): PrismaModel.Arguments<Model> {
