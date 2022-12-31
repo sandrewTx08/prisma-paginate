@@ -7,6 +7,12 @@
   "files": [
     "/dist"
   ],
+  "keywords": [
+    "orm",
+    "prisma",
+    "paginate",
+    "pagination"
+  ],
   "scripts": {
     "test": "jest",
     "build": "tsc",
