@@ -65,7 +65,9 @@ export class Paginate<Model extends PrismaModel.Properties> {
       take: paginationOptions.limit,
       skip:
         paginationOptions.limit *
-        (paginationOptions.page > 0
+        (paginationOptions.pageZero
+          ? paginationOptions.page
+          : paginationOptions.page > 0
           ? paginationOptions.page - 1
           : paginationOptions.page),
     };
@@ -77,17 +79,30 @@ export class Paginate<Model extends PrismaModel.Properties> {
     result: PrismaModel.FindManyReturn<Model>
   ): Result.Pagination<Model> {
     const totalPages = Math.round(count / paginationOptions.limit);
-    const add_page = paginationOptions.page > 0;
-    const page = add_page ? paginationOptions.page - 1 : 1;
-    const hasNextPage = (add_page ? page + 1 : page) < totalPages;
+    const gtZero = paginationOptions.page > 0;
+    const page = paginationOptions.pageZero
+      ? paginationOptions.page
+      : gtZero
+      ? paginationOptions.page - 1
+      : 1;
+    const hasNextPage =
+      (paginationOptions.pageZero
+        ? paginationOptions.page
+        : gtZero
+        ? page + 1
+        : page) < totalPages;
     const hasPrevPage =
-      paginationOptions.limit * (add_page ? paginationOptions.page - 1 : 0) > 0;
+      paginationOptions.limit * (gtZero ? paginationOptions.page - 1 : 0) > 0;
     const pagination: Pagination.Value = {
       count: count,
       totalPages,
       hasNextPage,
       hasPrevPage,
-      page: add_page ? page + 1 : page,
+      page: paginationOptions.pageZero
+        ? paginationOptions.page + 1
+        : gtZero
+        ? page + 1
+        : page,
       limit: paginationOptions.limit,
     };
 

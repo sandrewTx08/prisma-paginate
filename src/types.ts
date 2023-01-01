@@ -20,6 +20,19 @@ export namespace Pagination {
      * @default false
      */
     exceedCount?: boolean;
+    /**
+     * Paginating from zero
+     * @default false
+     * @example
+     * // pageZero true
+     * prismaPaginate(model, { page: 0, limit: 10, pageZero: true }); // { page: 1 }
+     * prismaPaginate(model, { page: 1, limit: 10, pageZero: true }); // { page: 2 }
+     *
+     * // pageZero false
+     * prismaPaginate(model, { page: 0, limit: 10, pageZero: false }); // { page: 1 }
+     * prismaPaginate(model, { page: 1, limit: 10, pageZero: false }); // { page: 1 }
+     */
+    pageZero?: boolean;
   };
   export type Value = Options & {
     totalPages: number;
