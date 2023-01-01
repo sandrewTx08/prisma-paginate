@@ -1,23 +1,23 @@
 import { PrismaClient } from "@prisma/client";
 import prismaPaginate from "../src";
 import { PrismaModel, Result, Pagination } from "../src/types";
-import { createRamdomArray } from "./utils";
+import { createRandomArray } from "./utils";
 
 describe("paginate model", () => {
   let client: PrismaClient;
-  const ramdomArray = createRamdomArray();
-  const ramdomIds = ramdomArray.map((id) => ({ id }));
+  const randomArray = createRandomArray();
+  const randomIds = randomArray.map((id) => ({ id }));
 
   beforeAll((done) => {
     client = new PrismaClient();
     client.$connect().then(() => {
-      client.model.createMany({ data: ramdomIds }).finally(done);
+      client.model.createMany({ data: randomIds }).finally(done);
     });
   });
 
   afterAll((done) => {
     client.model
-      .deleteMany({ where: { id: { in: ramdomArray } } })
+      .deleteMany({ where: { id: { in: randomArray } } })
       .finally(() => {
         client.$disconnect().finally(done);
       });
@@ -87,7 +87,7 @@ describe("paginate model", () => {
       .then((results) => {
         results.forEach(([error, result]) => {
           expect(error).toBe(null);
-          expect(result).toStrictEqual(ramdomIds);
+          expect(result).toStrictEqual(randomIds);
         });
       })
       .finally(done);
@@ -101,13 +101,13 @@ describe("paginate model", () => {
       .then((results) => {
         results.forEach(([error, result]) => {
           expect(error).toBe(null);
-          expect(result.result).toStrictEqual([ramdomIds[0]]);
-          expect(result.count).toBe(ramdomIds.length);
+          expect(result.result).toStrictEqual([randomIds[0]]);
+          expect(result.count).toBe(randomIds.length);
           expect(result.hasNextPage).toBe(true);
           expect(result.hasPrevPage).toBe(false);
           expect(result.limit).toBe(1);
           expect(result.page).toBe(1);
-          expect(result.totalPages).toBe(ramdomIds.length);
+          expect(result.totalPages).toBe(randomIds.length);
         });
       })
       .finally(done);
@@ -121,13 +121,13 @@ describe("paginate model", () => {
       .then((results) => {
         results.forEach(([error, result]) => {
           expect(error).toBe(null);
-          expect(result.result).toStrictEqual([ramdomIds[0]]);
-          expect(result.count).toBe(ramdomIds.length);
+          expect(result.result).toStrictEqual([randomIds[0]]);
+          expect(result.count).toBe(randomIds.length);
           expect(result.hasNextPage).toBe(true);
           expect(result.hasPrevPage).toBe(false);
           expect(result.limit).toBe(1);
           expect(result.page).toBe(1);
-          expect(result.totalPages).toBe(ramdomIds.length);
+          expect(result.totalPages).toBe(randomIds.length);
         });
       })
       .finally(done);
@@ -136,20 +136,20 @@ describe("paginate model", () => {
   it("page == totalPages", (done) => {
     testPrismaPaginate<Result.Pagination<typeof client.model>>(
       {},
-      { limit: 1, page: ramdomIds.length }
+      { limit: 1, page: randomIds.length }
     )
       .then((results) => {
         results.forEach(([error, result]) => {
           expect(error).toBe(null);
           expect(result.result).toStrictEqual([
-            ramdomIds[ramdomIds.length - 1],
+            randomIds[randomIds.length - 1],
           ]);
-          expect(result.count).toBe(ramdomIds.length);
+          expect(result.count).toBe(randomIds.length);
           expect(result.hasNextPage).toBe(false);
           expect(result.hasPrevPage).toBe(true);
           expect(result.limit).toBe(1);
-          expect(result.page).toBe(ramdomIds.length);
-          expect(result.totalPages).toBe(ramdomIds.length);
+          expect(result.page).toBe(randomIds.length);
+          expect(result.totalPages).toBe(randomIds.length);
         });
       })
       .finally(done);

@@ -1,4 +1,4 @@
-export function createRamdomArray() {
+export function createRandomArray() {
   return [
     ...new Set(
       Array.from({ length: 100 }, () =>
