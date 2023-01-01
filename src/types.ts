@@ -63,10 +63,6 @@ export interface ByModel {
     model: Model,
     findManyArgs: PrismaModel.Arguments<Model>
   ): Promise<Result.WithoutPagination<Model>>;
-  <Model extends PrismaModel.Properties>(
-    model: Model,
-    findManyArgs: PrismaModel.Arguments<Model>
-  ): Promise<Result.WithoutPagination<Model>>;
 }
 
 export interface WithModel<Model extends PrismaModel.Properties> {
@@ -83,9 +79,6 @@ export interface WithModel<Model extends PrismaModel.Properties> {
     findManyArgs: PrismaModel.Arguments<Model>,
     pagination: Pagination.Options
   ): Promise<Result.Pagination<Model>>;
-  (findManyArgs: PrismaModel.Arguments<Model>): Promise<
-    Result.WithoutPagination<Model>
-  >;
   (findManyArgs: PrismaModel.Arguments<Model>): Promise<
     Result.WithoutPagination<Model>
   >;
