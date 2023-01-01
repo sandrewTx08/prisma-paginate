@@ -138,7 +138,14 @@ export function paginate(): ByModel;
 export function paginate<Model extends PrismaModel.Properties>(
   model: Model
 ): WithModel<Model>;
-export function paginate<Model extends PrismaModel.Properties>(model?: Model) {
+export function paginate<Model extends PrismaModel.Properties>(
+  model: Model,
+  options: Partial<Pagination.Options>
+): WithModel<Model>;
+export function paginate<Model extends PrismaModel.Properties>(
+  model?: Model,
+  options?: Partial<Pagination.Options>
+) {
   function withModel(
     findManyArgs: PrismaModel.Arguments<Model>,
     paginationOrCallback?:
@@ -146,6 +153,11 @@ export function paginate<Model extends PrismaModel.Properties>(model?: Model) {
       | Result.Callback<Model, Result.WithoutPagination<Model>>,
     callback?: Result.Callback<Model, Result.Pagination<Model>>
   ) {
+    paginationOrCallback =
+      typeof paginationOrCallback === "object" && options
+        ? { ...options, ...(paginationOrCallback as Pagination.Arguments) }
+        : paginationOrCallback;
+
     return new Paginate(model!).paginateModel(
       findManyArgs,
       paginationOrCallback,
