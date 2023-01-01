@@ -7,7 +7,7 @@ export class Paginate<Model extends PrismaModel.Properties> {
   paginateModel(
     findManyArgs: PrismaModel.Arguments<Model>,
     paginationOrCallback?:
-      | Pagination.Options
+      | Pagination.Arguments
       | Result.Callback<Model, Result.WithoutPagination<Model>>,
     callback?: Result.Callback<Model, Result.Pagination<Model>>
   ) {
@@ -58,59 +58,59 @@ export class Paginate<Model extends PrismaModel.Properties> {
 
   paginateFindManyArgs(
     findManyArgs: PrismaModel.Arguments<Model>,
-    paginationOptions: Pagination.Options
+    paginationArgs: Pagination.Arguments
   ): PrismaModel.Arguments<Model> {
     return {
       ...findManyArgs,
-      take: paginationOptions.limit,
+      take: paginationArgs.limit,
       skip:
-        paginationOptions.limit *
-        (paginationOptions.pageZero
-          ? paginationOptions.page
-          : paginationOptions.page > 0
-          ? paginationOptions.page - 1
-          : paginationOptions.page),
+        paginationArgs.limit *
+        (paginationArgs.pageZero
+          ? paginationArgs.page
+          : paginationArgs.page > 0
+          ? paginationArgs.page - 1
+          : paginationArgs.page),
     };
   }
 
   paginateResult(
-    paginationOptions: Pagination.Options,
+    paginationArgs: Pagination.Arguments,
     count: number,
     result: PrismaModel.FindManyReturn<Model>
   ): Result.Pagination<Model> {
-    const totalPages = Math.round(count / paginationOptions.limit);
-    const gtZero = paginationOptions.page > 0;
-    const page = paginationOptions.pageZero
-      ? paginationOptions.page
+    const totalPages = Math.round(count / paginationArgs.limit);
+    const gtZero = paginationArgs.page > 0;
+    const page = paginationArgs.pageZero
+      ? paginationArgs.page
       : gtZero
-      ? paginationOptions.page - 1
+      ? paginationArgs.page - 1
       : 1;
     const hasNextPage =
-      (paginationOptions.pageZero
-        ? paginationOptions.page
+      (paginationArgs.pageZero
+        ? paginationArgs.page
         : gtZero
         ? page + 1
         : page) < totalPages;
     const hasPrevPage =
-      paginationOptions.limit * (gtZero ? paginationOptions.page - 1 : 0) > 0;
+      paginationArgs.limit * (gtZero ? paginationArgs.page - 1 : 0) > 0;
     const pagination: Pagination.Value = {
       count: count,
       totalPages,
       hasNextPage,
       hasPrevPage,
-      page: paginationOptions.pageZero
-        ? paginationOptions.page + 1
+      page: paginationArgs.pageZero
+        ? paginationArgs.page + 1
         : gtZero
         ? page + 1
         : page,
-      limit: paginationOptions.limit,
+      limit: paginationArgs.limit,
     };
 
     if (
-      paginationOptions.exceedCount === undefined
+      paginationArgs.exceedCount === undefined
         ? false
-        : paginationOptions.exceedCount &&
-          paginationOptions.limit * paginationOptions.page > count
+        : paginationArgs.exceedCount &&
+          paginationArgs.limit * paginationArgs.page > count
     ) {
       throw new ExceedCount(pagination);
     } else {
@@ -123,7 +123,7 @@ export function byModel<Model extends PrismaModel.Properties>(
   model: Model,
   findManyArgs: PrismaModel.Arguments<Model>,
   paginationOrCallback?:
-    | Pagination.Options
+    | Pagination.Arguments
     | Result.Callback<Model, Result.WithoutPagination<Model>>,
   callback?: Result.Callback<Model, Result.Pagination<Model>>
 ) {
@@ -134,15 +134,15 @@ export function byModel<Model extends PrismaModel.Properties>(
   );
 }
 
+export function paginate(): ByModel;
 export function paginate<Model extends PrismaModel.Properties>(
   model: Model
 ): WithModel<Model>;
-export function paginate(): ByModel;
 export function paginate<Model extends PrismaModel.Properties>(model?: Model) {
   function withModel(
     findManyArgs: PrismaModel.Arguments<Model>,
     paginationOrCallback?:
-      | Pagination.Options
+      | Pagination.Arguments
       | Result.Callback<Model, Result.WithoutPagination<Model>>,
     callback?: Result.Callback<Model, Result.Pagination<Model>>
   ) {

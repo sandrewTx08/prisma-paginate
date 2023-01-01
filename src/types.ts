@@ -12,14 +12,16 @@ export namespace PrismaModel {
 }
 
 export namespace Pagination {
-  export type Options = {
+  export type Arguments = Partial<Options> & {
     page: number;
     limit: number;
+  };
+  export type Options = {
     /**
      * Throw error if options is greater than count {@link ExceedCount}
      * @default false
      */
-    exceedCount?: boolean;
+    exceedCount: boolean;
     /**
      * Paginating from zero
      * @default false
@@ -32,9 +34,9 @@ export namespace Pagination {
      * prismaPaginate(model, { page: 0, limit: 10, pageZero: false }); // { page: 1 }
      * prismaPaginate(model, { page: 1, limit: 10, pageZero: false }); // { page: 1 }
      */
-    pageZero?: boolean;
+    pageZero: boolean;
   };
-  export type Value = Options & {
+  export type Value = Arguments & {
     totalPages: number;
     hasPrevPage: boolean;
     hasNextPage: boolean;
@@ -59,7 +61,7 @@ export interface ByModel {
   <Model extends PrismaModel.Properties>(
     model: Model,
     findManyArgs: PrismaModel.Arguments<Model>,
-    pagination: Pagination.Options,
+    pagination: Pagination.Arguments,
     callback: Result.Callback<Model, Result.Pagination<Model>>
   ): void;
   <Model extends PrismaModel.Properties>(
@@ -70,7 +72,7 @@ export interface ByModel {
   <Model extends PrismaModel.Properties>(
     model: Model,
     findManyArgs: PrismaModel.Arguments<Model>,
-    pagination: Pagination.Options
+    pagination: Pagination.Arguments
   ): Promise<Result.Pagination<Model>>;
   <Model extends PrismaModel.Properties>(
     model: Model,
@@ -81,7 +83,7 @@ export interface ByModel {
 export interface WithModel<Model extends PrismaModel.Properties> {
   (
     findManyArgs: PrismaModel.Arguments<Model>,
-    pagination: Pagination.Options,
+    pagination: Pagination.Arguments,
     callback: Result.Callback<Model, Result.Pagination<Model>>
   ): void;
   (
@@ -90,7 +92,7 @@ export interface WithModel<Model extends PrismaModel.Properties> {
   ): void;
   (
     findManyArgs: PrismaModel.Arguments<Model>,
-    pagination: Pagination.Options
+    pagination: Pagination.Arguments
   ): Promise<Result.Pagination<Model>>;
   (findManyArgs: PrismaModel.Arguments<Model>): Promise<
     Result.WithoutPagination<Model>

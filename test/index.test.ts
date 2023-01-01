@@ -29,7 +29,7 @@ describe("paginate model", () => {
   >(
     findManyArgs: PrismaModel.Arguments<Model>,
     paginationOrCallback?:
-      | Pagination.Options
+      | Pagination.Arguments
       | Result.Callback<Model, Result.WithoutPagination<Model>>
   ): Promise<[Error | null, Result][]> {
     return Promise.all<any>([
@@ -37,7 +37,7 @@ describe("paginate model", () => {
         PrismaPaginate()(
           client.model,
           findManyArgs,
-          paginationOrCallback as Pagination.Options,
+          paginationOrCallback as Pagination.Arguments,
           (error, result) => {
             resolve([error, result]);
           }
@@ -46,7 +46,7 @@ describe("paginate model", () => {
       new Promise((resolve) => {
         PrismaPaginate(client.model)(
           findManyArgs,
-          paginationOrCallback as Pagination.Options,
+          paginationOrCallback as Pagination.Arguments,
           (error, result) => {
             resolve([error, result]);
           }
@@ -55,7 +55,7 @@ describe("paginate model", () => {
       new Promise((resolve) => {
         PrismaPaginate(client.model)(
           findManyArgs,
-          paginationOrCallback as Pagination.Options
+          paginationOrCallback as Pagination.Arguments
         ).then(
           (result) => {
             resolve([null, result]);
@@ -69,7 +69,7 @@ describe("paginate model", () => {
         PrismaPaginate()(
           client.model,
           findManyArgs,
-          paginationOrCallback as Pagination.Options
+          paginationOrCallback as Pagination.Arguments
         ).then(
           (result) => {
             resolve([null, result]);
