@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import PrismaPaginate from "../src";
+import prismaPaginate from "../src";
 import { PrismaModel, Result, Pagination } from "../src/types";
 import { createRamdomArray } from "./utils";
 
@@ -34,7 +34,7 @@ describe("paginate model", () => {
   ): Promise<[Error | null, Result][]> {
     return Promise.all<any>([
       new Promise((resolve) => {
-        PrismaPaginate()(
+        prismaPaginate()(
           client.model,
           findManyArgs,
           paginationOrCallback as Pagination.Arguments,
@@ -44,7 +44,7 @@ describe("paginate model", () => {
         );
       }),
       new Promise((resolve) => {
-        PrismaPaginate(client.model)(
+        prismaPaginate(client.model)(
           findManyArgs,
           paginationOrCallback as Pagination.Arguments,
           (error, result) => {
@@ -53,7 +53,7 @@ describe("paginate model", () => {
         );
       }),
       new Promise((resolve) => {
-        PrismaPaginate(client.model)(
+        prismaPaginate(client.model)(
           findManyArgs,
           paginationOrCallback as Pagination.Arguments
         ).then(
@@ -66,7 +66,7 @@ describe("paginate model", () => {
         );
       }),
       new Promise((resolve) => {
-        PrismaPaginate()(
+        prismaPaginate()(
           client.model,
           findManyArgs,
           paginationOrCallback as Pagination.Arguments
