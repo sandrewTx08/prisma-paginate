@@ -81,21 +81,17 @@ export class Paginate<Model extends PrismaModel.Properties> {
     result: PrismaModel.FindManyReturn<Model>
   ): Result.Pagination<Model> {
     const totalPages = Math.round(count / paginationArgs.limit);
-
-    let page: number = NaN;
-    let hasNextPage: boolean = false;
-    let hasPrevPage: boolean = false;
-
-    if (paginationArgs.page !== undefined) {
-      const eqZero = paginationArgs.page === 0;
-      page = eqZero ? 1 : paginationArgs.page;
-    } else if (paginationArgs.pageIndex !== undefined) {
-      page = paginationArgs.pageIndex + 1;
-    }
-
-    hasNextPage = page < totalPages;
-    hasPrevPage = count > 0 && (page * paginationArgs.limit) / count - 1 === 0;
-
+    const page =
+      paginationArgs.page !== undefined
+        ? paginationArgs.page === 0
+          ? 1
+          : paginationArgs.page
+        : paginationArgs.pageIndex !== undefined
+        ? paginationArgs.pageIndex + 1
+        : NaN;
+    const hasNextPage = page < totalPages;
+    const hasPrevPage =
+      count > 0 && (page * paginationArgs.limit) / count - 1 === 0;
     const pagination: Pagination.Value = {
       limit: paginationArgs.limit,
       count,
