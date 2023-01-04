@@ -1,10 +1,10 @@
 import { ExceedCount } from "./errors";
 
 export namespace PrismaModel {
-  export type Properties = {
+  export interface Properties {
     findMany(...args: any[]): Promise<any>;
     count(...args: any[]): Promise<number>;
-  };
+  }
   export type Arguments<T extends Properties> = Parameters<T["findMany"]>[0];
   export type FindManyReturn<T extends Properties> = Awaited<
     ReturnType<T["findMany"]>
@@ -12,36 +12,37 @@ export namespace PrismaModel {
 }
 
 export namespace Pagination {
-  export type Arguments = Partial<Options> & {
-    page: number;
+  export interface Arguments extends Partial<Options> {
+    /**
+     * Paginate starting from 1
+     *
+     * Choose {@link Pagination.Arguments.page} or {@link Pagination.Arguments.pageIndex}
+     */
+    page?: number;
+    /**
+     * Paginate like index staring from 0
+     *
+     * Choose {@link Pagination.Arguments.page} or {@link Pagination.Arguments.pageIndex}
+     */
+    pageIndex?: number;
+    /**
+     * Limit how much rows to return
+     */
     limit: number;
-  };
-  export type Options = {
+  }
+  export interface Options {
     /**
      * Throw error if options is greater than count {@link ExceedCount}
      * @default false
      */
     exceedCount: boolean;
-    /**
-     * Paginating from zero
-     * @default false
-     * @example
-     * // pageZero true
-     * prismaPaginate(model, { page: 0, limit: 10, pageZero: true }); // { page: 1 }
-     * prismaPaginate(model, { page: 1, limit: 10, pageZero: true }); // { page: 2 }
-     *
-     * // pageZero false
-     * prismaPaginate(model, { page: 0, limit: 10, pageZero: false }); // { page: 1 }
-     * prismaPaginate(model, { page: 1, limit: 10, pageZero: false }); // { page: 1 }
-     */
-    pageZero: boolean;
-  };
-  export type Value = Arguments & {
+  }
+  export interface Value extends Arguments {
     totalPages: number;
     hasPrevPage: boolean;
     hasNextPage: boolean;
     count: number;
-  };
+  }
 }
 
 export namespace Result {
@@ -51,10 +52,12 @@ export namespace Result {
     Pagination.Value & {
       result: PrismaModel.FindManyReturn<T>;
     };
-  export type Callback<
-    T extends PrismaModel.Properties,
-    R extends WithoutPagination<T> | Pagination<T>
-  > = (error: Error | null, result?: R) => void;
+  export interface Callback<
+    Model extends PrismaModel.Properties,
+    Result extends WithoutPagination<Model> | Pagination<Model>
+  > {
+    (error: Error | null, result?: Result): void;
+  }
 }
 
 export interface ByModel {

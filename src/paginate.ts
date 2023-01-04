@@ -65,11 +65,13 @@ export class Paginate<Model extends PrismaModel.Properties> {
       take: paginationArgs.limit,
       skip:
         paginationArgs.limit *
-        (paginationArgs.pageZero
-          ? paginationArgs.page
-          : paginationArgs.page > 0
-          ? paginationArgs.page - 1
-          : paginationArgs.page),
+        (paginationArgs.page !== undefined
+          ? paginationArgs.page > 0
+            ? paginationArgs.page - 1
+            : paginationArgs.page
+          : paginationArgs.pageIndex !== undefined
+          ? paginationArgs.pageIndex
+          : 0),
     };
   }
 
@@ -79,38 +81,33 @@ export class Paginate<Model extends PrismaModel.Properties> {
     result: PrismaModel.FindManyReturn<Model>
   ): Result.Pagination<Model> {
     const totalPages = Math.round(count / paginationArgs.limit);
-    const gtZero = paginationArgs.page > 0;
-    const page = paginationArgs.pageZero
-      ? paginationArgs.page
-      : gtZero
-      ? paginationArgs.page - 1
-      : 1;
-    const hasNextPage =
-      (paginationArgs.pageZero
-        ? paginationArgs.page
-        : gtZero
-        ? page + 1
-        : page) < totalPages;
-    const hasPrevPage =
-      paginationArgs.limit * (gtZero ? paginationArgs.page - 1 : 0) > 0;
+
+    let page: number = NaN;
+    let hasNextPage: boolean = false;
+    let hasPrevPage: boolean = false;
+
+    if (paginationArgs.page !== undefined) {
+      const eqZero = paginationArgs.page === 0;
+      page = eqZero ? 1 : paginationArgs.page;
+    } else if (paginationArgs.pageIndex !== undefined) {
+      page = paginationArgs.pageIndex + 1;
+    }
+
+    hasNextPage = page < totalPages;
+    hasPrevPage = count > 0 && (page * paginationArgs.limit) / count - 1 === 0;
+
     const pagination: Pagination.Value = {
-      count: count,
+      limit: paginationArgs.limit,
+      count,
       totalPages,
       hasNextPage,
       hasPrevPage,
-      page: paginationArgs.pageZero
-        ? paginationArgs.page + 1
-        : gtZero
-        ? page + 1
-        : page,
-      limit: paginationArgs.limit,
+      page,
     };
 
     if (
-      paginationArgs.exceedCount === undefined
-        ? false
-        : paginationArgs.exceedCount &&
-          paginationArgs.limit * paginationArgs.page > count
+      paginationArgs.exceedCount === true &&
+      paginationArgs.limit * page > count
     ) {
       throw new ExceedCount(pagination);
     } else {
