@@ -78,7 +78,7 @@ export class Paginate<Model extends PrismaModel.Properties> {
   paginateResult(
     paginationArgs: Pagination.Arguments,
     count: number,
-    result: PrismaModel.FindManyReturn<Model>
+    findManyReturn: Result.WithoutPagination<Model>
   ): Result.Pagination<Model> {
     const totalPages = Math.round(count / paginationArgs.limit);
     const page =
@@ -91,7 +91,8 @@ export class Paginate<Model extends PrismaModel.Properties> {
         : NaN;
     const hasNextPage = page < totalPages;
     const hasPrevPage =
-      count > 0 && (page * paginationArgs.limit) / count - 1 === 0;
+      (count > 0 && (page * paginationArgs.limit) / count - 1 === 0) ||
+      page - 1 === totalPages;
     const pagination: Pagination.Value = {
       limit: paginationArgs.limit,
       count,
@@ -107,7 +108,7 @@ export class Paginate<Model extends PrismaModel.Properties> {
     ) {
       throw new ExceedCount(pagination);
     } else {
-      return { ...pagination, result };
+      return { ...pagination, result: findManyReturn };
     }
   }
 }
@@ -148,7 +149,7 @@ export function paginate<Model extends PrismaModel.Properties>(
   ) {
     paginationOrCallback =
       typeof paginationOrCallback === "object" && options
-        ? { ...options, ...(paginationOrCallback as Pagination.Arguments) }
+        ? { ...options, ...paginationOrCallback }
         : paginationOrCallback;
 
     return new Paginate(model!).paginateModel(

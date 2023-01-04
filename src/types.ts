@@ -5,10 +5,9 @@ export namespace PrismaModel {
     findMany(...args: any[]): Promise<any>;
     count(...args: any[]): Promise<number>;
   }
-  export type Arguments<T extends Properties> = Parameters<T["findMany"]>[0];
-  export type FindManyReturn<T extends Properties> = Awaited<
-    ReturnType<T["findMany"]>
-  >;
+  export type Arguments<Model extends Properties> = Parameters<
+    Model["findMany"]
+  >[0];
 }
 
 export namespace Pagination {
@@ -16,13 +15,15 @@ export namespace Pagination {
     /**
      * Paginate starting from 1
      *
-     * Choose {@link Pagination.Arguments.page} or {@link Pagination.Arguments.pageIndex}
+     * @see {@link Pagination.Arguments.pageIndex}
+     * @default 1
      */
     page?: number;
     /**
      * Paginate like index staring from 0
      *
-     * Choose {@link Pagination.Arguments.page} or {@link Pagination.Arguments.pageIndex}
+     * @see {@link Pagination.Arguments.page}
+     * @default 0
      */
     pageIndex?: number;
     /**
@@ -32,7 +33,8 @@ export namespace Pagination {
   }
   export interface Options {
     /**
-     * Throw error if options is greater than count {@link ExceedCount}
+     * Throw error if options is greater than count
+     * @see {@link ExceedCount}
      * @default false
      */
     exceedCount: boolean;
@@ -46,15 +48,16 @@ export namespace Pagination {
 }
 
 export namespace Result {
-  export type WithoutPagination<T extends PrismaModel.Properties> =
-    PrismaModel.FindManyReturn<T>;
-  export type Pagination<T extends PrismaModel.Properties> =
-    Pagination.Value & {
-      result: PrismaModel.FindManyReturn<T>;
-    };
+  export type WithoutPagination<Model extends PrismaModel.Properties> = Awaited<
+    ReturnType<Model["findMany"]>
+  >;
+  export interface Pagination<Model extends PrismaModel.Properties>
+    extends Pagination.Value {
+    result: Result.WithoutPagination<Model>;
+  }
   export interface Callback<
     Model extends PrismaModel.Properties,
-    Result extends WithoutPagination<Model> | Pagination<Model>
+    Result extends Result.WithoutPagination<Model> | Pagination<Model>
   > {
     (error: Error | null, result?: Result): void;
   }
