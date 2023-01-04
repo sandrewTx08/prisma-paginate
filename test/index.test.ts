@@ -154,4 +154,44 @@ describe("paginate model", () => {
       })
       .finally(done);
   });
+
+  it("page == totalPages + 1", (done) => {
+    testPrismaPaginate<Result.Pagination<typeof client.model>>(
+      {},
+      { limit: 1, page: randomIds.length + 1 }
+    )
+      .then((results) => {
+        results.forEach(([error, result]) => {
+          expect(error).toBe(null);
+          expect(result.result).toStrictEqual([]);
+          expect(result.count).toBe(randomIds.length);
+          expect(result.hasNextPage).toBe(false);
+          expect(result.hasPrevPage).toBe(true);
+          expect(result.limit).toBe(1);
+          expect(result.page).toBe(randomIds.length + 1);
+          expect(result.totalPages).toBe(randomIds.length);
+        });
+      })
+      .finally(done);
+  });
+
+  it("page == totalPages + 2", (done) => {
+    testPrismaPaginate<Result.Pagination<typeof client.model>>(
+      {},
+      { limit: 1, page: randomIds.length + 2 }
+    )
+      .then((results) => {
+        results.forEach(([error, result]) => {
+          expect(error).toBe(null);
+          expect(result.result).toStrictEqual([]);
+          expect(result.count).toBe(randomIds.length);
+          expect(result.hasNextPage).toBe(false);
+          expect(result.hasPrevPage).toBe(false);
+          expect(result.limit).toBe(1);
+          expect(result.page).toBe(randomIds.length + 2);
+          expect(result.totalPages).toBe(randomIds.length);
+        });
+      })
+      .finally(done);
+  });
 });
