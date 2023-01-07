@@ -7,28 +7,21 @@ on:
       - master
 
 jobs:
-  name: NPM Publish
-  runs-on: ubuntu-latest
+  publish:
+    name: NPM Publish
+    runs-on: ubuntu-latest
 
-  steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+    steps:
+      - uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: npm install
-
-    - name: Build
-      run: npm run build
-
-    - name: Setup node
-      uses: actions/setup-node@v3
-      with:
-        node-version: 16
-        cache: "npm"
-        registry-url: https://registry.npmjs.org
-
-    - name: Publish to NPM
-      run: npm publish
-      working-directory: ./
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "npm"
+          registry-url: https://registry.npmjs.org
+      - run: npm install
+      - run: npm run build
+      - run: npm publish
+        working-directory: ./
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

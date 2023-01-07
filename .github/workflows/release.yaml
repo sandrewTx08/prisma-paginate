@@ -1,33 +1,32 @@
-name: Release
+name: Documentation release
 
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: ["Node.js CI"]
+    types:
+      - completed
 
 jobs:
-  release:
-    name: Release
+  build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup node
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: "npm"
+      - run: npm install
+      - run: npm run docs
 
-      - name: Install dependencies
-        run: npm install
+  deploy:
+    name: Documentation release
+    runs-on: ubuntu-latest
 
-      - name: Build documentation
-        run: npm run docs
-
-      - name: Deploy documentation to Github Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+    steps:
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
