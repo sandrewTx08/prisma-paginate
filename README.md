@@ -43,7 +43,7 @@ prismaPaginate(client.table)(
   - `page` {Number}
   - `pageIndex` {Number}
   - `limit` {Number}
-- `callback? `{(err, result)}
+- `callback?` {(err, result)}
 
 ## Return
 
