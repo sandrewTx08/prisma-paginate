@@ -7,8 +7,7 @@ on:
       - completed
 
 jobs:
-  build:
-    name: Build
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,12 +20,7 @@ jobs:
       - run: npm install
       - run: npm run docs
 
-  deploy:
-    name: Documentation release
-    runs-on: ubuntu-latest
-
-    steps:
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
