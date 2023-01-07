@@ -1,5 +1,9 @@
 # prisma-paginate
 
+[![Node.js CI](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/nodejs.yaml/badge.svg?branch=master)](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/nodejs.yaml)
+
+[![pages-build-deployment](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment)
+
 # Install
 
 `npm install prisma-paginate`
