@@ -25,13 +25,38 @@
 <a href="#documentation-and-usage" id="documentation-and-usage" style="color: inherit; text-decoration: none;">
   <h1>Documentation and usage</h1>
 </a>
+<p>For more details and type definitions see:</p>
 <p><a href="http://sandrewtx08.github.io/prisma-paginate/">http://sandrewtx08.github.io/prisma-paginate/</a></p>
 
 <a href="#example" id="example" style="color: inherit; text-decoration: none;">
   <h2>Example</h2>
 </a>
-<pre><code class="language-js"><span class="hl-0">// ESM</span><br/><span class="hl-1">import</span><span class="hl-2"> { </span><span class="hl-3">PrismaClient</span><span class="hl-2"> } </span><span class="hl-1">from</span><span class="hl-2"> </span><span class="hl-4">&quot;@prisma/client&quot;</span><span class="hl-2">;</span><br/><span class="hl-1">import</span><span class="hl-2"> </span><span class="hl-3">prismaPaginate</span><span class="hl-2"> </span><span class="hl-1">from</span><span class="hl-2"> </span><span class="hl-4">&quot;prisma-paginate&quot;</span><span class="hl-2">;</span><br/><br/><span class="hl-0">// Commonjs</span><br/><span class="hl-5">const</span><span class="hl-2"> { </span><span class="hl-6">PrismaClient</span><span class="hl-2"> } = </span><span class="hl-7">require</span><span class="hl-2">(</span><span class="hl-4">&quot;@prisma/client&quot;</span><span class="hl-2">);</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">prismaPaginate</span><span class="hl-2"> = </span><span class="hl-7">require</span><span class="hl-2">(</span><span class="hl-4">&quot;prisma-paginate&quot;</span><span class="hl-2">).</span><span class="hl-3">paginate</span><span class="hl-2">;</span><br/><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">client</span><span class="hl-2"> = </span><span class="hl-5">new</span><span class="hl-2"> </span><span class="hl-7">PrismaClient</span><span class="hl-2">();</span><br/><span class="hl-0">// On database = [{ id: 1 },{ id: 2 }]</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">myTable</span><span class="hl-2"> = </span><span class="hl-7">prismaPaginate</span><span class="hl-2">(</span><span class="hl-3">client</span><span class="hl-2">.</span><span class="hl-3">model</span><span class="hl-2">);</span><br/><br/><span class="hl-7">myTable</span><span class="hl-2">(</span><br/><span class="hl-2">  {</span><br/><span class="hl-2">    </span><span class="hl-3">where:</span><span class="hl-2"> {</span><br/><span class="hl-2">      </span><span class="hl-0">// query stuff...</span><br/><span class="hl-2">    },</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  { </span><span class="hl-3">page:</span><span class="hl-2"> </span><span class="hl-8">1</span><span class="hl-2">, </span><span class="hl-3">limit:</span><span class="hl-2"> </span><span class="hl-8">1</span><span class="hl-2"> }</span><br/><span class="hl-2">).</span><span class="hl-7">then</span><span class="hl-2">((</span><span class="hl-3">query</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-3">query</span><span class="hl-2">.</span><span class="hl-3">result</span><span class="hl-2">; </span><span class="hl-0">// Return [{ id: 1 }]</span><br/><span class="hl-2">});</span>
+<pre><code class="language-js"><span class="hl-0">// ESM</span><br/><span class="hl-1">import</span><span class="hl-2"> { </span><span class="hl-3">PrismaClient</span><span class="hl-2"> } </span><span class="hl-1">from</span><span class="hl-2"> </span><span class="hl-4">&quot;@prisma/client&quot;</span><span class="hl-2">;</span><br/><span class="hl-1">import</span><span class="hl-2"> </span><span class="hl-3">prismaPaginate</span><span class="hl-2"> </span><span class="hl-1">from</span><span class="hl-2"> </span><span class="hl-4">&quot;prisma-paginate&quot;</span><span class="hl-2">;</span><br/><br/><span class="hl-0">// Commonjs</span><br/><span class="hl-5">const</span><span class="hl-2"> { </span><span class="hl-6">PrismaClient</span><span class="hl-2"> } = </span><span class="hl-7">require</span><span class="hl-2">(</span><span class="hl-4">&quot;@prisma/client&quot;</span><span class="hl-2">);</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">prismaPaginate</span><span class="hl-2"> = </span><span class="hl-7">require</span><span class="hl-2">(</span><span class="hl-4">&quot;prisma-paginate&quot;</span><span class="hl-2">).</span><span class="hl-3">paginate</span><span class="hl-2">;</span><br/><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">client</span><span class="hl-2"> = </span><span class="hl-5">new</span><span class="hl-2"> </span><span class="hl-7">PrismaClient</span><span class="hl-2">();</span><br/><br/><span class="hl-0">// on database = [ { id: 1 }, { id: 2 }, ...{ id: 100 } ]</span><br/><span class="hl-7">prismaPaginate</span><span class="hl-2">(</span><span class="hl-3">client</span><span class="hl-2">.</span><span class="hl-3">table</span><span class="hl-2">)(</span><br/><span class="hl-2">  {</span><br/><span class="hl-2">    </span><span class="hl-3">where:</span><span class="hl-2"> {</span><br/><span class="hl-2">      </span><span class="hl-0">// query stuff...</span><br/><span class="hl-2">    },</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  { </span><span class="hl-3">page:</span><span class="hl-2"> </span><span class="hl-8">1</span><span class="hl-2">, </span><span class="hl-3">limit:</span><span class="hl-2"> </span><span class="hl-8">50</span><span class="hl-2"> }</span><br/><span class="hl-2">).</span><span class="hl-7">then</span><span class="hl-2">((</span><span class="hl-3">query</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-3">query</span><span class="hl-2">.</span><span class="hl-3">result</span><span class="hl-2">; </span><span class="hl-0">// return [ ...{ id: 48 }, { id: 49 }, { id: 50 } ]</span><br/><span class="hl-2">});</span>
 </code></pre>
+
+<a href="#parameters" id="parameters" style="color: inherit; text-decoration: none;">
+  <h2>Parameters</h2>
+</a>
+<ul>
+<li><code>findManyArgs</code> {Object} - Query with findMany Prisma arguments</li>
+<li><code>paginationOrCallback?</code> {Object|(err, result)} - Pagination arguments or callback<ul>
+<li><code>page</code> {Number}</li>
+<li><code>pageIndex</code> {Number}</li>
+<li><code>limit</code> {Number}</li>
+</ul>
+</li>
+<li><code>callback? </code>{(err, result)}</li>
+</ul>
+
+<a href="#return" id="return" style="color: inherit; text-decoration: none;">
+  <h2>Return</h2>
+</a>
+<ul>
+<li><code>totalPages</code> {Number} - Total of pages based on pages parameters and limit;</li>
+<li><code>hasNextPage</code> {Boolean} - Has result on next page index;</li>
+<li><code>hasPrevPage</code> {Boolean} - Has result on last page index;</li>
+<li><code>count</code> {Number} - Count how many rows on has on table/model with query filter;</li>
+</ul>
 </div></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
