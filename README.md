@@ -6,6 +6,8 @@
 
 # Documentation and usage
 
+For more details and type definitions see:
+
 http://sandrewtx08.github.io/prisma-paginate/
 
 ## Example
@@ -20,17 +22,32 @@ const { PrismaClient } = require("@prisma/client");
 const prismaPaginate = require("prisma-paginate").paginate;
 
 const client = new PrismaClient();
-// On database = [{ id: 1 },{ id: 2 }]
-const myTable = prismaPaginate(client.model);
 
-myTable(
+// on database = [ { id: 1 }, { id: 2 }, ...{ id: 100 } ]
+prismaPaginate(client.table)(
   {
     where: {
       // query stuff...
     },
   },
-  { page: 1, limit: 1 }
+  { page: 1, limit: 50 }
 ).then((query) => {
-  query.result; // Return [{ id: 1 }]
+  query.result; // return [ ...{ id: 48 }, { id: 49 }, { id: 50 } ]
 });
 ```
+
+## Parameters
+
+- `findManyArgs` {Object} - Query with findMany Prisma arguments
+- `paginationOrCallback?` {Object|(err, result)} - Pagination arguments or callback
+  - `page` {Number}
+  - `pageIndex` {Number}
+  - `limit` {Number}
+- `callback? `{(err, result)}
+
+## Return
+
+- `totalPages` {Number} - Total of pages based on pages parameters and limit;
+- `hasNextPage` {Boolean} - Has result on next page index;
+- `hasPrevPage` {Boolean} - Has result on last page index;
+- `count` {Number} - Count how many rows on has on table/model with query filter;

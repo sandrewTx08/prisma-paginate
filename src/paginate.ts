@@ -88,7 +88,7 @@ export class Paginate<Model extends PrismaModel.Properties> {
           : paginationArgs.page
         : paginationArgs.pageIndex !== undefined
         ? paginationArgs.pageIndex + 1
-        : NaN;
+        : 1;
     const hasNextPage = page < totalPages;
     const hasPrevPage =
       (count > 0 && (page * paginationArgs.limit) / count - 1 === 0) ||
