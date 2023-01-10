@@ -1,8 +1,10 @@
 # prisma-paginate
 
-[![Node.js CI](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/nodejs.yaml/badge.svg?branch=master)](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/nodejs.yaml)
-
-[![pages-build-deployment](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment)
+<div style="display: flex; gap: 1em;">
+<p><a href="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/nodejs.yaml"><img src="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/nodejs.yaml/badge.svg?branch=master" alt="Node.js CI"></a></p>
+<p><a href="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment"><img src="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment/badge.svg" alt="pages-build-deployment"></a></p>
+<p><a href="https://badge.fury.io/js/prisma-paginate"><img src="https://badge.fury.io/js/prisma-paginate.svg" alt="npm version"></a></p>
+</div>
 
 # Install
 
@@ -14,7 +16,7 @@ For more details and type definitions see:
 
 http://sandrewtx08.github.io/prisma-paginate/
 
-## Example
+## Examples
 
 ```js
 // ESM
@@ -23,12 +25,12 @@ import prismaPaginate from "prisma-paginate";
 
 // Commonjs
 const { PrismaClient } = require("@prisma/client");
-const prismaPaginate = require("prisma-paginate").paginate;
+const paginate = require("prisma-paginate");
 
 const client = new PrismaClient();
 
 // on database = [ { id: 1 }, { id: 2 }, ...{ id: 100 } ]
-prismaPaginate(client.table)(
+paginate(client.table)(
   {
     where: {
       // query stuff...
