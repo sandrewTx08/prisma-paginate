@@ -2,7 +2,7 @@ name: Documentation release
 
 on:
   workflow_run:
-    workflows: ["Node.js CI"]
+    workflows: ["Test"]
     types:
       - completed
 
