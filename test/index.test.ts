@@ -1,10 +1,75 @@
 import { PrismaClient } from "@prisma/client";
-import prismaPaginate from "../src";
-import { PrismaModel, Result, Pagination } from "../src/types";
+import paginate, {
+  PaginationArguments,
+  PaginationCallback,
+  PaginationResult,
+  PrismaModelFindManyArguments,
+  WithoutPaginationResult,
+} from "../src";
 import { createRandomArray } from "./utils";
 
-describe("paginate model", () => {
-  let client: PrismaClient;
+let client: PrismaClient;
+type Model = typeof client.model;
+
+function testPaginate<
+  Result extends WithoutPaginationResult<Model> | PaginationResult<Model>
+>(
+  findManyArgs: PrismaModelFindManyArguments<Model>,
+  paginationOrCallback?:
+    | PaginationArguments
+    | PaginationCallback<Model, WithoutPaginationResult<Model>>
+): Promise<[Error | null, Result][]> {
+  return Promise.all<any>([
+    new Promise((resolve) => {
+      paginate()(
+        client.model,
+        findManyArgs,
+        paginationOrCallback as PaginationArguments,
+        (error, result) => {
+          resolve([error, result]);
+        }
+      );
+    }),
+    new Promise((resolve) => {
+      paginate(client.model)(
+        findManyArgs,
+        paginationOrCallback as PaginationArguments,
+        (error, result) => {
+          resolve([error, result]);
+        }
+      );
+    }),
+    new Promise((resolve) => {
+      paginate(client.model)(
+        findManyArgs,
+        paginationOrCallback as PaginationArguments
+      ).then(
+        (result) => {
+          resolve([null, result]);
+        },
+        (reason) => {
+          resolve([reason, undefined]);
+        }
+      );
+    }),
+    new Promise((resolve) => {
+      paginate()(
+        client.model,
+        findManyArgs,
+        paginationOrCallback as PaginationArguments
+      ).then(
+        (result) => {
+          resolve([null, result]);
+        },
+        (reason) => {
+          resolve([reason, undefined]);
+        }
+      );
+    }),
+  ]);
+}
+
+describe("random array", () => {
   const randomArray = createRandomArray();
   const randomIds = randomArray.map((id) => ({ id }));
 
@@ -23,67 +88,8 @@ describe("paginate model", () => {
       });
   });
 
-  function testPrismaPaginate<
-    Result extends Result.WithoutPagination<Model> | Result.Pagination<Model>,
-    Model extends typeof client.model = typeof client.model
-  >(
-    findManyArgs: PrismaModel.Arguments<Model>,
-    paginationOrCallback?:
-      | Pagination.Arguments
-      | Result.Callback<Model, Result.WithoutPagination<Model>>
-  ): Promise<[Error | null, Result][]> {
-    return Promise.all<any>([
-      new Promise((resolve) => {
-        prismaPaginate()(
-          client.model,
-          findManyArgs,
-          paginationOrCallback as Pagination.Arguments,
-          (error, result) => {
-            resolve([error, result]);
-          }
-        );
-      }),
-      new Promise((resolve) => {
-        prismaPaginate(client.model)(
-          findManyArgs,
-          paginationOrCallback as Pagination.Arguments,
-          (error, result) => {
-            resolve([error, result]);
-          }
-        );
-      }),
-      new Promise((resolve) => {
-        prismaPaginate(client.model)(
-          findManyArgs,
-          paginationOrCallback as Pagination.Arguments
-        ).then(
-          (result) => {
-            resolve([null, result]);
-          },
-          (reason) => {
-            resolve([reason, undefined]);
-          }
-        );
-      }),
-      new Promise((resolve) => {
-        prismaPaginate()(
-          client.model,
-          findManyArgs,
-          paginationOrCallback as Pagination.Arguments
-        ).then(
-          (result) => {
-            resolve([null, result]);
-          },
-          (reason) => {
-            resolve([reason, undefined]);
-          }
-        );
-      }),
-    ]);
-  }
-
   it("without pagination", (done) => {
-    testPrismaPaginate<Result.WithoutPagination<typeof client.model>>({})
+    testPaginate<WithoutPaginationResult<Model>>({})
       .then((results) => {
         results.forEach(([error, result]) => {
           expect(error).toBe(null);
@@ -94,10 +100,7 @@ describe("paginate model", () => {
   });
 
   it("page == 0", (done) => {
-    testPrismaPaginate<Result.Pagination<typeof client.model>>(
-      {},
-      { limit: 1, page: 0 }
-    )
+    testPaginate<PaginationResult<Model>>({}, { limit: 1, page: 0 })
       .then((results) => {
         results.forEach(([error, result]) => {
           expect(error).toBe(null);
@@ -114,10 +117,7 @@ describe("paginate model", () => {
   });
 
   it("page == 1", (done) => {
-    testPrismaPaginate<Result.Pagination<typeof client.model>>(
-      {},
-      { limit: 1, page: 1 }
-    )
+    testPaginate<PaginationResult<Model>>({}, { limit: 1, page: 1 })
       .then((results) => {
         results.forEach(([error, result]) => {
           expect(error).toBe(null);
@@ -134,7 +134,7 @@ describe("paginate model", () => {
   });
 
   it("page == totalPages", (done) => {
-    testPrismaPaginate<Result.Pagination<typeof client.model>>(
+    testPaginate<PaginationResult<Model>>(
       {},
       { limit: 1, page: randomIds.length }
     )
@@ -156,7 +156,7 @@ describe("paginate model", () => {
   });
 
   it("page == totalPages + 1", (done) => {
-    testPrismaPaginate<Result.Pagination<typeof client.model>>(
+    testPaginate<PaginationResult<Model>>(
       {},
       { limit: 1, page: randomIds.length + 1 }
     )
@@ -176,7 +176,7 @@ describe("paginate model", () => {
   });
 
   it("page == totalPages + 2", (done) => {
-    testPrismaPaginate<Result.Pagination<typeof client.model>>(
+    testPaginate<PaginationResult<Model>>(
       {},
       { limit: 1, page: randomIds.length + 2 }
     )
@@ -190,6 +190,64 @@ describe("paginate model", () => {
           expect(result.limit).toBe(1);
           expect(result.page).toBe(randomIds.length + 2);
           expect(result.totalPages).toBe(randomIds.length);
+        });
+      })
+      .finally(done);
+  });
+});
+
+describe("count == 0", () => {
+  beforeAll((done) => {
+    client = new PrismaClient();
+    client.model.findMany =
+      async function () {} as unknown as typeof client.model.findMany;
+    client.$connect().finally(done);
+  });
+
+  afterAll((done) => {
+    client.$disconnect().finally(done);
+  });
+
+  it("without pagination", (done) => {
+    testPaginate<WithoutPaginationResult<Model>>({})
+      .then((results) => {
+        results.forEach(([error, result]) => {
+          expect(error).toBe(null);
+          expect(result).toBeUndefined();
+        });
+      })
+      .finally(done);
+  });
+
+  it("page == 0", (done) => {
+    testPaginate<PaginationResult<Model>>({}, { limit: 1, page: 0 })
+      .then((results) => {
+        results.forEach(([error, result]) => {
+          expect(error).toBe(null);
+          expect(result.result).toBeUndefined();
+          expect(result.count).toBe(0);
+          expect(result.hasNextPage).toBe(false);
+          expect(result.hasPrevPage).toBe(false);
+          expect(result.limit).toBe(1);
+          expect(result.page).toBe(1);
+          expect(result.totalPages).toBe(0);
+        });
+      })
+      .finally(done);
+  });
+
+  it("page == 1", (done) => {
+    testPaginate<PaginationResult<Model>>({}, { limit: 1, page: 1 })
+      .then((results) => {
+        results.forEach(([error, result]) => {
+          expect(error).toBe(null);
+          expect(result.result).toBeUndefined();
+          expect(result.count).toBe(0);
+          expect(result.hasNextPage).toBe(false);
+          expect(result.hasPrevPage).toBe(false);
+          expect(result.limit).toBe(1);
+          expect(result.page).toBe(1);
+          expect(result.totalPages).toBe(0);
         });
       })
       .finally(done);
