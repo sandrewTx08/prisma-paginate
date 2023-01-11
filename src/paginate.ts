@@ -1,3 +1,17 @@
+/**
+ * @example
+ *
+ * // on database = [ { id: 1 }, { id: 2 }, ...{ id: 100 } ]
+ * paginate(client.table)(
+ *   {
+ *     where: {
+ *       // query stuff...
+ *     },
+ *   },
+ *   { page: 1, limit: 50 }).then((query) => {
+ *      query.result; // return [ ...{ id: 48 }, { id: 49 }, { id: 50 } ]
+ *   });
+ */
 export function paginate(): paginate.PaginationParametersUnsetModel;
 export function paginate<Model extends paginate.PrismaModelProperties>(
   model: Model
@@ -52,6 +66,8 @@ export namespace paginate {
     /**
      * Paginate starting from 1
      *
+     * If enabled it overwrite 'pageIndex'
+     *
      * @see {@link PaginationArguments.pageIndex}
      * @default 1
      */
@@ -78,10 +94,22 @@ export namespace paginate {
     exceedCount: boolean;
   }
 
-  export interface PaginationValue extends PaginationArguments {
+  export interface Pagination extends PaginationArguments {
+    /**
+     * Total of pages based on pagination arguments
+     */
     totalPages: number;
-    hasPrevPage: boolean;
+    /**
+     * If has result on next page index
+     */
     hasNextPage: boolean;
+    /**
+     * If has result on last page index
+     */
+    hasPrevPage: boolean;
+    /**
+     * Count how many rows on has on table/model with query filter
+     */
     count: number;
   }
 
@@ -89,7 +117,7 @@ export namespace paginate {
     Awaited<ReturnType<Model["findMany"]>>;
 
   export interface PaginationResult<Model extends PrismaModelProperties>
-    extends PaginationValue {
+    extends Pagination {
     result: WithoutPaginationResult<Model>;
   }
 
@@ -143,7 +171,7 @@ export namespace paginate {
   }
 
   export class ExceedCount extends Error {
-    constructor(public pagination: PaginationValue) {
+    constructor(public pagination: Pagination) {
       super("Pagination options exceed count of rows");
     }
   }
@@ -242,7 +270,7 @@ export namespace paginate {
           ? (page * paginationArgs.limit) / count - 1 === 0 ||
             page - 1 === totalPages
           : false;
-      const pagination: PaginationValue = {
+      const pagination: Pagination = {
         limit: paginationArgs.limit,
         count,
         totalPages,

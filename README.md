@@ -55,7 +55,7 @@ paginate(client.table)(
 
 ## Return
 
-- `totalPages` {Number} - Total of pages based on pages parameters and limit;
-- `hasNextPage` {Boolean} - Has result on next page index;
-- `hasPrevPage` {Boolean} - Has result on last page index;
-- `count` {Number} - Count how many rows on has on table/model with query filter;
+- `totalPages` {Number} - Total of pages based on pagination arguments
+- `hasNextPage` {Boolean} - If has result on next page index
+- `hasPrevPage` {Boolean} - If has result on last page index
+- `count` {Number} - Count how many rows on has on table/model with query filter
