@@ -13,5 +13,6 @@
     }
   ],
   "assignees": ["sandrewTx08"],
-  "reviewers": ["sandrewTx08"]
+  "reviewers": ["sandrewTx08"],
+  "assignAutomerge": false
 }
