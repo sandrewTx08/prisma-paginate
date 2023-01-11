@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sandrewTx08/prisma-paginate.git"
+    "url": "https://github.com/sandrewTx08/prisma-paginate.git"
   },
   "author": "sandrewTx08",
   "license": "ISC",
