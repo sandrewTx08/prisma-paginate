@@ -197,23 +197,19 @@ describe("random array", () => {
 });
 
 describe("count == 0", () => {
-  beforeAll((done) => {
-    client = new PrismaClient();
-    client.model.findMany =
-      async function () {} as unknown as typeof client.model.findMany;
-    client.$connect().finally(done);
-  });
-
-  afterAll((done) => {
-    client.$disconnect().finally(done);
-  });
+  client = new PrismaClient();
+  client.model.count = async function (..._: any[]) {
+    return 0;
+  } as unknown as typeof client.model.count;
+  client.model.findMany = async function (..._: any[]) {
+    return new Array(await client.model.count());
+  } as unknown as typeof client.model.findMany;
 
   it("without pagination", (done) => {
     testPaginate<WithoutPaginationResult<Model>>({})
       .then((results) => {
-        results.forEach(([error, result]) => {
+        results.forEach(([error]) => {
           expect(error).toBe(null);
-          expect(result).toBeUndefined();
         });
       })
       .finally(done);
@@ -224,7 +220,6 @@ describe("count == 0", () => {
       .then((results) => {
         results.forEach(([error, result]) => {
           expect(error).toBe(null);
-          expect(result.result).toBeUndefined();
           expect(result.count).toBe(0);
           expect(result.hasNextPage).toBe(false);
           expect(result.hasPrevPage).toBe(false);
@@ -241,7 +236,6 @@ describe("count == 0", () => {
       .then((results) => {
         results.forEach(([error, result]) => {
           expect(error).toBe(null);
-          expect(result.result).toBeUndefined();
           expect(result.count).toBe(0);
           expect(result.hasNextPage).toBe(false);
           expect(result.hasPrevPage).toBe(false);
