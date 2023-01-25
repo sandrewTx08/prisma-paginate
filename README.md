@@ -25,47 +25,51 @@ const { PrismaClient } = require("@prisma/client");
 const paginator = require("prisma-paginate");
 ```
 
-## Creating a connection
+## Paginated client
+
+### Creating new client
+
+```js
+const paginate = paginator.paginateClient();
+
+paginate.myTable.paginate({ where: {} }, { limit: 10, page: 1 });
+paginate.myOtherTable.paginate({ where: {} }, { limit: 10, page: 2 });
+```
+
+### Reusing exist client
 
 ```js
 const prisma = new PrismaClient();
+const paginate = paginator(prisma);
+
+paginate.myTable.paginate({ where: {} }, { limit: 10, page: 1 });
+paginate.myOtherTable.paginate({ where: {} }, { limit: 10, page: 2 });
+```
+
+### Other Prisma methods is avalible too
+
+```js
+paginate.myTable.findMany({ where: { field: true } });
+paginate.myTable.findOne({ where: { id: 1 } });
+paginate.myOtherTable.count();
 ```
 
 ## Paginating 100 rows
 
 ```js
 // on database = [ { id: 1 }, { id: 2 }, {...}, { id: 100 } ]
-paginator(prisma.myTable)(
-  {
-    where: {
-      // query stuff...
+paginate.myTable
+  .paginate(
+    {
+      where: {
+        // query stuff...
+      },
     },
-  },
-  { page: 1, limit: 50 }
-).then((query) => {
-  query.result; // return [ {...}, { id: 48 }, { id: 49 }, { id: 50 } ]
-});
-```
-
-## Paginated client
-
-You can easily create new **PrismaClient**:
-
-```js
-const paginate = paginateClient();
-
-paginate.myTable.paginate({ where: {} }, { limit: 10, page: 1 });
-paginate.myOtherTable.paginate({ where: {} }, { limit: 20, page: 1 });
-```
-
-Or reuse one:
-
-```js
-const prisma = new PrismaClient();
-const paginate = paginateClient(prisma);
-
-paginate.myTable.paginate({ where: {} }, { limit: 10, page: 1 });
-paginate.myOtherTable.paginate({ where: {} }, { limit: 20, page: 1 });
+    { page: 1, limit: 50 }
+  )
+  .then((query) => {
+    query.result; // return [ {...}, { id: 48 }, { id: 49 }, { id: 50 } ]
+  });
 ```
 
 ## Parameters
