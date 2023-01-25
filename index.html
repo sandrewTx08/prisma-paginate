@@ -13,17 +13,18 @@
 <div class="tsd-page-title">
 <h2>prisma-paginate</h2></div>
 <div class="tsd-panel tsd-typography">
-<a href="#prisma-paginate" id="prisma-paginate" style="color: inherit; text-decoration: none;">
-  <h1>prisma-paginate</h1>
+<a href="#📖-prisma-paginate" id="📖-prisma-paginate" style="color: inherit; text-decoration: none;">
+  <h1>📖 prisma-paginate</h1>
 </a>
-<div style="display: flex; gap: 1em;">
-<p><a href="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/test.yaml"><img src="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/test.yaml/badge.svg" alt="Test"></a></p>
-
-<p><a href="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment"><img src="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment/badge.svg" alt="pages-build-deployment"></a></p>
-
-<p><a href="https://badge.fury.io/js/prisma-paginate"><img src="https://badge.fury.io/js/prisma-paginate.svg" alt="npm version"></a></p>
-</div>
-
+<table>
+<thead>
+<tr>
+<th><a href="https://badge.fury.io/js/prisma-paginate"><img src="https://badge.fury.io/js/prisma-paginate.svg" alt="npm version"></a></th>
+<th><a href="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/test.yaml"><img src="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/test.yaml/badge.svg" alt="Test"></a></th>
+<th><a href="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment"><img src="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment/badge.svg" alt="pages-build-deployment"></a></th>
+</tr>
+</thead>
+</table>
 
 <a href="#install" id="install" style="color: inherit; text-decoration: none;">
   <h1>Install</h1>
@@ -36,10 +37,38 @@
 <p>For more details and type definitions see:</p>
 <p><a href="http://sandrewtx08.github.io/prisma-paginate/">http://sandrewtx08.github.io/prisma-paginate/</a></p>
 
-<a href="#examples" id="examples" style="color: inherit; text-decoration: none;">
-  <h2>Examples</h2>
+<a href="#importing" id="importing" style="color: inherit; text-decoration: none;">
+  <h2>Importing</h2>
 </a>
-<pre><code class="language-js"><span class="hl-0">// ESM</span><br/><span class="hl-1">import</span><span class="hl-2"> { </span><span class="hl-3">PrismaClient</span><span class="hl-2"> } </span><span class="hl-1">from</span><span class="hl-2"> </span><span class="hl-4">&quot;@prisma/client&quot;</span><span class="hl-2">;</span><br/><span class="hl-1">import</span><span class="hl-2"> </span><span class="hl-3">prismaPaginate</span><span class="hl-2"> </span><span class="hl-1">from</span><span class="hl-2"> </span><span class="hl-4">&quot;prisma-paginate&quot;</span><span class="hl-2">;</span><br/><br/><span class="hl-0">// Commonjs</span><br/><span class="hl-5">const</span><span class="hl-2"> { </span><span class="hl-6">PrismaClient</span><span class="hl-2"> } = </span><span class="hl-7">require</span><span class="hl-2">(</span><span class="hl-4">&quot;@prisma/client&quot;</span><span class="hl-2">);</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">paginate</span><span class="hl-2"> = </span><span class="hl-7">require</span><span class="hl-2">(</span><span class="hl-4">&quot;prisma-paginate&quot;</span><span class="hl-2">);</span><br/><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">client</span><span class="hl-2"> = </span><span class="hl-5">new</span><span class="hl-2"> </span><span class="hl-7">PrismaClient</span><span class="hl-2">();</span><br/><br/><span class="hl-0">// on database = [ { id: 1 }, { id: 2 }, ...{ id: 100 } ]</span><br/><span class="hl-7">paginate</span><span class="hl-2">(</span><span class="hl-3">client</span><span class="hl-2">.</span><span class="hl-3">table</span><span class="hl-2">)(</span><br/><span class="hl-2">  {</span><br/><span class="hl-2">    </span><span class="hl-3">where:</span><span class="hl-2"> {</span><br/><span class="hl-2">      </span><span class="hl-0">// query stuff...</span><br/><span class="hl-2">    },</span><br/><span class="hl-2">  },</span><br/><span class="hl-2">  { </span><span class="hl-3">page:</span><span class="hl-2"> </span><span class="hl-8">1</span><span class="hl-2">, </span><span class="hl-3">limit:</span><span class="hl-2"> </span><span class="hl-8">50</span><span class="hl-2"> }</span><br/><span class="hl-2">).</span><span class="hl-7">then</span><span class="hl-2">((</span><span class="hl-3">query</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">  </span><span class="hl-3">query</span><span class="hl-2">.</span><span class="hl-3">result</span><span class="hl-2">; </span><span class="hl-0">// return [ ...{ id: 48 }, { id: 49 }, { id: 50 } ]</span><br/><span class="hl-2">});</span>
+<pre><code class="language-js"><span class="hl-0">// ESM</span><br/><span class="hl-1">import</span><span class="hl-2"> { </span><span class="hl-3">PrismaClient</span><span class="hl-2"> } </span><span class="hl-1">from</span><span class="hl-2"> </span><span class="hl-4">&quot;@prisma/client&quot;</span><span class="hl-2">;</span><br/><span class="hl-1">import</span><span class="hl-2"> </span><span class="hl-3">paginator</span><span class="hl-2"> </span><span class="hl-1">from</span><span class="hl-2"> </span><span class="hl-4">&quot;prisma-paginate&quot;</span><span class="hl-2">;</span><br/><br/><span class="hl-0">// Commonjs</span><br/><span class="hl-5">const</span><span class="hl-2"> { </span><span class="hl-6">PrismaClient</span><span class="hl-2"> } = </span><span class="hl-7">require</span><span class="hl-2">(</span><span class="hl-4">&quot;@prisma/client&quot;</span><span class="hl-2">);</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">paginator</span><span class="hl-2"> = </span><span class="hl-7">require</span><span class="hl-2">(</span><span class="hl-4">&quot;prisma-paginate&quot;</span><span class="hl-2">);</span>
+</code></pre>
+
+<a href="#paginated-client" id="paginated-client" style="color: inherit; text-decoration: none;">
+  <h2>Paginated client</h2>
+</a>
+
+<a href="#creating-new-client" id="creating-new-client" style="color: inherit; text-decoration: none;">
+  <h3>Creating new client</h3>
+</a>
+<pre><code class="language-js"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">paginate</span><span class="hl-2"> = </span><span class="hl-3">paginator</span><span class="hl-2">.</span><span class="hl-7">paginateClient</span><span class="hl-2">();</span><br/><br/><span class="hl-3">paginate</span><span class="hl-2">.</span><span class="hl-3">myTable</span><span class="hl-2">.</span><span class="hl-7">paginate</span><span class="hl-2">({ </span><span class="hl-3">where:</span><span class="hl-2"> {} }, { </span><span class="hl-3">limit:</span><span class="hl-2"> </span><span class="hl-8">10</span><span class="hl-2">, </span><span class="hl-3">page:</span><span class="hl-2"> </span><span class="hl-8">1</span><span class="hl-2"> });</span><br/><span class="hl-3">paginate</span><span class="hl-2">.</span><span class="hl-3">myOtherTable</span><span class="hl-2">.</span><span class="hl-7">paginate</span><span class="hl-2">({ </span><span class="hl-3">where:</span><span class="hl-2"> {} }, { </span><span class="hl-3">limit:</span><span class="hl-2"> </span><span class="hl-8">10</span><span class="hl-2">, </span><span class="hl-3">page:</span><span class="hl-2"> </span><span class="hl-8">2</span><span class="hl-2"> });</span>
+</code></pre>
+
+<a href="#reusing-exist-client" id="reusing-exist-client" style="color: inherit; text-decoration: none;">
+  <h3>Reusing exist client</h3>
+</a>
+<pre><code class="language-js"><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">prisma</span><span class="hl-2"> = </span><span class="hl-5">new</span><span class="hl-2"> </span><span class="hl-7">PrismaClient</span><span class="hl-2">();</span><br/><span class="hl-5">const</span><span class="hl-2"> </span><span class="hl-6">paginate</span><span class="hl-2"> = </span><span class="hl-7">paginator</span><span class="hl-2">(</span><span class="hl-3">prisma</span><span class="hl-2">);</span><br/><br/><span class="hl-3">paginate</span><span class="hl-2">.</span><span class="hl-3">myTable</span><span class="hl-2">.</span><span class="hl-7">paginate</span><span class="hl-2">({ </span><span class="hl-3">where:</span><span class="hl-2"> {} }, { </span><span class="hl-3">limit:</span><span class="hl-2"> </span><span class="hl-8">10</span><span class="hl-2">, </span><span class="hl-3">page:</span><span class="hl-2"> </span><span class="hl-8">1</span><span class="hl-2"> });</span><br/><span class="hl-3">paginate</span><span class="hl-2">.</span><span class="hl-3">myOtherTable</span><span class="hl-2">.</span><span class="hl-7">paginate</span><span class="hl-2">({ </span><span class="hl-3">where:</span><span class="hl-2"> {} }, { </span><span class="hl-3">limit:</span><span class="hl-2"> </span><span class="hl-8">10</span><span class="hl-2">, </span><span class="hl-3">page:</span><span class="hl-2"> </span><span class="hl-8">2</span><span class="hl-2"> });</span>
+</code></pre>
+
+<a href="#other-prisma-methods-is-avalible-too" id="other-prisma-methods-is-avalible-too" style="color: inherit; text-decoration: none;">
+  <h3>Other Prisma methods is avalible too</h3>
+</a>
+<pre><code class="language-js"><span class="hl-3">paginate</span><span class="hl-2">.</span><span class="hl-3">myTable</span><span class="hl-2">.</span><span class="hl-7">findMany</span><span class="hl-2">({ </span><span class="hl-3">where:</span><span class="hl-2"> { </span><span class="hl-3">field:</span><span class="hl-2"> </span><span class="hl-5">true</span><span class="hl-2"> } });</span><br/><span class="hl-3">paginate</span><span class="hl-2">.</span><span class="hl-3">myTable</span><span class="hl-2">.</span><span class="hl-7">findOne</span><span class="hl-2">({ </span><span class="hl-3">where:</span><span class="hl-2"> { </span><span class="hl-3">id:</span><span class="hl-2"> </span><span class="hl-8">1</span><span class="hl-2"> } });</span><br/><span class="hl-3">paginate</span><span class="hl-2">.</span><span class="hl-3">myOtherTable</span><span class="hl-2">.</span><span class="hl-7">count</span><span class="hl-2">();</span>
+</code></pre>
+
+<a href="#paginating-100-rows" id="paginating-100-rows" style="color: inherit; text-decoration: none;">
+  <h2>Paginating 100 rows</h2>
+</a>
+<pre><code class="language-js"><span class="hl-0">// on database = [ { id: 1 }, { id: 2 }, {...}, { id: 100 } ]</span><br/><span class="hl-3">paginate</span><span class="hl-2">.</span><span class="hl-3">myTable</span><br/><span class="hl-2">  .</span><span class="hl-7">paginate</span><span class="hl-2">(</span><br/><span class="hl-2">    {</span><br/><span class="hl-2">      </span><span class="hl-3">where:</span><span class="hl-2"> {</span><br/><span class="hl-2">        </span><span class="hl-0">// query stuff...</span><br/><span class="hl-2">      },</span><br/><span class="hl-2">    },</span><br/><span class="hl-2">    { </span><span class="hl-3">page:</span><span class="hl-2"> </span><span class="hl-8">1</span><span class="hl-2">, </span><span class="hl-3">limit:</span><span class="hl-2"> </span><span class="hl-8">50</span><span class="hl-2"> }</span><br/><span class="hl-2">  )</span><br/><span class="hl-2">  .</span><span class="hl-7">then</span><span class="hl-2">((</span><span class="hl-3">query</span><span class="hl-2">) </span><span class="hl-5">=&gt;</span><span class="hl-2"> {</span><br/><span class="hl-2">    </span><span class="hl-3">query</span><span class="hl-2">.</span><span class="hl-3">result</span><span class="hl-2">; </span><span class="hl-0">// return [ {...}, { id: 48 }, { id: 49 }, { id: 50 } ]</span><br/><span class="hl-2">  });</span>
 </code></pre>
 
 <a href="#parameters" id="parameters" style="color: inherit; text-decoration: none;">
@@ -51,6 +80,7 @@
 <li><code>page</code> {Number}</li>
 <li><code>pageIndex</code> {Number}</li>
 <li><code>limit</code> {Number}</li>
+<li><code>exceedCount</code> {Boolean}</li>
 </ul>
 </li>
 <li><code>callback?</code> {(err, result)}</li>
@@ -60,6 +90,7 @@
   <h2>Return</h2>
 </a>
 <ul>
+<li><code>result</code> {Array} - Pagination result</li>
 <li><code>totalPages</code> {Number} - Total of pages based on pagination arguments</li>
 <li><code>hasNextPage</code> {Boolean} - If has result on next page index</li>
 <li><code>hasPrevPage</code> {Boolean} - If has result on last page index</li>
@@ -93,12 +124,13 @@
 <li class="tsd-kind-interface"><a href="interfaces/Pagination.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-interface)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-256-path"></rect><path d="M9.51 16V15.016H11.298V8.224H9.51V7.24H14.19V8.224H12.402V15.016H14.19V16H9.51Z" fill="var(--color-text)" id="icon-256-text"></path></svg>Pagination</a></li>
 <li class="tsd-kind-interface"><a href="interfaces/PaginationArguments.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Pagination<wbr/>Arguments</a></li>
 <li class="tsd-kind-interface"><a href="interfaces/PaginationCallback.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Pagination<wbr/>Callback</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/PaginationModelParameters.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Pagination<wbr/>Model<wbr/>Parameters</a></li>
 <li class="tsd-kind-interface"><a href="interfaces/PaginationOptions.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Pagination<wbr/>Options</a></li>
 <li class="tsd-kind-interface"><a href="interfaces/PaginationParameters.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Pagination<wbr/>Parameters</a></li>
-<li class="tsd-kind-interface"><a href="interfaces/PaginationParametersUnsetModel.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Pagination<wbr/>Parameters<wbr/>Unset<wbr/>Model</a></li>
 <li class="tsd-kind-interface"><a href="interfaces/PaginationResult.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Pagination<wbr/>Result</a></li>
-<li class="tsd-kind-interface"><a href="interfaces/PrismaModelProperties.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Prisma<wbr/>Model<wbr/>Properties</a></li>
-<li class="tsd-kind-type-alias"><a href="types/PrismaModelFindManyArguments.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-4194304-path"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)" id="icon-4194304-text"></path></svg>Prisma<wbr/>Model<wbr/>Find<wbr/>Many<wbr/>Arguments</a></li>
+<li class="tsd-kind-interface"><a href="interfaces/PrismaModel.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-256-path"></use><use href="#icon-256-text"></use></svg>Prisma<wbr/>Model</a></li>
+<li class="tsd-kind-type-alias"><a href="types/PrismaClientPaginate.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-4194304-path"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)" id="icon-4194304-text"></path></svg>Prisma<wbr/>Client<wbr/>Paginate</a></li>
+<li class="tsd-kind-type-alias"><a href="types/PrismaModelFindManyArguments.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Prisma<wbr/>Model<wbr/>Find<wbr/>Many<wbr/>Arguments</a></li>
 <li class="tsd-kind-type-alias"><a href="types/WithoutPaginationResult.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Without<wbr/>Pagination<wbr/>Result</a></li>
 <li class="tsd-kind-function"><a href="functions/export_-1.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-function)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-64-path"></rect><path d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z" fill="var(--color-text)" id="icon-64-text"></path></svg>export=</a></li></ul></nav></div></div>
 <div class="container tsd-generator">
