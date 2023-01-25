@@ -1,2 +1,2 @@
-import { paginate } from "./paginate";
-export = paginate;
+import { paginator } from "./paginator";
+export = paginator;

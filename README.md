@@ -1,12 +1,7 @@
-# prisma-paginate
+# 📖 prisma-paginate
 
-<div style="display: flex; gap: 1em;">
-<p><a href="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/test.yaml"><img src="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/test.yaml/badge.svg" alt="Test"></a></p>
-
-<p><a href="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment"><img src="https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment/badge.svg" alt="pages-build-deployment"></a></p>
-
-<p><a href="https://badge.fury.io/js/prisma-paginate"><img src="https://badge.fury.io/js/prisma-paginate.svg" alt="npm version"></a></p>
-</div>
+| [![npm version](https://badge.fury.io/js/prisma-paginate.svg)](https://badge.fury.io/js/prisma-paginate) | [![Test](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/test.yaml/badge.svg)](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/test.yaml) | [![pages-build-deployment](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/sandrewTx08/prisma-paginate/actions/workflows/pages/pages-build-deployment) |
+| -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
 # Install
 
@@ -18,21 +13,29 @@ For more details and type definitions see:
 
 http://sandrewtx08.github.io/prisma-paginate/
 
-## Examples
+## Importing
 
 ```js
 // ESM
 import { PrismaClient } from "@prisma/client";
-import prismaPaginate from "prisma-paginate";
+import paginator from "prisma-paginate";
 
 // Commonjs
 const { PrismaClient } = require("@prisma/client");
-const paginate = require("prisma-paginate");
+const paginator = require("prisma-paginate");
+```
 
-const client = new PrismaClient();
+## Creating a connection
 
-// on database = [ { id: 1 }, { id: 2 }, ...{ id: 100 } ]
-paginate(client.table)(
+```js
+const prisma = new PrismaClient();
+```
+
+## Paginating 100 rows
+
+```js
+// on database = [ { id: 1 }, { id: 2 }, {...}, { id: 100 } ]
+paginator(prisma.myTable)(
   {
     where: {
       // query stuff...
@@ -40,8 +43,29 @@ paginate(client.table)(
   },
   { page: 1, limit: 50 }
 ).then((query) => {
-  query.result; // return [ ...{ id: 48 }, { id: 49 }, { id: 50 } ]
+  query.result; // return [ {...}, { id: 48 }, { id: 49 }, { id: 50 } ]
 });
+```
+
+## Paginated client
+
+You can easily create new **PrismaClient**:
+
+```js
+const paginate = paginateClient();
+
+paginate.myTable.paginate({ where: {} }, { limit: 10, page: 1 });
+paginate.myOtherTable.paginate({ where: {} }, { limit: 20, page: 1 });
+```
+
+Or reuse one:
+
+```js
+const prisma = new PrismaClient();
+const paginate = paginateClient(prisma);
+
+paginate.myTable.paginate({ where: {} }, { limit: 10, page: 1 });
+paginate.myOtherTable.paginate({ where: {} }, { limit: 20, page: 1 });
 ```
 
 ## Parameters
@@ -51,10 +75,12 @@ paginate(client.table)(
   - `page` {Number}
   - `pageIndex` {Number}
   - `limit` {Number}
+  - `exceedCount` {Boolean}
 - `callback?` {(err, result)}
 
 ## Return
 
+- `result` {Array} - Pagination result
 - `totalPages` {Number} - Total of pages based on pagination arguments
 - `hasNextPage` {Boolean} - If has result on next page index
 - `hasPrevPage` {Boolean} - If has result on last page index

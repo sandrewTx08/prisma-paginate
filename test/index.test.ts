@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import paginate, {
+import paginator, {
   PaginationArguments,
   PaginationCallback,
   PaginationResult,
@@ -21,7 +21,7 @@ function testPaginate<
 ): Promise<[Error | null, Result][]> {
   return Promise.all<any>([
     new Promise((resolve) => {
-      paginate()(
+      paginator()(
         client.model,
         findManyArgs,
         paginationOrCallback as PaginationArguments,
@@ -31,7 +31,7 @@ function testPaginate<
       );
     }),
     new Promise((resolve) => {
-      paginate(client.model)(
+      paginator(client.model)(
         findManyArgs,
         paginationOrCallback as PaginationArguments,
         (error, result) => {
@@ -40,7 +40,7 @@ function testPaginate<
       );
     }),
     new Promise((resolve) => {
-      paginate(client.model)(
+      paginator(client.model)(
         findManyArgs,
         paginationOrCallback as PaginationArguments
       ).then(
@@ -53,7 +53,7 @@ function testPaginate<
       );
     }),
     new Promise((resolve) => {
-      paginate()(
+      paginator()(
         client.model,
         findManyArgs,
         paginationOrCallback as PaginationArguments
