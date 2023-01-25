@@ -20,9 +20,9 @@ jobs:
         with:
           node-version: "lts/*"
 
-      - run: npm install
-      - run: npm run build
-      - run: npx semantic-release
+      - run: yarn install
+      - run: yarn build
+      - run: yarn semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

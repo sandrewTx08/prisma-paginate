@@ -37,8 +37,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
-      - run: npm install
-      - run: npm run build
-      - run: npx prisma db push
-      - run: npm test
+          cache: "yarn"
+      - run: yarn install
+      - run: yarn build
+      - run: yarn prisma db push
+      - run: yarn test
