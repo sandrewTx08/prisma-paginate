@@ -221,34 +221,6 @@ export namespace paginator {
         return result;
       }
     }
-
-    nextPage<
-      Result extends PaginationResult<Model>["result"] | PaginationResult<Model>
-    >(
-      findManyArgs: PrismaModelFindManyArguments<Model>,
-      paginationArgs: PaginationArguments
-    ): NextPage<Model, Result> {
-      paginationArgs = {
-        ...paginationArgs,
-        page: (paginationArgs.page || 0) + 1,
-        pageIndex:
-          typeof paginationArgs.page === "number"
-            ? undefined
-            : (paginationArgs.pageIndex || 0) + 1,
-      };
-
-      return (callback) => {
-        this.paginate(findManyArgs, paginationArgs, (error, result) => {
-          if (callback instanceof Promise) {
-            callback.then((callback) => {
-              callback(error, result as Result);
-            });
-          } else {
-            callback(error, result as Result);
-          }
-        });
-      };
-    }
   }
 
   /**
@@ -277,6 +249,33 @@ export namespace paginator {
       };
     }
 
+    nextPage(): NextPage<Model, PaginationResult<Model>> {
+      this.paginationArgs = {
+        ...this.paginationArgs,
+        page: (this.paginationArgs.page || 0) + 1,
+        pageIndex:
+          typeof this.paginationArgs.page === "number"
+            ? undefined
+            : (this.paginationArgs.pageIndex || 0) + 1,
+      };
+
+      return (callback) => {
+        this.paginator.paginate(
+          this.findManyArgs,
+          this.paginationArgs,
+          (error, result) => {
+            if (callback instanceof Promise) {
+              callback.then((callback) => {
+                callback(error, result);
+              });
+            } else {
+              callback(error, result);
+            }
+          }
+        );
+      };
+    }
+
     result(
       count: number,
       findManyReturn: WithoutPaginationResult<Model>
@@ -298,10 +297,7 @@ export namespace paginator {
           : false;
       const pagination: Pagination<Model> = {
         limit: this.paginationArgs.limit,
-        nextPage: this.paginator.nextPage(
-          this.findManyArgs,
-          this.paginationArgs
-        ),
+        nextPage: this.nextPage(),
         count,
         totalPages,
         hasNextPage,
