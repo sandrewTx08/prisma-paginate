@@ -311,7 +311,7 @@ export namespace paginator {
     }
   }
 
-  type PrismaClientPaginateModels = Omit<
+  type PrismaClientModels = Omit<
     typeof PrismaClient.prototype,
     | "$executeRaw"
     | "$disconnect"
@@ -325,7 +325,7 @@ export namespace paginator {
   >;
 
   export type PrismaClientPaginate = {
-    [K in keyof PrismaClientPaginateModels]: PrismaClientPaginateModels[K] & {
+    [K in keyof PrismaClientModels]: PrismaClientModels[K] & {
       paginate: PaginationParameters<typeof PrismaClient.prototype[K]>;
     };
   };
