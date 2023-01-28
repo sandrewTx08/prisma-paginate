@@ -30,9 +30,9 @@ export function paginator<Model extends paginator.PrismaModel>(
   return modelOrClient
     ? "findMany" in modelOrClient
       ? // Fix undefined class bug
-      paginator.Paginator.prototype.paginate.bind(
-        new paginator.Paginator(modelOrClient, options)
-      )
+        paginator.Paginator.prototype.paginate.bind(
+          new paginator.Paginator(modelOrClient, options)
+        )
       : paginator.paginateClient(modelOrClient)
     : paginator.paginateClient();
 }
@@ -247,8 +247,8 @@ export namespace paginator {
               ? this.paginationArgs.page - 1
               : this.paginationArgs.page
             : typeof this.paginationArgs.pageIndex === "number"
-              ? this.paginationArgs.pageIndex
-              : 0),
+            ? this.paginationArgs.pageIndex
+            : 0),
       };
     }
 
@@ -290,8 +290,8 @@ export namespace paginator {
             ? 1
             : this.paginationArgs.page
           : typeof this.paginationArgs.pageIndex === "number"
-            ? this.paginationArgs.pageIndex + 1
-            : 1;
+          ? this.paginationArgs.pageIndex + 1
+          : 1;
       const hasNextPage = page < totalPages;
       const hasPrevPage =
         count > 0
