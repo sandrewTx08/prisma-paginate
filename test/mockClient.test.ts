@@ -2,10 +2,10 @@ import { testPaginate, testWithoutPagination } from "./utils";
 
 describe("count == 0", () => {
   const mock = Object();
-  mock.count = async function (..._: any[]) {
+  mock.count = async function () {
     return 0;
   };
-  mock.findMany = async function (..._: any[]) {
+  mock.findMany = async function () {
     return new Array(await mock.count());
   };
 

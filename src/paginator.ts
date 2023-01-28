@@ -30,9 +30,9 @@ export function paginator<Model extends paginator.PrismaModel>(
   return modelOrClient
     ? "findMany" in modelOrClient
       ? // Fix undefined class bug
-        paginator.Paginator.prototype.paginate.bind(
-          new paginator.Paginator(modelOrClient, options)
-        )
+      paginator.Paginator.prototype.paginate.bind(
+        new paginator.Paginator(modelOrClient, options)
+      )
       : paginator.paginateClient(modelOrClient)
     : paginator.paginateClient();
 }
@@ -182,13 +182,16 @@ export namespace paginator {
         WithoutPaginationResult<Model> | PaginationResult<Model>
       >((resolve, reject) => {
         if (typeof paginationOrCallback === "object") {
-          const pg = new Paginator(this.model);
-          const pn = new Paginate(findManyArgs, paginationOrCallback, pg);
+          const paginate = new Paginate(
+            findManyArgs,
+            paginationOrCallback,
+            new Paginator(this.model)
+          );
 
           this.model.count(findManyArgs).then((count) => {
             this.model
-              .findMany(pn.arguments())
-              .then((result) => pn.result(count, result))
+              .findMany(paginate.arguments())
+              .then((result) => paginate.result(count, result))
               .then(resolve);
           }, reject);
         } else {
@@ -244,8 +247,8 @@ export namespace paginator {
               ? this.paginationArgs.page - 1
               : this.paginationArgs.page
             : typeof this.paginationArgs.pageIndex === "number"
-            ? this.paginationArgs.pageIndex
-            : 0),
+              ? this.paginationArgs.pageIndex
+              : 0),
       };
     }
 
@@ -287,8 +290,8 @@ export namespace paginator {
             ? 1
             : this.paginationArgs.page
           : typeof this.paginationArgs.pageIndex === "number"
-          ? this.paginationArgs.pageIndex + 1
-          : 1;
+            ? this.paginationArgs.pageIndex + 1
+            : 1;
       const hasNextPage = page < totalPages;
       const hasPrevPage =
         count > 0

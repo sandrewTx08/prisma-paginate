@@ -39,6 +39,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
       - run: yarn install
+      - run: yarn lint
       - run: yarn build
       - run: yarn prisma db push
       - run: yarn test
