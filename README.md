@@ -89,3 +89,4 @@ paginate.myTable
 - `hasNextPage` {Boolean} - If has result on next page index
 - `hasPrevPage` {Boolean} - If has result on last page index
 - `count` {Number} - Count how many rows on has on table/model with query filter
+- `nextPage` {(err, result)} - Request next page
