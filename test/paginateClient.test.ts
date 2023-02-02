@@ -4,15 +4,28 @@ import { client } from "./utils";
 describe("paginateClient", () => {
   const paginate = paginator(client);
 
-  it("paginate", () => {
+  it("paginate spp cb", () => {
     paginate.model.paginate({}, { page: 1, limit: 10 }, (error, result) => {
       expect(error).toBe(null);
       expect(result?.result).toBeTruthy();
     });
   });
 
-  it("paginate", () => {
+  it("paginate spp pm", () => {
     paginate.model.paginate({}, { page: 1, limit: 10 }).then((result) => {
+      expect(result?.result).toBeTruthy();
+    });
+  });
+
+  it("paginate aip cb", () => {
+    paginate.model.paginate({ page: 1, limit: 10 }, (error, result) => {
+      expect(error).toBe(null);
+      expect(result?.result).toBeTruthy();
+    });
+  });
+
+  it("paginate aip pm", () => {
+    paginate.model.paginate({ page: 1, limit: 10 }).then((result) => {
       expect(result?.result).toBeTruthy();
     });
   });

@@ -28,7 +28,9 @@ export function paginator<Model extends paginator.PrismaModel>(
   options?: Partial<paginator.PaginationOptions>
 ) {
   return modelOrClient
-    ? "findMany" in modelOrClient
+    ? modelOrClient instanceof Object &&
+      "count" in modelOrClient &&
+      "findMany" in modelOrClient
       ? // Fix undefined class bug
         paginator.Paginator.prototype.paginate.bind(
           new paginator.Paginator(modelOrClient, options)
@@ -39,27 +41,33 @@ export function paginator<Model extends paginator.PrismaModel>(
 
 export namespace paginator {
   export interface PrismaModel {
-    findMany(...args: any[]): Promise<any>;
-    count(...args: any[]): Promise<number>;
+    findMany(args: any): Promise<any[]>;
+    count(args: any): Promise<number>;
   }
 
-  export type PrismaModelFindManyArguments<Model extends PrismaModel> =
-    Parameters<Model["findMany"]>[0];
+  export type PrismaFindManyReturn<Model extends PrismaModel> = Awaited<
+    ReturnType<Model["findMany"]>
+  >;
 
-  export interface PaginationArguments extends Partial<PaginationOptions> {
+  export type PrismaModelArgs<Model extends PrismaModel> = Omit<
+    NonNullable<Parameters<Model["findMany"]>[0]>,
+    "skip" | "take"
+  >;
+
+  export interface PaginationArgs extends Partial<PaginationOptions> {
     /**
      * Paginate starting from 1
      *
      * If enabled it overwrite 'pageIndex'
      *
-     * @see {@link PaginationArguments.pageIndex}
+     * @see {@link PaginationArgs.pageIndex}
      * @default 1
      */
     page?: number;
     /**
      * Paginate like index staring from 0
      *
-     * @see {@link PaginationArguments.page}
+     * @see {@link PaginationArgs.page}
      * @default 0
      */
     pageIndex?: number;
@@ -79,7 +87,7 @@ export namespace paginator {
   }
 
   export interface Pagination<Model extends PrismaModel>
-    extends PaginationArguments {
+    extends PaginationArgs {
     /**
      * Total of pages based on pagination arguments
      */
@@ -99,7 +107,7 @@ export namespace paginator {
      *     });
      *   });
      */
-    nextPage: NextPage<Model, PaginationResult<Model>>;
+    nextPage: NextPage<Model>;
     /**
      * If has result on last page index
      */
@@ -110,49 +118,34 @@ export namespace paginator {
     count: number;
   }
 
-  export type WithoutPaginationResult<Model extends PrismaModel> = Awaited<
-    ReturnType<Model["findMany"]>
-  >;
-
   export interface PaginationResult<Model extends PrismaModel>
     extends Pagination<Model> {
-    result: WithoutPaginationResult<Model>;
+    result: PrismaFindManyReturn<Model>;
   }
 
-  export interface NextPage<
-    Model extends PrismaModel,
-    Result extends PaginationResult<Model>["result"] | PaginationResult<Model>
-  > {
-    (
-      callback:
-        | Promise<PaginationCallback<Model, Result>>
-        | PaginationCallback<Model, Result>
-    ): void;
+  export interface NextPage<Model extends PrismaModel> {
+    (callback: PaginationCallback<Model>): void;
   }
 
-  export interface PaginationCallback<
-    Model extends PrismaModel,
-    Result extends PaginationResult<Model>["result"] | PaginationResult<Model>
-  > {
-    (error: Error | null, result?: Result): void;
+  export interface PaginationCallback<Model extends PrismaModel> {
+    (error: Error | null, result?: PaginationResult<Model>): void;
   }
 
   export interface PaginationParameters<Model extends PrismaModel> {
     (
-      findManyArgs: PrismaModelFindManyArguments<Model>,
-      pagination: PaginationArguments,
-      callback: PaginationCallback<Model, PaginationResult<Model>>
+      findManyArgs: PrismaModelArgs<Model> & PaginationArgs,
+      callback: PaginationCallback<Model>
     ): void;
+    (findManyArgs: PrismaModelArgs<Model> & PaginationArgs): Promise<
+      PaginationResult<Model>
+    >;
     (
-      findManyArgs: PrismaModelFindManyArguments<Model>,
-      callback: PaginationCallback<Model, WithoutPaginationResult<Model>>
+      findManyArgs: PrismaModelArgs<Model>,
+      pagination: PaginationArgs,
+      callback: PaginationCallback<Model>
     ): void;
-    (
-      findManyArgs: PrismaModelFindManyArguments<Model>,
-      pagination: PaginationArguments
-    ): Promise<PaginationResult<Model>>;
-    (findManyArgs: PrismaModelFindManyArguments<Model>): Promise<
-      WithoutPaginationResult<Model>
+    (findManyArgs: PrismaModelArgs<Model>, pagination: PaginationArgs): Promise<
+      PaginationResult<Model>
     >;
   }
 
@@ -172,31 +165,27 @@ export namespace paginator {
     ) {}
 
     paginate(
-      findManyArgs: PrismaModelFindManyArguments<Model>,
-      paginationOrCallback?:
-        | PaginationArguments
-        | PaginationCallback<Model, WithoutPaginationResult<Model>>,
-      callback?: PaginationCallback<Model, PaginationResult<Model>>
-    ) {
-      const result = new Promise<
-        WithoutPaginationResult<Model> | PaginationResult<Model>
-      >((resolve, reject) => {
-        if (typeof paginationOrCallback === "object") {
-          const paginate = new Paginate(
-            findManyArgs,
-            paginationOrCallback,
-            new Paginator(this.model)
-          );
+      findManyArgs: PrismaModelArgs<Model> & PaginationArgs,
+      paginationOrCallback: PaginationArgs | PaginationCallback<Model>,
+      callback?: PaginationCallback<Model>
+    ): Promise<PaginationResult<Model>> | void {
+      const result = new Promise<PaginationResult<Model>>((resolve, reject) => {
+        const paginate = new Paginate(
+          findManyArgs,
+          {
+            ...findManyArgs,
+            ...(typeof paginationOrCallback === "object" &&
+              paginationOrCallback),
+          },
+          new Paginator(this.model)
+        );
 
-          this.model.count(findManyArgs).then((count) => {
-            this.model
-              .findMany(paginate.arguments())
-              .then((result) => paginate.result(count, result))
-              .then(resolve);
-          }, reject);
-        } else {
-          this.model.findMany(findManyArgs).then(resolve);
-        }
+        this.model.count(paginate.formartCount()).then((count) => {
+          this.model
+            .findMany(paginate.formatfindManyArgs())
+            .then((result) => paginate.result(count, result))
+            .then(resolve);
+        }, reject);
       });
 
       result.then(
@@ -204,7 +193,7 @@ export namespace paginator {
           if (callback) {
             callback(null, value);
           } else if (typeof paginationOrCallback === "function") {
-            paginationOrCallback(null, value as WithoutPaginationResult<Model>);
+            paginationOrCallback(null, value);
           } else {
             return value;
           }
@@ -231,12 +220,12 @@ export namespace paginator {
    */
   export class Paginate<Model extends PrismaModel> {
     constructor(
-      private findManyArgs: PrismaModelFindManyArguments<Model>,
-      private paginationArgs: PaginationArguments,
+      private findManyArgs: PrismaModelArgs<Model>,
+      private paginationArgs: PaginationArgs,
       private paginator: Paginator<Model>
     ) {}
 
-    arguments(): PrismaModelFindManyArguments<Model> {
+    formatfindManyArgs(): PrismaModelArgs<Model> {
       return {
         ...this.findManyArgs,
         take: this.paginationArgs.limit,
@@ -252,7 +241,16 @@ export namespace paginator {
       };
     }
 
-    nextPage(): NextPage<Model, PaginationResult<Model>> {
+    formartCount(): PrismaModelArgs<Model> {
+      const args = this.findManyArgs;
+      delete args.page;
+      delete args.exceedCount;
+      delete args.pageIndex;
+      delete args.limit;
+      return args;
+    }
+
+    nextPage(): NextPage<Model> {
       this.paginationArgs = {
         ...this.paginationArgs,
         page: (this.paginationArgs.page || 0) + 1,
@@ -264,24 +262,15 @@ export namespace paginator {
 
       return (callback) => {
         this.paginator.paginate(
-          this.findManyArgs,
-          this.paginationArgs,
-          (error, result) => {
-            if (callback instanceof Promise) {
-              callback.then((callback) => {
-                callback(error, result);
-              });
-            } else {
-              callback(error, result);
-            }
-          }
+          { ...this.findManyArgs, ...this.paginationArgs },
+          callback
         );
       };
     }
 
     result(
       count: number,
-      findManyReturn: WithoutPaginationResult<Model>
+      findManyReturn: PrismaFindManyReturn<Model>[0]
     ): PaginationResult<Model> {
       const totalPages = Math.round(count / this.paginationArgs.limit);
       const page =

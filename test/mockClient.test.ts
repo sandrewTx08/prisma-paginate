@@ -1,4 +1,4 @@
-import { testPaginate, testWithoutPagination } from "./utils";
+import { testPaginate } from "./utils";
 
 describe("count == 0", () => {
   const mock = Object();
@@ -8,15 +8,6 @@ describe("count == 0", () => {
   mock.findMany = async function () {
     return new Array(await mock.count());
   };
-
-  it("without pagination", () => {
-    testWithoutPagination(mock, {}).then((results) => {
-      results.forEach(([error, result]) => {
-        expect(error).toBe(null);
-        expect(result).toStrictEqual([]);
-      });
-    });
-  });
 
   it("page == 0", () => {
     testPaginate(mock, {}, { limit: 1, page: 0 }).then((results) => {

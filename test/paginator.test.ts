@@ -1,11 +1,5 @@
 import paginator from "../src";
-import {
-  randomIds,
-  randomArray,
-  testWithoutPagination,
-  testPaginate,
-  client,
-} from "./utils";
+import { randomIds, randomArray, testPaginate, client } from "./utils";
 
 describe("random array", () => {
   beforeAll((done) => {
@@ -20,15 +14,6 @@ describe("random array", () => {
       .finally(() => {
         client.$disconnect().finally(done);
       });
-  });
-
-  it("without pagination", () => {
-    testWithoutPagination(client.model, {}).then((results) => {
-      results.forEach(([error, result]) => {
-        expect(error).toBe(null);
-        expect(result).toStrictEqual(randomIds);
-      });
-    });
   });
 
   it("page == 0", (done) => {

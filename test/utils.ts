@@ -1,27 +1,26 @@
 import { PrismaClient } from "@prisma/client";
 import paginator, {
-  PaginationArguments,
+  PaginationArgs,
   PaginationResult,
-  PrismaModelFindManyArguments,
-  WithoutPaginationResult,
+  PrismaModelArgs,
 } from "../src";
 
 export const client = new PrismaClient();
 export type TestModel = typeof client.model;
 
-export function testPaginate<Model extends TestModel = TestModel>(
-  model: Model,
-  findManyArgs: PrismaModelFindManyArguments<TestModel>,
-  pagination: PaginationArguments
+export function testPaginate(
+  model: TestModel,
+  findManyArgs: PrismaModelArgs<TestModel>,
+  pagination: PaginationArgs
 ) {
-  const callback = new Promise((resolve) => {
-    paginator(model)(findManyArgs, pagination, (error, result) => {
+  const cb_spp = new Promise((resolve) => {
+    paginator<TestModel>(model)(findManyArgs, pagination, (error, result) => {
       resolve([error, result]);
     });
   });
 
-  const promise = new Promise((resolve) => {
-    paginator(model)(findManyArgs, pagination).then(
+  const pm_spp = new Promise((resolve) => {
+    paginator<TestModel>(model)(findManyArgs, pagination).then(
       (result) => {
         resolve([null, result]);
       },
@@ -31,34 +30,28 @@ export function testPaginate<Model extends TestModel = TestModel>(
     );
   });
 
-  return Promise.all([callback, promise]) as Promise<
+  const cb_aip = new Promise((resolve) => {
+    paginator<TestModel>(model)(
+      { ...findManyArgs, ...pagination },
+      (error, result) => {
+        resolve([error, result]);
+      }
+    );
+  });
+
+  const pm_aip = new Promise((resolve) => {
+    paginator<TestModel>(model)({ ...findManyArgs, ...pagination }).then(
+      (result) => {
+        resolve([null, result]);
+      },
+      (reason) => {
+        resolve([reason, undefined]);
+      }
+    );
+  });
+
+  return Promise.all([cb_spp, pm_spp, cb_aip, pm_aip]) as Promise<
     [Error | null, PaginationResult<TestModel>][]
-  >;
-}
-
-export function testWithoutPagination<Model extends TestModel = TestModel>(
-  model: Model,
-  findManyArgs: PrismaModelFindManyArguments<Model>
-) {
-  const callback = new Promise((resolve) => {
-    paginator(model)(findManyArgs, (error, result) => {
-      resolve([error, result]);
-    });
-  });
-
-  const promise = new Promise((resolve) => {
-    paginator(model)(findManyArgs).then(
-      (result) => {
-        resolve([null, result]);
-      },
-      (reason) => {
-        resolve([reason, undefined]);
-      }
-    );
-  });
-
-  return Promise.all([callback, promise]) as Promise<
-    [Error | null, WithoutPaginationResult<TestModel>][]
   >;
 }
 
