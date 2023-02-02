@@ -49,7 +49,7 @@ export namespace paginator {
     ReturnType<Model["findMany"]>
   >;
 
-  export type PrismaModelArgs<Model extends PrismaModel> = Omit<
+  export type PrismaFindManyArgs<Model extends PrismaModel> = Omit<
     NonNullable<Parameters<Model["findMany"]>[0]>,
     "skip" | "take"
   >;
@@ -133,20 +133,21 @@ export namespace paginator {
 
   export interface PaginationParameters<Model extends PrismaModel> {
     (
-      findManyArgs: PrismaModelArgs<Model> & PaginationArgs,
+      findManyPaginationArgs: PrismaFindManyArgs<Model> & PaginationArgs,
       callback: PaginationCallback<Model>
     ): void;
-    (findManyArgs: PrismaModelArgs<Model> & PaginationArgs): Promise<
-      PaginationResult<Model>
-    >;
     (
-      findManyArgs: PrismaModelArgs<Model>,
+      findManyPaginationArgs: PrismaFindManyArgs<Model> & PaginationArgs
+    ): Promise<PaginationResult<Model>>;
+    (
+      findManyArgs: PrismaFindManyArgs<Model>,
       pagination: PaginationArgs,
       callback: PaginationCallback<Model>
     ): void;
-    (findManyArgs: PrismaModelArgs<Model>, pagination: PaginationArgs): Promise<
-      PaginationResult<Model>
-    >;
+    (
+      findManyArgs: PrismaFindManyArgs<Model>,
+      pagination: PaginationArgs
+    ): Promise<PaginationResult<Model>>;
   }
 
   export class ExceedCount extends Error {
@@ -165,7 +166,7 @@ export namespace paginator {
     ) {}
 
     paginate(
-      findManyArgs: PrismaModelArgs<Model> & PaginationArgs,
+      findManyArgs: PrismaFindManyArgs<Model> & PaginationArgs,
       paginationOrCallback: PaginationArgs | PaginationCallback<Model>,
       callback?: PaginationCallback<Model>
     ): Promise<PaginationResult<Model>> | void {
@@ -180,7 +181,7 @@ export namespace paginator {
           new Paginator(this.model)
         );
 
-        this.model.count(paginate.formartCount()).then((count) => {
+        this.model.count(paginate.formatCountArgs()).then((count) => {
           this.model
             .findMany(paginate.formatfindManyArgs())
             .then((result) => paginate.result(count, result))
@@ -220,12 +221,12 @@ export namespace paginator {
    */
   export class Paginate<Model extends PrismaModel> {
     constructor(
-      private findManyArgs: PrismaModelArgs<Model>,
+      private findManyArgs: PrismaFindManyArgs<Model>,
       private paginationArgs: PaginationArgs,
       private paginator: Paginator<Model>
     ) {}
 
-    formatfindManyArgs(): PrismaModelArgs<Model> {
+    formatfindManyArgs(): PrismaFindManyArgs<Model> {
       return {
         ...this.findManyArgs,
         take: this.paginationArgs.limit,
@@ -241,7 +242,7 @@ export namespace paginator {
       };
     }
 
-    formartCount(): PrismaModelArgs<Model> {
+    formatCountArgs(): PrismaFindManyArgs<Model> {
       const args = this.findManyArgs;
       delete args.page;
       delete args.exceedCount;

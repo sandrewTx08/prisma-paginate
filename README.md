@@ -74,7 +74,7 @@ paginate.myTable
 
 ## Parameters
 
-- `findManyArgs` {Object} - Query with findMany Prisma arguments
+- `findManyPaginationArgs` {Object} - Query with findMany Prisma and pagination arguments
 - `paginationOrCallback?` {Object|(err, result)} - Pagination arguments or callback
   - `page` {Number}
   - `pageIndex` {Number}

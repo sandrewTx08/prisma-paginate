@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import paginator, {
   PaginationArgs,
   PaginationResult,
-  PrismaModelArgs,
+  PrismaFindManyArgs,
 } from "../src";
 
 export const client = new PrismaClient();
@@ -10,7 +10,7 @@ export type TestModel = typeof client.model;
 
 export function testPaginate(
   model: TestModel,
-  findManyArgs: PrismaModelArgs<TestModel>,
+  findManyArgs: PrismaFindManyArgs<TestModel>,
   pagination: PaginationArgs
 ) {
   const cb_spp = new Promise((resolve) => {
