@@ -1,9 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import paginator, {
-  PaginationArgs,
-  PaginationResult,
-  PrismaFindManyArgs,
-} from "../src";
+import { PrismaFindManyArgs } from "../src/prisma";
+import paginator, { PaginationArgs, PaginationResult } from "../src";
 
 export const client = new PrismaClient();
 export type TestModel = typeof client.model;
