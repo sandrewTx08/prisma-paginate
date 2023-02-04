@@ -9,10 +9,10 @@ import { Paginator } from "./paginator";
 import {
   PrismaFindManyArgs,
   PrismaFindManyReturn,
-  PrismaModel,
+  PrismaClientModel,
 } from "./prisma";
 
-export class Paginate<Model extends PrismaModel> {
+export class Paginate<Model extends PrismaClientModel> {
   constructor(
     private findManyArgs: PrismaFindManyArgs<Model>,
     private paginationArgs: PaginationArgs,
