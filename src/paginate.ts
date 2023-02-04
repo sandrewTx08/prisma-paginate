@@ -92,8 +92,8 @@ export class Paginate<Model extends PrismaModel> {
     };
 
     if (
-      (typeof this.paginationArgs.exceedCount === "boolean" ||
-        this.paginator.options?.exceedCount) &&
+      (this.paginationArgs.exceedCount === true ||
+        this.paginator.options?.exceedCount === true) &&
       this.paginationArgs.limit * page > count
     ) {
       throw new ExceedCount(pagination);

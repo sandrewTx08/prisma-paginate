@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import paginator from "../src";
 import { client } from "./utils";
 
@@ -28,6 +29,39 @@ describe("paginateClient", () => {
     paginate.model.paginate({ page: 1, limit: 10 }).then((result) => {
       expect(result?.result).toBeTruthy();
     });
+  });
+
+  it("paginate scp cb", () => {
+    paginator("model").paginate({ page: 1, limit: 10 }, (error, result) => {
+      expect(error).toBe(null);
+      expect(result?.result).toBeTruthy();
+    });
+  });
+
+  it("paginate scp pm", () => {
+    paginator("model")
+      .paginate({ page: 1, limit: 10 })
+      .then((result) => {
+        expect(result?.result).toBeTruthy();
+      });
+  });
+
+  it("paginate cpp cb", () => {
+    paginator(new PrismaClient()).model.paginate(
+      { page: 1, limit: 10 },
+      (error, result) => {
+        expect(error).toBe(null);
+        expect(result?.result).toBeTruthy();
+      }
+    );
+  });
+
+  it("paginate cpp pm", () => {
+    paginator(new PrismaClient())
+      .model.paginate({ page: 1, limit: 10 })
+      .then((result) => {
+        expect(result?.result).toBeTruthy();
+      });
   });
 
   it("other methods", () => {

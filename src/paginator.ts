@@ -13,6 +13,13 @@ export class Paginator<Model extends PrismaModel> {
     public options?: Partial<paginator.PaginationOptions>
   ) {}
 
+  paginateModel() {
+    return {
+      ...this.model,
+      paginate: Paginator.prototype.paginate.bind(this),
+    };
+  }
+
   paginate(
     findManyArgs: PrismaFindManyArgs<Model> & paginator.PaginationArgs,
     paginationOrCallback?:
@@ -71,7 +78,7 @@ export class Paginator<Model extends PrismaModel> {
 /**
  * @example
  * // on database = [ { id: 1 }, { id: 2 }, {...}, { id: 100 } ]
- * paginator(prisma.myTable)(
+ * paginator(prisma.myTable).paginate(
  *   {
  *     where: {
  *       // query stuff...
@@ -86,21 +93,30 @@ export function paginator(): paginator.PrismaClientPaginate;
 export function paginator(client: PrismaClient): paginator.PrismaClientPaginate;
 export function paginator<Model extends PrismaModel>(
   model: Model
-): paginator.PaginationParams<Model>;
+): paginator.PrismaClientModel<Model>;
 export function paginator<Model extends PrismaModel>(
   model: Model,
   options: Partial<paginator.PaginationOptions>
-): paginator.PaginationParams<Model>;
+): paginator.PrismaClientModel<Model>;
+export function paginator<Model extends keyof PrismaClientModels>(
+  model: Model
+): paginator.PrismaClientModel<typeof PrismaClient.prototype[Model]>;
+export function paginator<Model extends keyof PrismaClientModels>(
+  model: Model,
+  options: Partial<paginator.PaginationOptions>
+): paginator.PrismaClientModel<typeof PrismaClient.prototype[Model]>;
 export function paginator<Model extends PrismaModel>(
-  modelOrClient?: Model | PrismaClient,
+  modelOrClient?: keyof PrismaClientModels | Model | PrismaClient,
   options?: Partial<paginator.PaginationOptions>
 ) {
   return modelOrClient
-    ? modelOrClient instanceof Object &&
-      "count" in modelOrClient &&
-      "findMany" in modelOrClient
-      ? // Fix undefined class bug
-        Paginator.prototype.paginate.bind(new Paginator(modelOrClient, options))
+    ? typeof modelOrClient === "string"
+      ? new Paginator(
+          new PrismaClient()[modelOrClient],
+          options
+        ).paginateModel()
+      : "count" in modelOrClient && "findMany" in modelOrClient
+      ? new Paginator(modelOrClient, options).paginateModel()
       : paginator.paginateClient(modelOrClient)
     : paginator.paginateClient();
 }
@@ -138,7 +154,7 @@ export namespace paginator {
     exceedCount: boolean;
   }
 
-  export interface Pagination<Model extends PrismaModel>
+  export interface Pagination<Model extends PrismaModel = any>
     extends PaginationArgs {
     /**
      * Total of pages based on pagination arguments
@@ -203,15 +219,19 @@ export namespace paginator {
   }
 
   export class ExceedCount extends Error {
-    constructor(public pagination: Pagination<any>) {
+    constructor(public pagination: Pagination) {
       super("Pagination options exceed count of rows");
     }
   }
 
   export type PrismaClientPaginate = {
-    [K in keyof PrismaClientModels]: PrismaClientModels[K] & {
+    -readonly [K in keyof PrismaClientModels]: PrismaClientModels[K] & {
       paginate: PaginationParams<typeof PrismaClient.prototype[K]>;
     };
+  };
+
+  export type PrismaClientModel<Model extends PrismaModel> = Model & {
+    paginate: PaginationParams<Model>;
   };
 
   /**
@@ -234,7 +254,7 @@ export namespace paginator {
       paginateClient
     ) as (keyof typeof paginateClient)[]) {
       if (typeof paginateClient[ok]?.findMany === "function") {
-        paginateClient[ok].paginate = paginator(paginateClient[ok]);
+        paginateClient[ok] = paginator(paginateClient[ok]);
       }
     }
 

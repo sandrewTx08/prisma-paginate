@@ -11,24 +11,30 @@ export function testPaginate(
   pagination: PaginationArgs
 ) {
   const cb_spp = new Promise((resolve) => {
-    paginator<TestModel>(model)(findManyArgs, pagination, (error, result) => {
-      resolve([error, result]);
-    });
-  });
-
-  const pm_spp = new Promise((resolve) => {
-    paginator<TestModel>(model)(findManyArgs, pagination).then(
-      (result) => {
-        resolve([null, result]);
-      },
-      (reason) => {
-        resolve([reason, undefined]);
+    paginator<TestModel>(model).paginate(
+      findManyArgs,
+      pagination,
+      (error, result) => {
+        resolve([error, result]);
       }
     );
   });
 
+  const pm_spp = new Promise((resolve) => {
+    paginator<TestModel>(model)
+      .paginate(findManyArgs, pagination)
+      .then(
+        (result) => {
+          resolve([null, result]);
+        },
+        (reason) => {
+          resolve([reason, undefined]);
+        }
+      );
+  });
+
   const cb_aip = new Promise((resolve) => {
-    paginator<TestModel>(model)(
+    paginator<TestModel>(model).paginate(
       { ...findManyArgs, ...pagination },
       (error, result) => {
         resolve([error, result]);
@@ -37,14 +43,16 @@ export function testPaginate(
   });
 
   const pm_aip = new Promise((resolve) => {
-    paginator<TestModel>(model)({ ...findManyArgs, ...pagination }).then(
-      (result) => {
-        resolve([null, result]);
-      },
-      (reason) => {
-        resolve([reason, undefined]);
-      }
-    );
+    paginator<TestModel>(model)
+      .paginate({ ...findManyArgs, ...pagination })
+      .then(
+        (result) => {
+          resolve([null, result]);
+        },
+        (reason) => {
+          resolve([reason, undefined]);
+        }
+      );
   });
 
   return Promise.all([cb_spp, pm_spp, cb_aip, pm_aip]) as Promise<

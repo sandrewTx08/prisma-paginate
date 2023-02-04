@@ -27,31 +27,20 @@ const paginator = require("prisma-paginate");
 
 ## Paginated client
 
-### Creating new client
-
-```js
-const paginate = paginator.paginateClient();
-
-paginate.myTable.paginate({ where: {} }, { limit: 10, page: 1 });
-paginate.myOtherTable.paginate({ where: {} }, { limit: 10, page: 2 });
-```
-
 ### Reusing exist client
 
 ```js
 const prisma = new PrismaClient();
 const paginate = paginator(prisma);
 
-paginate.myTable.paginate({ where: {} }, { limit: 10, page: 1 });
-paginate.myOtherTable.paginate({ where: {} }, { limit: 10, page: 2 });
-```
-
-### Other Prisma methods is avalible too
-
-```js
-paginate.myTable.findMany({ where: { field: true } });
-paginate.myTable.findOne({ where: { id: 1 } });
-paginate.myOtherTable.count();
+paginate.myTable.paginate({ limit: 20, page: 1, where: {} }, (err, result) => {
+  console.log(err, result);
+});
+paginate.myOtherTable
+  .paginate({ where: {} }, { limit: 10, page: 1 })
+  .then((result) => {
+    console.log(result);
+  });
 ```
 
 ## Paginating 100 rows
@@ -67,9 +56,48 @@ paginate.myTable
     },
     { page: 1, limit: 50 }
   )
-  .then((query) => {
-    query.result; // return [ {...}, { id: 48 }, { id: 49 }, { id: 50 } ]
+  .then((result) => {
+    console.log(result); // [ {...}, { id: 48 }, { id: 49 }, { id: 50 } ]
   });
+```
+
+### Other Prisma methods is avalible too
+
+```js
+const prisma = new PrismaClient();
+const paginate = paginator(prisma);
+
+paginate.myTable.findMany({ where: { field: true } });
+paginate.myTable.findOne({ where: { id: 1 } });
+paginate.myOtherTable.count();
+
+// Or
+
+const myTable = paginator(prisma.myTable);
+const myOtherTable = paginator(prisma.myOtherTable);
+
+myTable.findMany({ where: { field: true } });
+myTable.findOne({ where: { id: 1 } });
+myOtherTable.count();
+```
+
+### Passing model name
+
+```js
+paginator("myTable").paginate({
+  where: { from_id: 2 },
+  pageIndex: 0,
+  limit: 30,
+});
+```
+
+### Creating new client
+
+```js
+const paginate = paginator();
+
+paginate.myTable.paginate({ where: {} }, { limit: 10, page: 1 });
+paginate.myOtherTable.paginate({ where: {}, limit: 10, page: 2 });
 ```
 
 ## Parameters

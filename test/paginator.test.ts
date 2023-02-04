@@ -106,7 +106,7 @@ describe("random array", () => {
 
 describe("nextPage", () => {
   it("callback", () => {
-    paginator(client.model)({}, { page: 1, limit: 10 }).then((r) => {
+    paginator(client.model).paginate({}, { page: 1, limit: 10 }).then((r) => {
       expect(r?.page).toBe(1);
       r.nextPage((e, r) => {
         expect(e).toBe(null);
