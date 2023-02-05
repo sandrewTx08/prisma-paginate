@@ -31,15 +31,12 @@ export type PrismaClientModels = Omit<
 export type PrismaClientPaginate = PrismaClient & PrismaClientModelsPaginate;
 
 export type PrismaClientModelsPaginate = {
-  -readonly [K in keyof PrismaClientModels]: PrismaClientModels[K] & {
-    paginate: PaginationParams<typeof PrismaClient.prototype[K]>;
-  };
+  -readonly [K in keyof PrismaClientModels]: PrismaClientModels[K] &
+    PaginationParams<typeof PrismaClient.prototype[K]>;
 };
 
-export type PrismaClientModelPaginate<Model extends PrismaClientModel> =
-  Model & {
-    paginate: PaginationParams<Model>;
-  };
+export type PrismaClientModelPaginate<Model extends PrismaClientModel> = Model &
+  PaginationParams<Model>;
 
 export type PrismaClientMutable = {
   -readonly [K in keyof typeof PrismaClient.prototype]: typeof PrismaClient.prototype[K];

@@ -35,8 +35,8 @@ export class Paginate<Model extends PrismaClientModel> {
     };
   }
 
-  formatCountArgs(): Partial<PrismaFindManyArgs<Model>> {
-    const args = this.findManyArgs;
+  formatCountArgs(): Partial<PaginationArgs> {
+    const args: Partial<PaginationArgs> = this.findManyArgs;
     delete args.page;
     delete args.exceedCount;
     delete args.pageIndex;
@@ -54,11 +54,12 @@ export class Paginate<Model extends PrismaClientModel> {
           : (this.paginationArgs.pageIndex || 0) + 1,
     };
 
-    return (callback) => {
-      this.paginator.paginate(
-        { ...this.findManyArgs, ...this.paginationArgs },
-        callback
-      );
+    return {
+      nextPage: (callback) =>
+        this.paginator.paginate(
+          { ...this.findManyArgs, ...this.paginationArgs },
+          callback
+        ),
     };
   }
 
@@ -82,8 +83,8 @@ export class Paginate<Model extends PrismaClientModel> {
           page - 1 === totalPages
         : false;
     const pagination: Pagination<Model> = {
+      ...this.nextPage(),
       limit: this.paginationArgs.limit,
-      nextPage: this.nextPage(),
       count,
       totalPages,
       hasNextPage,

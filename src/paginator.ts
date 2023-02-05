@@ -159,7 +159,8 @@ export namespace paginator {
   }
 
   export interface Pagination<Model extends PrismaClientModel = any>
-    extends PaginationArgs {
+    extends PaginationArgs,
+      NextPage<Model> {
     /**
      * Total of pages based on pagination arguments
      */
@@ -168,18 +169,6 @@ export namespace paginator {
      * If has result on next page index
      */
     hasNextPage: boolean;
-    /**
-     * Request next page
-     * @example
-     * paginator(prisma)
-     *   .myTable.paginate({}, { page: 1, limit: 10 })
-     *   .then((result) => {
-     *     result.nextPage((error, nextResult) => {
-     *       // result?.nextPage(...)
-     *     });
-     *   });
-     */
-    nextPage: NextPage<Model>;
     /**
      * If has result on last page index
      */
@@ -196,7 +185,18 @@ export namespace paginator {
   }
 
   export interface NextPage<Model extends PrismaClientModel> {
-    (callback: PaginationCallback<Model>): void;
+    /**
+     * Request next page
+     * @example
+     * paginator(prisma)
+     *   .myTable.paginate({}, { page: 1, limit: 10 })
+     *   .then((result) => {
+     *     result.nextPage((error, nextResult) => {
+     *       // result?.nextPage(...)
+     *     });
+     *   });
+     */
+    nextPage(callback: PaginationCallback<Model>): void;
   }
 
   export interface PaginationCallback<Model extends PrismaClientModel> {
@@ -204,19 +204,19 @@ export namespace paginator {
   }
 
   export interface PaginationParams<Model extends PrismaClientModel> {
-    (
+    paginate(
       findManyPaginationArgs: PrismaFindManyArgs<Model> & PaginationArgs,
       callback: PaginationCallback<Model>
     ): void;
-    (
+    paginate(
       findManyPaginationArgs: PrismaFindManyArgs<Model> & PaginationArgs
     ): Promise<PaginationResult<Model>>;
-    (
+    paginate(
       findManyArgs: PrismaFindManyArgs<Model>,
       pagination: PaginationArgs,
       callback: PaginationCallback<Model>
     ): void;
-    (
+    paginate(
       findManyArgs: PrismaFindManyArgs<Model>,
       pagination: PaginationArgs
     ): Promise<PaginationResult<Model>>;
