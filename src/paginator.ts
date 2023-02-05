@@ -137,7 +137,7 @@ export namespace paginator {
      */
     page?: number;
     /**
-     * Paginate like index staring from 0
+     * Paginate like array index staring from 0
      *
      * @see {@link PaginationArgs.page}
      * @default 0
@@ -156,6 +156,10 @@ export namespace paginator {
      * @default false
      */
     exceedCount: boolean;
+    /**
+     * @default false
+     */
+    exceedTotalPages: boolean;
   }
 
   export interface Pagination<Model extends PrismaClientModel = any>
@@ -222,9 +226,19 @@ export namespace paginator {
     ): Promise<PaginationResult<Model>>;
   }
 
-  export class ExceedCount extends Error {
+  export interface PaginationError {
+    pagination: Pagination;
+  }
+
+  export class ExceedCount extends Error implements PaginationError {
     constructor(public pagination: Pagination) {
       super("Pagination options exceed count of rows");
+    }
+  }
+
+  export class ExceedTotalPages extends Error implements PaginationError {
+    constructor(public pagination: Pagination) {
+      super("Pagination options exceed total of pages");
     }
   }
 
