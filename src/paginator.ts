@@ -151,19 +151,35 @@ export namespace paginator {
 
   export interface PaginationOptions {
     /**
-     * Throw error if options is greater than count
      * @see {@link ExceedCount}
      * @default false
      */
     exceedCount: boolean;
     /**
      * @default false
+     * @see {@link ExceedTotalPages}
      */
     exceedTotalPages: boolean;
+    /**
+     * @example
+     * // on database = [ { id: 1 }, { id: 2 }, {...}, { id: 6 } ]
+     * paginator(client).myTable.paginate({ where: {} },
+     *    { limit: 5, page: 1, strictLimit: true })
+     *   .then((result) => {
+     *     // if strictLimit: true
+     *     console.log(result.totalPage) // 1
+     *     console.log(result.hasNextPage) // false
+     *     // else
+     *     console.log(result.totalPage) // 2
+     *     console.log(result.hasNextPage) // true
+     *   })
+     * @default false
+     */
+    strictLimit: boolean;
   }
 
   export interface Pagination<Model extends PrismaClientModel = any>
-    extends PaginationArgs,
+    extends Omit<PaginationArgs, "pageIndex">,
       NextPage<Model> {
     /**
      * Total of pages based on pagination arguments
@@ -184,7 +200,7 @@ export namespace paginator {
   }
 
   export interface PaginationResult<Model extends PrismaClientModel>
-    extends Pagination<Model> {
+    extends Required<Pagination<Model>> {
     result: PrismaFindManyReturn<Model>;
   }
 
@@ -226,17 +242,17 @@ export namespace paginator {
     ): Promise<PaginationResult<Model>>;
   }
 
-  export interface PaginationError {
+  export interface PaginationException {
     pagination: Pagination;
   }
 
-  export class ExceedCount extends Error implements PaginationError {
+  export class ExceedCount extends Error implements PaginationException {
     constructor(public pagination: Pagination) {
       super("Pagination options exceed count of rows");
     }
   }
 
-  export class ExceedTotalPages extends Error implements PaginationError {
+  export class ExceedTotalPages extends Error implements PaginationException {
     constructor(public pagination: Pagination) {
       super("Pagination options exceed total of pages");
     }
