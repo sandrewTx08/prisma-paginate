@@ -1,19 +1,16 @@
 import paginator from "../src";
-import { randomIds, randomArray, testPaginate, client } from "./utils";
+import { randomIds, testPaginate, client } from "./utils";
 
 describe("random array", () => {
-  beforeAll((done) => {
-    client.$connect().then(() => {
-      client.model.createMany({ data: randomIds }).finally(done);
-    });
+  beforeAll(async () => {
+    await client.$connect();
+    await client.model.deleteMany();
+    await client.model.createMany({ data: randomIds });
   });
 
-  afterAll((done) => {
-    client.model
-      .deleteMany({ where: { id: { in: randomArray } } })
-      .finally(() => {
-        client.$disconnect().finally(done);
-      });
+  afterAll(async () => {
+    await client.model.deleteMany();
+    await client.$disconnect();
   });
 
   it("page == 0", (done) => {
@@ -94,13 +91,40 @@ describe("random array", () => {
           expect(result.result).toStrictEqual([]);
           expect(result.count).toBe(randomIds.length);
           expect(result.hasNextPage).toBe(false);
-          expect(result.hasPrevPage).toBe(false);
+          expect(result.hasPrevPage).toBe(true);
           expect(result.limit).toBe(1);
           expect(result.page).toBe(randomIds.length + 2);
           expect(result.totalPages).toBe(randomIds.length);
         });
       })
       .finally(done);
+  });
+
+  it("rounds up total pages correctly on the second to last page", async () => {
+    const results = await testPaginate(
+      client.model,
+      {},
+      { limit: 9, page: 11 }
+    );
+    results.forEach(([error, result]) => {
+      expect(error).toBe(null);
+      expect(result.count).toBe(100);
+      expect(result.totalPages).toBe(12);
+      expect(result.hasNextPage).toBe(true);
+      expect(result.hasPrevPage).toBe(true);
+    });
+  });
+
+  it("rounds up total pages correctly on the last page", async () => {
+    const result = await paginator(client.model).paginate({
+      limit: 9,
+      page: 12,
+    });
+
+    expect(result.count).toBe(100);
+    expect(result.totalPages).toBe(12);
+    expect(result.hasNextPage).toBe(false);
+    expect(result.hasPrevPage).toBe(true);
   });
 });
 
