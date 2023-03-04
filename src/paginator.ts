@@ -160,22 +160,6 @@ export namespace paginator {
      * @see {@link ExceedTotalPages}
      */
     exceedTotalPages: boolean;
-    /**
-     * @example
-     * // on database = [ { id: 1 }, { id: 2 }, {...}, { id: 6 } ]
-     * paginator(client).myTable.paginate({ where: {} },
-     *    { limit: 5, page: 1, strictLimit: true })
-     *   .then((result) => {
-     *     // if strictLimit: true
-     *     console.log(result.totalPage) // 1
-     *     console.log(result.hasNextPage) // false
-     *     // else
-     *     console.log(result.totalPage) // 2
-     *     console.log(result.hasNextPage) // true
-     *   })
-     * @default false
-     */
-    strictLimit: boolean;
   }
 
   export interface Pagination<Model extends PrismaClientModel = any>
