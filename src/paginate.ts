@@ -48,6 +48,7 @@ export class Paginate<Model extends PrismaClientModel> {
     delete args.strictLimit;
     delete args.pageIndex;
     delete args.limit;
+    delete args.include;
     return args;
   }
 
