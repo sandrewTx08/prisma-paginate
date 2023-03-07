@@ -91,7 +91,7 @@ describe("random array", () => {
           expect(result.result).toStrictEqual([]);
           expect(result.count).toBe(randomIds.length);
           expect(result.hasNextPage).toBe(false);
-          expect(result.hasPrevPage).toBe(true);
+          expect(result.hasPrevPage).toBe(false);
           expect(result.limit).toBe(1);
           expect(result.page).toBe(randomIds.length + 2);
           expect(result.totalPages).toBe(randomIds.length);
