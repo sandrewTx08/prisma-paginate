@@ -75,13 +75,8 @@ export class Paginate<Model extends PrismaClientModel> {
     count: number,
     findManyReturn: PrismaFindManyReturn<Model>
   ): Required<PaginationResult<Model>> {
-    const strictLimit = (count / this.paginationArgs.limit).toFixed(1);
-    const totalPages =
-      this.paginationArgs.strictLimit === true
-        ? Number(strictLimit[strictLimit.length - 1]) > 0
-          ? Math.round(Number(strictLimit)) - 1
-          : Math.round(Number(strictLimit))
-        : Math.round(count / this.paginationArgs.limit);
+    const totalPages = Math.ceil(count / this.paginationArgs.limit);
+
     const page =
       typeof this.paginationArgs.page === "number"
         ? this.paginationArgs.page === 0
@@ -91,17 +86,12 @@ export class Paginate<Model extends PrismaClientModel> {
         ? this.paginationArgs.pageIndex + 1
         : 1;
     const hasNextPage = page < totalPages;
-    const hasPrevPage =
-      count > 0 && page > 1
-        ? (page * this.paginationArgs.limit) / count - 1 === 0 ||
-          page - 1 === totalPages
-        : false;
+    const hasPrevPage = count > 0 && page > 1 && page <= totalPages + 1;
     const pagination: Required<Pagination<Model>> = {
       ...this.nextPage(),
       limit: this.paginationArgs.limit,
       exceedCount: this.paginationArgs.exceedCount === true,
       exceedTotalPages: this.paginationArgs.exceedTotalPages === true,
-      strictLimit: this.paginationArgs.strictLimit === true,
       count,
       totalPages,
       hasNextPage,
