@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { PaginationParams } from ".";
+import { PaginateParams } from ".";
 
 export interface PrismaClientModel {
   findMany(args: any): Promise<any>;
@@ -32,11 +32,11 @@ export type PrismaClientPaginate = PrismaClient & PrismaClientModelsPaginate;
 
 export type PrismaClientModelsPaginate = {
   -readonly [K in keyof PrismaClientModels]: PrismaClientModels[K] &
-    PaginationParams<typeof PrismaClient.prototype[K]>;
+    PaginateParams<typeof PrismaClient.prototype[K]>;
 };
 
 export type PrismaClientModelPaginate<Model extends PrismaClientModel> = Model &
-  PaginationParams<Model>;
+  PaginateParams<Model>;
 
 export type PrismaClientMutable = {
   -readonly [K in keyof typeof PrismaClient.prototype]: typeof PrismaClient.prototype[K];

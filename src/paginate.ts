@@ -1,13 +1,7 @@
-import {
-  ExceedCount,
-  ExceedTotalPages,
-  NextPage,
-  Pagination,
-  PaginationArgs,
-  PaginationResult,
-} from ".";
-import { Paginator } from "./paginator";
-import {
+import type { PaginationArgs, NextPage, PaginationResult, Pagination } from ".";
+import { ExceedCount, ExceedTotalPages } from ".";
+import { Paginator } from "./paginatorClass";
+import type {
   PrismaFindManyArgs,
   PrismaFindManyReturn,
   PrismaClientModel,
@@ -17,10 +11,8 @@ export class Paginate<Model extends PrismaClientModel> {
   constructor(
     private findManyArgs: PrismaFindManyArgs<Model>,
     private paginationArgs: PaginationArgs,
-    private paginator: Paginator<Model>
-  ) {
-    this.paginationArgs = { ...this.paginator.options, ...this.paginationArgs };
-  }
+    private readonly paginator: Paginator<Model>
+  ) {}
 
   formatfindManyArgs(): PrismaFindManyArgs<Model> {
     return {
@@ -76,7 +68,6 @@ export class Paginate<Model extends PrismaClientModel> {
     findManyReturn: PrismaFindManyReturn<Model>
   ): Required<PaginationResult<Model>> {
     const totalPages = Math.ceil(count / this.paginationArgs.limit);
-
     const page =
       typeof this.paginationArgs.page === "number"
         ? this.paginationArgs.page === 0
@@ -99,15 +90,9 @@ export class Paginate<Model extends PrismaClientModel> {
       page,
     };
 
-    if (
-      this.paginationArgs.exceedCount === true &&
-      this.paginationArgs.limit * page > count
-    ) {
+    if (pagination.exceedCount && this.paginationArgs.limit * page > count) {
       throw new ExceedCount(pagination);
-    } else if (
-      this.paginationArgs.exceedTotalPages === true &&
-      page > totalPages
-    ) {
+    } else if (pagination.exceedTotalPages && page > totalPages) {
       throw new ExceedTotalPages(pagination);
     } else {
       return { ...pagination, result: findManyReturn };

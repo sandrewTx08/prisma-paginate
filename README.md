@@ -5,7 +5,11 @@
 
 # Install
 
-`npm install prisma-paginate`
+```
+npm i prisma prisma-paginate
+yarn add prisma prisma-paginate
+pnpm add prisma prisma-paginate
+```
 
 # Documentation and usage
 
