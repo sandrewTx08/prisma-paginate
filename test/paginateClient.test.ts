@@ -6,16 +6,22 @@ describe("paginateClient", () => {
   const paginate = paginator(client);
 
   it("paginate spp cb", () => {
-    paginate.model.paginate({}, { page: 1, limit: 10 }, (error, result) => {
-      expect(error).toBe(null);
-      expect(result?.result).toBeTruthy();
-    });
+    paginate.model.paginate(
+      { select: { id: true } },
+      { page: 1, limit: 10 },
+      (error, result) => {
+        expect(error).toBe(null);
+        expect(result?.result).toBeTruthy();
+      }
+    );
   });
 
   it("paginate spp pm", () => {
-    paginate.model.paginate({}, { page: 1, limit: 10 }).then((result) => {
-      expect(result?.result).toBeTruthy();
-    });
+    paginate.model
+      .paginate({ select: { id: true } }, { page: 1, limit: 10 })
+      .then((result) => {
+        expect(result?.result).toBeTruthy();
+      });
   });
 
   it("paginate aip cb", () => {
@@ -76,7 +82,11 @@ describe("paginateClient", () => {
 
   it("paginate mcp pm", () => {
     paginator(new PrismaClient().model)
-      .paginate({ page: 1, limit: 10 })
+      .paginate({
+        page: 1,
+        limit: 10,
+        select: { Model2: { select: { id: true } } },
+      })
       .then((result) => {
         expect(result?.result).toBeTruthy();
       });

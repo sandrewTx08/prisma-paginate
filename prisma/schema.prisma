@@ -12,5 +12,12 @@ datasource db {
 }
 
 model Model {
-  id Int @id @default(autoincrement())
+  id     Int      @id @default(autoincrement())
+  Model2 Model2[]
+}
+
+model Model2 {
+  id      Int    @id @default(autoincrement())
+  Model   Model? @relation(fields: [modelId], references: [id])
+  modelId Int?
 }

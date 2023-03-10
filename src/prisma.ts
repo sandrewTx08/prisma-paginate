@@ -3,7 +3,7 @@ import { PaginateParams } from ".";
 
 export interface PrismaClientModel {
   findMany(args: any): Promise<any>;
-  count(args: any): Promise<number>;
+  count(args: any): Promise<any>;
 }
 
 export type PrismaFindManyReturn<Model extends PrismaClientModel> = Awaited<

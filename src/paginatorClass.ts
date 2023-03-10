@@ -42,10 +42,15 @@ export class Paginator<Model extends PrismaClientModel>
         new Paginator(this.model)
       );
 
-      this.model.count(paginate.formatCountArgs()).then((count) => {
+      this.model.count(paginate.countArgs()).then((count) => {
         this.model
-          .findMany(paginate.formatfindManyArgs())
-          .then((result) => paginate.result(count, result))
+          .findMany(paginate.findManyArgs())
+          .then((result) =>
+            paginate.result(
+              typeof count === "number" ? count : count._all,
+              result
+            )
+          )
           .then(resolve);
       }, reject);
     });

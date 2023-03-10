@@ -180,7 +180,7 @@ export namespace paginator {
         typeof paginateClient[ok]?.findMany === "function" &&
         typeof paginateClient[ok]?.count === "function"
       ) {
-        paginateClient[ok] = paginator(paginateClient[ok]);
+        paginateClient[ok] = paginator(paginateClient[ok]) as unknown as any;
       }
     }
 

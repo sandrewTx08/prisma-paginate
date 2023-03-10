@@ -100,7 +100,7 @@ describe("random array", () => {
       .finally(done);
   });
 
-  it("rounds up total pages correctly on the second to last page", async () => {
+  it("rounds up total pages on the second to last page", async () => {
     const results = await testPaginate(
       client.model,
       {},
@@ -115,7 +115,7 @@ describe("random array", () => {
     });
   });
 
-  it("rounds up total pages correctly on the last page", async () => {
+  it("rounds up total pages on the last page", async () => {
     const result = await paginator(client.model).paginate({
       limit: 9,
       page: 12,

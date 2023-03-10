@@ -8,58 +8,63 @@ import type {
 } from "./prisma";
 
 export class Paginate<Model extends PrismaClientModel> {
-  constructor(
-    private findManyArgs: PrismaFindManyArgs<Model>,
-    private paginationArgs: PaginationArgs,
-    private readonly paginator: Paginator<Model>
-  ) {}
+  private readonly paginate: PrismaFindManyArgs<Model> & PaginationArgs;
 
-  formatfindManyArgs(): PrismaFindManyArgs<Model> {
+  constructor(
+    findManyArgs: PrismaFindManyArgs<Model>,
+    paginationArgs: PaginationArgs,
+    private readonly paginator: Paginator<Model>
+  ) {
+    this.paginate = {
+      ...findManyArgs,
+      ...paginationArgs,
+      ...(findManyArgs.select
+        ? { select: findManyArgs.select }
+        : { include: findManyArgs.include }),
+    };
+  }
+
+  findManyArgs() {
     return {
-      ...this.findManyArgs,
-      take: this.paginationArgs.limit,
+      where: this.paginate.where,
+      orderBy: this.paginate.orderBy,
+      cursor: this.paginate.cursor,
+      distinct: this.paginate.distinct,
+      take: this.paginate.limit,
       skip:
-        this.paginationArgs.limit *
-        (typeof this.paginationArgs.page === "number"
-          ? this.paginationArgs.page > 0
-            ? this.paginationArgs.page - 1
-            : this.paginationArgs.page
-          : typeof this.paginationArgs.pageIndex === "number"
-          ? this.paginationArgs.pageIndex
+        this.paginate.limit *
+        (typeof this.paginate.page === "number"
+          ? this.paginate.page > 0
+            ? this.paginate.page - 1
+            : this.paginate.page
+          : typeof this.paginate.pageIndex === "number"
+          ? this.paginate.pageIndex
           : 0),
     };
   }
 
-  formatCountArgs(): Partial<PrismaFindManyArgs<Model>> {
-    const args = new Object(this.findManyArgs) as Partial<
-      PrismaFindManyArgs<Model>
-    >;
-    delete args.page;
-    delete args.exceedCount;
-    delete args.exceedTotalPages;
-    delete args.strictLimit;
-    delete args.pageIndex;
-    delete args.limit;
-    delete args.include;
-    return args;
+  countArgs() {
+    return {
+      orderBy: this.paginate.orderBy,
+      cursor: this.paginate.cursor,
+      where: this.paginate.where,
+      take: this.paginate.take,
+      skip: this.paginate.skip,
+    };
   }
 
   nextPage(): NextPage<Model> {
-    this.paginationArgs = {
-      ...this.paginationArgs,
-      page: (this.paginationArgs.page || 0) + 1,
+    const paginate = {
+      ...this.paginate,
+      page: (this.paginate.page || 0) + 1,
       pageIndex:
-        typeof this.paginationArgs.page === "number"
+        typeof this.paginate.page === "number"
           ? undefined
-          : (this.paginationArgs.pageIndex || 0) + 1,
+          : (this.paginate.pageIndex || 0) + 1,
     };
 
     return {
-      nextPage: (callback) =>
-        this.paginator.paginate(
-          { ...this.findManyArgs, ...this.paginationArgs },
-          callback
-        ),
+      nextPage: (callback) => this.paginator.paginate(paginate, callback),
     };
   }
 
@@ -67,22 +72,22 @@ export class Paginate<Model extends PrismaClientModel> {
     count: number,
     findManyReturn: PrismaFindManyReturn<Model>
   ): Required<PaginationResult<Model>> {
-    const totalPages = Math.ceil(count / this.paginationArgs.limit);
+    const totalPages = Math.ceil(count / this.paginate.limit);
     const page =
-      typeof this.paginationArgs.page === "number"
-        ? this.paginationArgs.page === 0
+      typeof this.paginate.page === "number"
+        ? this.paginate.page === 0
           ? 1
-          : this.paginationArgs.page
-        : typeof this.paginationArgs.pageIndex === "number"
-        ? this.paginationArgs.pageIndex + 1
+          : this.paginate.page
+        : typeof this.paginate.pageIndex === "number"
+        ? this.paginate.pageIndex + 1
         : 1;
     const hasNextPage = page < totalPages;
     const hasPrevPage = count > 0 && page > 1 && page <= totalPages + 1;
     const pagination: Required<Pagination<Model>> = {
       ...this.nextPage(),
-      limit: this.paginationArgs.limit,
-      exceedCount: this.paginationArgs.exceedCount === true,
-      exceedTotalPages: this.paginationArgs.exceedTotalPages === true,
+      limit: this.paginate.limit,
+      exceedCount: this.paginate.exceedCount === true,
+      exceedTotalPages: this.paginate.exceedTotalPages === true,
       count,
       totalPages,
       hasNextPage,
@@ -90,7 +95,7 @@ export class Paginate<Model extends PrismaClientModel> {
       page,
     };
 
-    if (pagination.exceedCount && this.paginationArgs.limit * page > count) {
+    if (pagination.exceedCount && this.paginate.limit * page > count) {
       throw new ExceedCount(pagination);
     } else if (pagination.exceedTotalPages && page > totalPages) {
       throw new ExceedTotalPages(pagination);
