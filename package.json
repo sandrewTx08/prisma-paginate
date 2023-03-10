@@ -43,7 +43,7 @@
     "prisma": "^4.11.0"
   },
   "peerDependencies": {
-    "@prisma/client": ">=4",
-    "prisma": ">=4"
+    "@prisma/client": ">=4.11.0",
+    "prisma": ">=4.11.0"
   }
 }
