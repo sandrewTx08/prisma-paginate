@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { PaginateParams } from ".";
+import type { PaginateParams } from ".";
 
 export interface PrismaClientModel {
   findMany(args: any): Promise<any>;

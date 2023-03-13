@@ -15,13 +15,7 @@ export class Paginate<Model extends PrismaClientModel> {
     paginationArgs: PaginationArgs,
     private readonly paginator: Paginator<Model>
   ) {
-    this.paginate = {
-      ...findManyArgs,
-      ...paginationArgs,
-      ...(findManyArgs.select
-        ? { select: findManyArgs.select }
-        : { include: findManyArgs.include }),
-    };
+    this.paginate = { ...findManyArgs, ...paginationArgs };
   }
 
   findManyArgs() {
@@ -31,6 +25,8 @@ export class Paginate<Model extends PrismaClientModel> {
       cursor: this.paginate.cursor,
       distinct: this.paginate.distinct,
       take: this.paginate.limit,
+      include: this.paginate.include,
+      select: this.paginate.select,
       skip:
         this.paginate.limit *
         (typeof this.paginate.page === "number"

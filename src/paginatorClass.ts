@@ -1,4 +1,4 @@
-import {
+import type {
   PaginationArgs,
   PaginationOptions,
   PaginationCallback,
@@ -6,7 +6,7 @@ import {
   PaginateParams,
 } from ".";
 import { Paginate } from "./paginate";
-import {
+import type {
   PrismaClientModel,
   PrismaClientModelPaginate,
   PrismaFindManyArgs,
