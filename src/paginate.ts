@@ -1,4 +1,4 @@
-import type { PaginationArgs, NextPage, PaginationResult, Pagination } from ".";
+import type { PaginationArgs, NextPage, ModelPaginationResult } from ".";
 import { ExceedCount, ExceedTotalPages } from ".";
 import { Paginator } from "./paginatorClass";
 import type {
@@ -49,7 +49,7 @@ export class Paginate<Model extends PrismaClientModel> {
     };
   }
 
-  nextPage(): NextPage<Model> {
+  nextPage(): NextPage<ModelPaginationResult<Model>> {
     const paginate = {
       ...this.paginate,
       page: (this.paginate.page || 0) + 1,
@@ -65,9 +65,10 @@ export class Paginate<Model extends PrismaClientModel> {
   }
 
   result(
-    count: number,
+    count: number | { _all: number },
     findManyReturn: PrismaFindManyReturn<Model>
-  ): Required<PaginationResult<Model>> {
+  ): ModelPaginationResult<Model> {
+    count = typeof count === "number" ? count : count._all;
     const totalPages = Math.ceil(count / this.paginate.limit);
     const page =
       typeof this.paginate.page === "number"
@@ -79,11 +80,12 @@ export class Paginate<Model extends PrismaClientModel> {
         : 1;
     const hasNextPage = page < totalPages;
     const hasPrevPage = count > 0 && page > 1 && page <= totalPages + 1;
-    const pagination: Required<Pagination<Model>> = {
+    const pagination: ModelPaginationResult<Model> = {
       ...this.nextPage(),
       limit: this.paginate.limit,
       exceedCount: this.paginate.exceedCount === true,
       exceedTotalPages: this.paginate.exceedTotalPages === true,
+      result: findManyReturn,
       count,
       totalPages,
       hasNextPage,
@@ -91,12 +93,11 @@ export class Paginate<Model extends PrismaClientModel> {
       page,
     };
 
-    if (pagination.exceedCount && this.paginate.limit * page > count) {
+    if (pagination.exceedCount && this.paginate.limit * page > count)
       throw new ExceedCount(pagination);
-    } else if (pagination.exceedTotalPages && page > totalPages) {
+    else if (pagination.exceedTotalPages && page > totalPages)
       throw new ExceedTotalPages(pagination);
-    } else {
-      return { ...pagination, result: findManyReturn };
-    }
+
+    return pagination;
   }
 }

@@ -130,20 +130,22 @@ describe("random array", () => {
 
 describe("nextPage", () => {
   it("callback", () => {
-    paginator(client.model).paginate({}, { page: 1, limit: 10 }).then((r) => {
-      expect(r?.page).toBe(1);
-      r.nextPage((e, r) => {
-        expect(e).toBe(null);
-        expect(r?.page).toBe(2);
-        r?.nextPage((e, r) => {
+    paginator(client.model)
+      .paginate({}, { page: 1, limit: 10 })
+      .then((r) => {
+        expect(r?.page).toBe(1);
+        r.nextPage((e, r) => {
           expect(e).toBe(null);
-          expect(r?.page).toBe(3);
-          r?.nextPage(async (e, r) => {
+          expect(r?.page).toBe(2);
+          r?.nextPage((e, r) => {
             expect(e).toBe(null);
-            expect(r?.page).toBe(4);
+            expect(r?.page).toBe(3);
+            r?.nextPage(async (e, r) => {
+              expect(e).toBe(null);
+              expect(r?.page).toBe(4);
+            });
           });
         });
       });
-    });
   });
 });

@@ -2,7 +2,7 @@ import type {
   PaginationArgs,
   PaginationOptions,
   PaginationCallback,
-  PaginationResult,
+  ModelPaginationResult,
   PaginateParams,
 } from ".";
 import { Paginate } from "./paginate";
@@ -29,31 +29,31 @@ export class Paginator<Model extends PrismaClientModel>
 
   paginate(
     findManyArgs: PrismaFindManyArgs<Model> & PaginationArgs,
-    paginationOrCallback?: PaginationArgs | PaginationCallback<Model>,
-    callback?: PaginationCallback<Model>
-  ): Promise<PaginationResult<Model>> {
-    const result = new Promise<PaginationResult<Model>>((resolve, reject) => {
-      const paginate = new Paginate(
-        findManyArgs,
-        {
-          ...findManyArgs,
-          ...(typeof paginationOrCallback === "object" && paginationOrCallback),
-        },
-        new Paginator(this.model)
-      );
+    paginationOrCallback?:
+      | PaginationArgs
+      | PaginationCallback<ModelPaginationResult<Model>>,
+    callback?: PaginationCallback<ModelPaginationResult<Model>>
+  ): Promise<ModelPaginationResult<Model>> {
+    const result = new Promise<ModelPaginationResult<Model>>(
+      (resolve, reject) => {
+        const paginate = new Paginate(
+          findManyArgs,
+          {
+            ...findManyArgs,
+            ...(typeof paginationOrCallback === "object" &&
+              paginationOrCallback),
+          },
+          new Paginator(this.model)
+        );
 
-      this.model.count(paginate.countArgs()).then((count) => {
-        this.model
-          .findMany(paginate.findManyArgs())
-          .then((result) =>
-            paginate.result(
-              typeof count === "number" ? count : count._all,
-              result
-            )
-          )
-          .then(resolve);
-      }, reject);
-    });
+        this.model.count(paginate.countArgs()).then((count) => {
+          this.model
+            .findMany(paginate.findManyArgs())
+            .then((result) => paginate.result(count, result))
+            .then(resolve);
+        }, reject);
+      }
+    );
 
     result.then(
       (value) => {

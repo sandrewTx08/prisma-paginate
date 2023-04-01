@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaFindManyArgs } from "../src/prisma";
-import paginator, { PaginationArgs, PaginationResult } from "../src";
+import paginator, { PaginationArgs, ModelPaginationResult } from "../src";
 
 export const client = new PrismaClient();
 export type TestModel = typeof client.model;
@@ -56,7 +56,7 @@ export function testPaginate(
   });
 
   return Promise.all([cb_spp, pm_spp, cb_aip, pm_aip]) as Promise<
-    [Error | null, PaginationResult<TestModel>][]
+    [Error | null, ModelPaginationResult<TestModel>][]
   >;
 }
 

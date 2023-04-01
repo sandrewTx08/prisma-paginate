@@ -87,9 +87,9 @@ export namespace paginator {
     exceedTotalPages: boolean;
   }
 
-  export interface Pagination<Model extends PrismaClientModel = any>
-    extends Omit<PaginationArgs, "pageIndex">,
-      NextPage<Model> {
+  export interface Pagination<Result = any>
+    extends Omit<PaginationArgs, "pageIndex"> {
+    result: Result;
     /**
      * Total of pages based on pagination arguments
      */
@@ -108,12 +108,15 @@ export namespace paginator {
     count: number;
   }
 
-  export interface PaginationResult<Model extends PrismaClientModel>
-    extends Required<Pagination<Model>> {
-    result: PrismaFindManyReturn<Model>;
-  }
+  export interface ModelPaginationResult<Model extends PrismaClientModel>
+    extends Required<Pagination<PrismaFindManyReturn<Model>>>,
+      NextPage<ModelPaginationResult<Model>> {}
 
-  export interface NextPage<Model extends PrismaClientModel> {
+  export interface PaginationResult<Result>
+    extends Required<Pagination<Result[]>>,
+      NextPage<Pagination<Result[]>> {}
+
+  export interface NextPage<Result> {
     /**
      * Request next page
      * @example
@@ -125,31 +128,31 @@ export namespace paginator {
      *     });
      *   });
      */
-    nextPage(callback: PaginationCallback<Model>): void;
+    nextPage(callback: PaginationCallback<Result>): void;
   }
 
-  export type PaginationCallback<Model extends PrismaClientModel> = (
+  export type PaginationCallback<Result> = (
     error: Error | null,
-    result?: PaginationResult<Model>
+    result?: Result
   ) => void;
 
   export interface PaginateParams<Model extends PrismaClientModel> {
     paginate(
       findManyPaginationArgs: PrismaFindManyArgs<Model> & PaginationArgs,
-      callback: PaginationCallback<Model>
+      callback: PaginationCallback<ModelPaginationResult<Model>>
     ): void;
     paginate(
       findManyPaginationArgs: PrismaFindManyArgs<Model> & PaginationArgs
-    ): Promise<PaginationResult<Model>>;
+    ): Promise<ModelPaginationResult<Model>>;
     paginate(
       findManyArgs: PrismaFindManyArgs<Model>,
       pagination: PaginationArgs,
-      callback: PaginationCallback<Model>
+      callback: PaginationCallback<ModelPaginationResult<Model>>
     ): void;
     paginate(
       findManyArgs: PrismaFindManyArgs<Model>,
       pagination: PaginationArgs
-    ): Promise<PaginationResult<Model>>;
+    ): Promise<ModelPaginationResult<Model>>;
   }
 
   export interface PaginationException {
