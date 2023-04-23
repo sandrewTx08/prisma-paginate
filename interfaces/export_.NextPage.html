@@ -16,9 +16,9 @@
 <li><a href="../modules/export_.html">export=</a></li>
 <li><a href="export_.NextPage.html">NextPage</a></li></ul>
 <h1>Interface NextPage&lt;Result&gt;</h1></div> 
-<section class="tsd-panel tsd-type-parameters">
+<section class="tsd-panel">
 <h4>Type Parameters</h4>
-<ul class="tsd-type-parameters">
+<ul class="tsd-type-parameter-list">
 <li>
 <h4><span class="tsd-kind-type-parameter">Result</span></h4></li></ul></section> 
 <section class="tsd-panel tsd-hierarchy">
@@ -29,7 +29,7 @@
 <li><a href="export_.ModelPaginationResult.html" class="tsd-signature-type tsd-kind-interface">ModelPaginationResult</a></li>
 <li><a href="export_.PaginationResult.html" class="tsd-signature-type tsd-kind-interface">PaginationResult</a></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/sandrewTx08/prisma-paginate/blob/e8925ef/src/paginator.ts#L119">src/paginator.ts:119</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/sandrewTx08/prisma-paginate/blob/f5c5416/src/paginator.ts#L119">src/paginator.ts:119</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -49,7 +49,7 @@
 <div class="tsd-comment tsd-typography"><p>Request next page</p>
 
 <h3>Example</h3><pre><code class="language-ts"><span class="hl-7">paginator</span><span class="hl-1">(</span><span class="hl-0">prisma</span><span class="hl-1">)</span><br/><span class="hl-1">  .</span><span class="hl-0">myTable</span><span class="hl-1">.</span><span class="hl-7">paginate</span><span class="hl-1">({}, { </span><span class="hl-0">page:</span><span class="hl-1"> </span><span class="hl-8">1</span><span class="hl-1">, </span><span class="hl-0">limit:</span><span class="hl-1"> </span><span class="hl-8">10</span><span class="hl-1"> })</span><br/><span class="hl-1">  .</span><span class="hl-7">then</span><span class="hl-1">((</span><span class="hl-0">result</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-0">result</span><span class="hl-1">.</span><span class="hl-7">nextPage</span><span class="hl-1">((</span><span class="hl-0">error</span><span class="hl-1">, </span><span class="hl-0">nextResult</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">      </span><span class="hl-2">// result?.nextPage(...)</span><br/><span class="hl-1">    });</span><br/><span class="hl-1">  });</span>
-</code></pre>
+</code><button>Copy</button></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -58,7 +58,7 @@
 <h5><span class="tsd-kind-parameter">callback</span>: <a href="../types/export_.PaginationCallback.html" class="tsd-signature-type tsd-kind-type-alias">PaginationCallback</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">Result</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/sandrewTx08/prisma-paginate/blob/e8925ef/src/paginator.ts#L131">src/paginator.ts:131</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/sandrewTx08/prisma-paginate/blob/f5c5416/src/paginator.ts#L131">src/paginator.ts:131</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
