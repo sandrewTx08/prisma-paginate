@@ -1,4 +1,4 @@
-name: Test
+name: CI
 
 on:
   push:
@@ -15,6 +15,7 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x, 16.x, 18.x]
+        prisma-version: [4.9.0, 4.16.0, latest]
 
     services:
       postgres:
@@ -38,8 +39,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
+
       - run: yarn install
+      - run: yarn add prisma@${{ matrix.prisma-version }}
       - run: yarn lint
       - run: yarn build
+      - run: yarn prisma generate
       - run: yarn prisma db push
       - run: yarn test

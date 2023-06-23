@@ -2,7 +2,7 @@ name: semantic-release
 
 on:
   workflow_run:
-    workflows: ["Test"]
+    workflows: ["CI"]
     types:
       - completed
     branches:
@@ -18,7 +18,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: "lts/*"
+          node-version: 16
 
       - run: yarn install
       - run: yarn build

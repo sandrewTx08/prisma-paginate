@@ -2,7 +2,7 @@ name: Documentation release
 
 on:
   workflow_run:
-    workflows: ["Test"]
+    workflows: ["CI"]
     types:
       - completed
 
@@ -17,6 +17,7 @@ jobs:
         with:
           node-version: 16
           cache: "yarn"
+
       - run: yarn install
       - run: yarn docs
 
