@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [16.x, 18.x, lts/*]
         prisma-version: [4.9.0, 4.16.0, latest]
 
     services:
