@@ -2,18 +2,24 @@ import { Prisma } from "@prisma/client";
 import type { PaginationArgs } from "./pagination";
 import { PaginationResult } from "./result";
 
-export interface PrismaPaginateExtension {
+interface PrismaPaginateExtension {
   name: "prisma-paginate";
   model: {
     $allModels: {
       paginate<Model, Args>(
         this: Model,
-        args: Prisma.Exact<Args, Prisma.Args<Model, "findMany">> &
+        args: Prisma.Exact<
+          Args,
+          Omit<Prisma.Args<Model, "findMany">, "skip" | "take">
+        > &
           PaginationArgs
       ): Promise<PaginationResult<Prisma.Result<Model, Args, "findMany">>>;
       paginate<Model, Args>(
         this: Model,
-        args: Prisma.Exact<Args, Prisma.Args<Model, "findMany">>,
+        args: Prisma.Exact<
+          Args,
+          Omit<Prisma.Args<Model, "findMany">, "skip" | "take">
+        >,
         pagination: PaginationArgs
       ): Promise<PaginationResult<Prisma.Result<Model, Args, "findMany">>>;
     };
@@ -26,9 +32,9 @@ export const extension = Prisma.getExtensionContext<PrismaPaginateExtension>({
     $allModels: {
       async paginate<Model, Args>(
         this: Model,
-        args: Omit<
-          Prisma.Exact<Args, Prisma.Args<Model, "findMany">>,
-          "skip" | "take"
+        args: Prisma.Exact<
+          Args,
+          Omit<Prisma.Args<Model, "findMany">, "skip" | "take">
         > &
           PaginationArgs,
         pagination?: PaginationArgs
@@ -36,7 +42,7 @@ export const extension = Prisma.getExtensionContext<PrismaPaginateExtension>({
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const _model: any = this;
         const _args: { [x: string]: any } & PaginationArgs = {
-          ...args,
+          ...(args as any),
           ...pagination,
         };
 
@@ -49,13 +55,13 @@ export const extension = Prisma.getExtensionContext<PrismaPaginateExtension>({
         });
 
         const result = await _model.findMany({
-          where: _args.where,
-          orderBy: _args.orderBy,
-          cursor: _args.cursor,
           distinct: _args.distinct,
-          take: _args.limit,
+          orderBy: _args.orderBy,
           include: _args.include,
+          cursor: _args.cursor,
           select: _args.select,
+          where: _args.where,
+          take: _args.limit,
           skip:
             _args.limit *
             (typeof _args.page === "number"

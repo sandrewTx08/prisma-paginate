@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { extension } from "../src";
+import { ExceedCount, ExceedTotalPages, extension } from "../src";
 import { randomIds } from "./utils";
 
 describe("extension", () => {
@@ -15,6 +15,26 @@ describe("extension", () => {
   afterAll(async () => {
     await prisma.model.deleteMany();
     await prisma.$disconnect();
+  });
+
+  it("ExceedCount", () => {
+    expect(
+      xprisma.model.paginate({
+        limit: randomIds.length + 1,
+        page: 1,
+        exceedCount: true,
+      })
+    ).rejects.toThrow(ExceedCount);
+  });
+
+  it("ExceedTotalPages", () => {
+    expect(
+      xprisma.model.paginate({
+        limit: 1,
+        page: randomIds.length + 1,
+        exceedTotalPages: true,
+      })
+    ).rejects.toThrow(ExceedTotalPages);
   });
 
   it("page == 0", (done) => {

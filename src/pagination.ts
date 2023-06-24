@@ -57,18 +57,18 @@ export interface Pagination extends Omit<PaginationArgs, "pageIndex"> {
 
 export type NextPage<Result> = () => Promise<IPaginationResult<Result>>;
 
-export interface PaginationException {
-  paginationResult: IPaginationResult;
+export abstract class PaginationException extends Error {
+  public readonly paginationResult?: IPaginationResult;
 }
 
-export class ExceedCount extends Error implements PaginationException {
-  constructor(public paginationResult: IPaginationResult) {
+export class ExceedCount extends PaginationException {
+  public constructor(public readonly paginationResult: IPaginationResult) {
     super("Pagination exceed count of rows");
   }
 }
 
-export class ExceedTotalPages extends Error implements PaginationException {
-  constructor(public paginationResult: IPaginationResult) {
+export class ExceedTotalPages extends PaginationException {
+  public constructor(public readonly paginationResult: IPaginationResult) {
     super("Pagination exceed total of pages");
   }
 }
