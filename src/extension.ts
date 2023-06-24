@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import type { PaginationArgs } from "./pagination";
 import { PaginationResult } from "./result";
+import type { IPaginationResult } from "./result";
 
 interface PrismaPaginateExtension {
   name: "prisma-paginate";
@@ -13,7 +14,7 @@ interface PrismaPaginateExtension {
           Omit<Prisma.Args<Model, "findMany">, "skip" | "take">
         > &
           PaginationArgs
-      ): Promise<PaginationResult<Prisma.Result<Model, Args, "findMany">>>;
+      ): Promise<IPaginationResult<Prisma.Result<Model, Args, "findMany">>>;
       paginate<Model, Args>(
         this: Model,
         args: Prisma.Exact<
@@ -21,7 +22,7 @@ interface PrismaPaginateExtension {
           Omit<Prisma.Args<Model, "findMany">, "skip" | "take">
         >,
         pagination: PaginationArgs
-      ): Promise<PaginationResult<Prisma.Result<Model, Args, "findMany">>>;
+      ): Promise<IPaginationResult<Prisma.Result<Model, Args, "findMany">>>;
     };
   };
 }
@@ -38,20 +39,34 @@ export const extension = Prisma.getExtensionContext<PrismaPaginateExtension>({
         > &
           PaginationArgs,
         pagination?: PaginationArgs
-      ): Promise<PaginationResult<Prisma.Result<Model, Args, "findMany">>> {
+      ): Promise<IPaginationResult<Prisma.Result<Model, Args, "findMany">>> {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const _model: any = this;
-        const _args: { [x: string]: any } & PaginationArgs = {
+        const _args: { [args: string]: any } & PaginationArgs &
+          IPaginationResult<Prisma.Result<Model, Args, "findMany">> = {
           ...(args as any),
           ...pagination,
         };
 
         const count = await _model.count({
-          orderBy: _args.orderBy,
+          distinct: _args.distinct,
           cursor: _args.cursor,
           where: _args.where,
-          take: _args.take,
-          skip: _args.skip,
+        });
+
+        _args.count = PaginationResult.extractCount(count);
+
+        PaginationResult.prototype.validateExceedCount.apply({
+          exceedCount: _args.exceedCount,
+          count: _args.count,
+          limit: _args.limit,
+          page: _args.page,
+        });
+
+        PaginationResult.prototype.validateExceedTotalPages.apply({
+          exceedTotalPages: _args.exceedTotalPages,
+          totalPages: _args.totalPages,
+          page: _args.page,
         });
 
         const result = await _model.findMany({
@@ -74,27 +89,13 @@ export const extension = Prisma.getExtensionContext<PrismaPaginateExtension>({
         });
 
         return new PaginationResult<Prisma.Result<Model, Args, "findMany">>(
-          typeof count === "number" ? count : count._all,
-          typeof _args.page === "number"
-            ? _args.page === 0
-              ? 1
-              : _args.page
-            : typeof _args.pageIndex === "number"
-            ? _args.pageIndex + 1
-            : 1,
+          _args.count,
+          { page: _args.page, pageIndex: _args.pageIndex },
           _args.limit,
-          _args.exceedCount === true,
-          _args.exceedTotalPages === true,
+          _args.exceedCount,
+          _args.exceedTotalPages,
           result,
-          () =>
-            _model.paginate({
-              ..._args,
-              page: (_args.page || 0) + 1,
-              pageIndex:
-                typeof _args.page === "number"
-                  ? undefined
-                  : (_args.pageIndex || 0) + 1,
-            })
+          () => _model.paginate(PaginationResult.nextPageArgs(_args))
         );
       },
     },

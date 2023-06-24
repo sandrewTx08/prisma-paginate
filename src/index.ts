@@ -7,6 +7,6 @@ export {
   PaginationException,
   PaginationOptions,
 } from "./pagination";
-export { IPaginationResult, PaginationResult } from "./result";
+export { IPaginationResult as PaginationResult } from "./result";
 export { extension } from "./extension";
 export { extension as default } from "./extension";
