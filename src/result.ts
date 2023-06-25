@@ -8,14 +8,14 @@ export interface IPaginationResult<Result = unknown>
 }
 
 export class PaginationResult<Result> implements IPaginationResult<Result> {
-  public readonly page: number;
+  public readonly page: number = 1;
 
   public constructor(
     public readonly count: number,
     page: Partial<Pick<PaginationArgs, "page" | "pageIndex">>,
     public readonly limit: number,
-    public readonly exceedCount: boolean,
-    public readonly exceedTotalPages: boolean,
+    public readonly exceedCount: boolean = false,
+    public readonly exceedTotalPages: boolean = false,
     public readonly result: Result,
     public readonly nextPage: NextPage<Result>
   ) {
@@ -72,5 +72,21 @@ export class PaginationResult<Result> implements IPaginationResult<Result> {
       pageIndex:
         typeof args.page === "number" ? undefined : (args.pageIndex || 0) + 1,
     };
+  }
+
+  public static pageOffset(
+    limit: number,
+    { page, pageIndex }: Partial<Pick<PaginationArgs, "page" | "pageIndex">>
+  ): number {
+    return (
+      limit *
+      (typeof page === "number"
+        ? page > 0
+          ? page - 1
+          : page
+        : typeof pageIndex === "number"
+        ? pageIndex
+        : 0)
+    );
   }
 }

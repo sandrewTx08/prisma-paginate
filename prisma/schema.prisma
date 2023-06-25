@@ -9,7 +9,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgres://postgres:postgres@localhost:5432/test"
+  url      = env("DATABASE_URL")
 }
 
 model Model {
@@ -21,4 +21,9 @@ model Model2 {
   id      Int    @id @default(autoincrement())
   Model   Model? @relation(fields: [modelId], references: [id])
   modelId Int?
+}
+
+model Model3 {
+  id   Int    @id @default(autoincrement())
+  name String
 }

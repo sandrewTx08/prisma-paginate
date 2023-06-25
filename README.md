@@ -10,7 +10,7 @@ npm i prisma@>=4.9.0 @prisma/client@>=4.9.0 prisma-paginate@latest
 yarn add prisma@>=4.9.0 @prisma/client@>=4.9.0 prisma-paginate@latest
 ```
 
-⚠️ If you are using the **Prisma** version equal or greater than **>=4.9.0** use `clientExtensions` preview flag on schema file
+⚠️ If you are using the **Prisma** version equal or greater than **>=4.9.0** add `clientExtensions` preview flag on schema file
 
 **`prisma/schema.prisma`**:
 
@@ -20,6 +20,8 @@ generator client {
   previewFeatures = ["clientExtensions"]
 }
 ```
+
+⚠️ These steps no longer required for versions starting from **4.16.0**
 
 # Documentation and usage
 
@@ -52,7 +54,7 @@ xprisma.model2
   });
 
 xprisma.table1
-  .paginate({ select: { id: true } }, { limit: 10, page: 1 })
+  .paginate({ where: { id: 5 } }, { limit: 10, page: 1 })
   .then((result) => {
     console.log(result);
   });
@@ -81,17 +83,15 @@ xprisma.model1
 - `findManyArgs` {Object}
 - `paginationArgs` {Pagination}
 
----
-
 - `findManyPaginationArgs` {Object&Pagination}
 
 ## Return
 
 - `result` {Array}
-- `totalPages` {Number} - Total of pages based on pagination arguments
-- `hasNextPage` {Boolean} - If has result on next page index
-- `hasPrevPage` {Boolean} - If has result on last page index
-- `count` {Number} - Count how many rows on has on table/model with query filter
-- `nextPage` {Promise} - Request next page
+- `totalPages` {Number}
+- `hasNextPage` {Boolean}
+- `hasPrevPage` {Boolean}
+- `count` {Number}
+- `nextPage` {Promise}
 - `exceedCount` {Boolean}
 - `exceedTotalPages` {Boolean}

@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { ExceedCount, ExceedTotalPages, extension } from "../src";
-import { randomIds } from "./utils";
+import { createRandomArray, randomIds } from "./utils";
+import { PaginationResult } from "../src/result";
 
 describe("extension", () => {
   const prisma = new PrismaClient();
@@ -17,31 +18,74 @@ describe("extension", () => {
     await prisma.$disconnect();
   });
 
-  it("ExceedCount", () => {
-    expect(
-      xprisma.model.paginate({
-        limit: randomIds.length + 1,
-        page: 1,
-        exceedCount: true,
-      })
-    ).rejects.toThrow(ExceedCount);
+  it("ExceedCount", (done) => {
+    Promise.all([
+      expect(
+        xprisma.model
+          .paginate({
+            limit: randomIds.length + 1,
+            page: 1,
+            exceedCount: true,
+          })
+          .then((result) => {
+            expect(result.exceedCount).toBe(true);
+            return result;
+          })
+      ).rejects.toThrow(ExceedCount),
+
+      expect(
+        xprisma.model
+          .paginate({
+            limit: randomIds.length - 2,
+            page: 1,
+            exceedCount: true,
+          })
+          .then((result) => {
+            expect(result.exceedCount).toBe(true);
+            expect(result.exceedTotalPages).toBe(false);
+            return result;
+          })
+      ).resolves.toBeTruthy(),
+    ]).finally(done);
   });
 
-  it("ExceedTotalPages", () => {
-    expect(
-      xprisma.model.paginate({
-        limit: 1,
-        page: randomIds.length + 1,
-        exceedTotalPages: true,
-      })
-    ).rejects.toThrow(ExceedTotalPages);
+  it("ExceedTotalPages", (done) => {
+    Promise.all([
+      expect(
+        xprisma.model
+          .paginate({
+            limit: 1,
+            page: randomIds.length + 1,
+            exceedTotalPages: true,
+          })
+          .then((result) => {
+            expect(result.exceedCount).toBe(true);
+            expect(result.exceedTotalPages).toBe(false);
+            return result;
+          })
+      ).rejects.toThrow(ExceedTotalPages),
+
+      expect(
+        xprisma.model
+          .paginate({
+            limit: 1,
+            page: randomIds.length - 2,
+            exceedTotalPages: true,
+          })
+          .then((result) => {
+            expect(result.exceedCount).toBe(false);
+            expect(result.exceedTotalPages).toBe(true);
+            return result;
+          })
+      ).resolves.toBeTruthy(),
+    ]).finally(done);
   });
 
   it("page == 0", (done) => {
     xprisma.model
       .paginate({ limit: 1, page: 0 })
       .then((result) => {
-        expect(result.result).toStrictEqual([randomIds[0]]);
+        expect(result.result).toStrictEqual([randomIds.at(0)]);
         expect(result.count).toBe(randomIds.length);
         expect(result.hasNextPage).toBe(true);
         expect(result.hasPrevPage).toBe(false);
@@ -56,7 +100,7 @@ describe("extension", () => {
     xprisma.model
       .paginate({}, { limit: 1, page: 1 })
       .then((result) => {
-        expect(result.result).toStrictEqual([randomIds[0]]);
+        expect(result.result).toStrictEqual([randomIds.at(0)]);
         expect(result.count).toBe(randomIds.length);
         expect(result.hasNextPage).toBe(true);
         expect(result.hasPrevPage).toBe(false);
@@ -71,7 +115,7 @@ describe("extension", () => {
     xprisma.model
       .paginate({ limit: 1, page: randomIds.length })
       .then((result) => {
-        expect(result.result).toStrictEqual([randomIds[randomIds.length - 1]]);
+        expect(result.result).toStrictEqual([randomIds.at(-1)]);
         expect(result.count).toBe(randomIds.length);
         expect(result.hasNextPage).toBe(false);
         expect(result.hasPrevPage).toBe(true);
@@ -110,5 +154,44 @@ describe("extension", () => {
         expect(result.totalPages).toBe(randomIds.length);
       })
       .finally(done);
+  });
+
+  it("pageOffset", async () => {
+    const random = createRandomArray().map((randomId) => ({
+      id: randomId,
+      name: randomId.toString(),
+    }));
+
+    const limit = 10;
+    const page = 5;
+
+    await prisma.model3.createMany({ data: random });
+
+    const [{ count }] = await prisma.$queryRawUnsafe<[{ count: bigint }]>(
+      'SELECT COUNT(*) FROM "Model3";'
+    );
+
+    const data = await prisma.$queryRawUnsafe<unknown[]>(
+      'SELECT name FROM "Model3" LIMIT $1 OFFSET $2;',
+      limit,
+      PaginationResult.pageOffset(limit, { page })
+    );
+
+    const result = new PaginationResult(
+      Number(count),
+      { page },
+      limit,
+      false,
+      false,
+      data,
+      Object()
+    );
+
+    expect(result.result.at(0)).toStrictEqual({ name: "40" });
+    expect(result.result.at(-1)).toStrictEqual({ name: "49" });
+    expect(result.page).toBe(page);
+    expect(result.totalPages).toBe(10);
+
+    await prisma.model3.deleteMany();
   });
 });
