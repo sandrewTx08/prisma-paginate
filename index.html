@@ -37,12 +37,12 @@
 <a id="md:paginating-100-rows" class="tsd-anchor"></a><h2><a href="#md:paginating-100-rows">Paginating 100 rows</a></h2><pre><code class="language-js"><span class="hl-3">// on database = [ { id: 1 }, { id: 2 }, {...}, { id: 100 } ]</span><br/><span class="hl-2">xprisma</span><span class="hl-0">.</span><span class="hl-2">model1</span><br/><span class="hl-0">  .</span><span class="hl-7">paginate</span><span class="hl-0">(</span><br/><span class="hl-0">    {</span><br/><span class="hl-0">      </span><span class="hl-2">where:</span><span class="hl-0"> {</span><br/><span class="hl-0">        </span><span class="hl-3">// query stuff...</span><br/><span class="hl-0">      },</span><br/><span class="hl-0">    },</span><br/><span class="hl-0">    { </span><span class="hl-2">page:</span><span class="hl-0"> </span><span class="hl-8">1</span><span class="hl-0">, </span><span class="hl-2">limit:</span><span class="hl-0"> </span><span class="hl-8">50</span><span class="hl-0"> }</span><br/><span class="hl-0">  )</span><br/><span class="hl-0">  .</span><span class="hl-7">then</span><span class="hl-0">((</span><span class="hl-2">result</span><span class="hl-0">) </span><span class="hl-5">=&gt;</span><span class="hl-0"> {</span><br/><span class="hl-0">    </span><span class="hl-2">console</span><span class="hl-0">.</span><span class="hl-7">log</span><span class="hl-0">(</span><span class="hl-2">result</span><span class="hl-0">.</span><span class="hl-2">result</span><span class="hl-0">); </span><span class="hl-3">// [ {...}, { id: 48 }, { id: 49 }, { id: 50 } ]</span><br/><span class="hl-0">  });</span>
 </code><button>Copy</button></pre>
 <a id="md:parameters" class="tsd-anchor"></a><h2><a href="#md:parameters">Parameters</a></h2><ul>
-<li><p><code>findManyArgs</code> {Object}</p>
-</li>
-<li><p><code>paginationArgs</code> {Pagination}</p>
-</li>
-<li><p><code>findManyPaginationArgs</code> {Object&amp;Pagination}</p>
-</li>
+<li><code>findManyArgs</code> {Object}</li>
+<li><code>paginationArgs</code> {Pagination}</li>
+</ul>
+<hr>
+<ul>
+<li><code>findManyPaginationArgs</code> {Object&amp;Pagination}</li>
 </ul>
 <a id="md:return" class="tsd-anchor"></a><h2><a href="#md:return">Return</a></h2><ul>
 <li><code>result</code> {Array}</li>
@@ -50,7 +50,7 @@
 <li><code>hasNextPage</code> {Boolean}</li>
 <li><code>hasPrevPage</code> {Boolean}</li>
 <li><code>count</code> {Number}</li>
-<li><code>nextPage</code> {Promise}</li>
+<li><code>nextPage</code> {() =&gt; Promise}</li>
 <li><code>exceedCount</code> {Boolean}</li>
 <li><code>exceedTotalPages</code> {Boolean}</li>
 </ul>
