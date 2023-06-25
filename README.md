@@ -83,6 +83,8 @@ xprisma.model1
 - `findManyArgs` {Object}
 - `paginationArgs` {Pagination}
 
+---
+
 - `findManyPaginationArgs` {Object&Pagination}
 
 ## Return
@@ -92,6 +94,6 @@ xprisma.model1
 - `hasNextPage` {Boolean}
 - `hasPrevPage` {Boolean}
 - `count` {Number}
-- `nextPage` {Promise}
+- `nextPage` {() => Promise}
 - `exceedCount` {Boolean}
 - `exceedTotalPages` {Boolean}

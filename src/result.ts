@@ -1,6 +1,8 @@
 import { ExceedCount, ExceedTotalPages } from "./pagination";
 import type { NextPage, Pagination, PaginationArgs } from "./pagination";
 
+type PageArgs = Partial<Pick<PaginationArgs, "page" | "pageIndex">>;
+
 export interface IPaginationResult<Result = unknown>
   extends Required<Pagination> {
   result: Result;
@@ -12,14 +14,14 @@ export class PaginationResult<Result> implements IPaginationResult<Result> {
 
   public constructor(
     public readonly count: number,
-    page: Partial<Pick<PaginationArgs, "page" | "pageIndex">>,
+    page: PageArgs,
     public readonly limit: number,
     public readonly exceedCount: boolean = false,
     public readonly exceedTotalPages: boolean = false,
     public readonly result: Result,
     public readonly nextPage: NextPage<Result>
   ) {
-    this.page = this.pageInit(page);
+    this.page = PaginationResult.pageInit(page);
     this.validateExceedTotalPages();
     this.validateExceedCount();
   }
@@ -36,10 +38,7 @@ export class PaginationResult<Result> implements IPaginationResult<Result> {
     return Math.ceil(this.count / this.limit);
   }
 
-  private pageInit({
-    page,
-    pageIndex,
-  }: Partial<Pick<PaginationArgs, "page" | "pageIndex">>): number {
+  public static pageInit({ page, pageIndex }: PageArgs): number {
     return typeof page === "number"
       ? page === 0
         ? 1
@@ -76,7 +75,7 @@ export class PaginationResult<Result> implements IPaginationResult<Result> {
 
   public static pageOffset(
     limit: number,
-    { page, pageIndex }: Partial<Pick<PaginationArgs, "page" | "pageIndex">>
+    { page, pageIndex }: PageArgs
   ): number {
     return (
       limit *

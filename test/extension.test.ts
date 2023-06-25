@@ -194,4 +194,31 @@ describe("extension", () => {
 
     await prisma.model3.deleteMany();
   });
+
+  it("nextPage", (done) => {
+    xprisma.model
+      .paginate({}, { limit: randomIds.length / 2 })
+      .then((result) => {
+        expect(result.result.at(0)).toStrictEqual({ id: 0 });
+        expect(result.count).toBe(randomIds.length);
+        expect(result.hasNextPage).toBe(true);
+        expect(result.hasPrevPage).toBe(false);
+        expect(result.limit).toBe(randomIds.length / 2);
+        expect(result.page).toBe(1);
+        expect(result.totalPages).toBe(2);
+
+        result
+          .nextPage()
+          .then((result) => {
+            expect(result.result.at(0)).toStrictEqual({ id: 50 });
+            expect(result.count).toBe(randomIds.length);
+            expect(result.hasNextPage).toBe(false);
+            expect(result.hasPrevPage).toBe(true);
+            expect(result.limit).toBe(randomIds.length / 2);
+            expect(result.page).toBe(2);
+            expect(result.totalPages).toBe(2);
+          })
+          .finally(done);
+      });
+  });
 });
