@@ -11,7 +11,6 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   rules: {
     "no-console": 2,
-    "@typescript-eslint/no-namespace": 0,
     "@typescript-eslint/no-explicit-any": 0,
   },
 };

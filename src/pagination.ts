@@ -1,4 +1,4 @@
-import type { IPaginationResult } from "./result";
+import { ExceedCount, ExceedTotalPages } from "./exceptions";
 
 export interface PaginationArgs extends Partial<PaginationOptions> {
   /**
@@ -36,7 +36,8 @@ export interface PaginationOptions {
   exceedTotalPages: boolean;
 }
 
-export interface Pagination extends Omit<PaginationArgs, "pageIndex"> {
+export interface IPagination
+  extends Required<Omit<PaginationArgs, "pageIndex">> {
   /**
    * Total of pages based on pagination arguments
    */
@@ -55,20 +56,71 @@ export interface Pagination extends Omit<PaginationArgs, "pageIndex"> {
   count: number;
 }
 
-export type NextPage<Result> = () => Promise<IPaginationResult<Result>>;
+export type PaginateArgs = Partial<Pick<PaginationArgs, "page" | "pageIndex">>;
 
-export abstract class PaginationException extends Error {
-  public readonly paginationResult?: IPaginationResult;
-}
-
-export class ExceedCount extends PaginationException {
-  public constructor(public readonly paginationResult: IPaginationResult) {
-    super("Pagination exceed count of rows");
+export class Pagination implements IPagination {
+  public constructor(
+    public readonly count: number,
+    public readonly page: number = 1,
+    public readonly limit: number,
+    public readonly exceedCount: boolean = false,
+    public readonly exceedTotalPages: boolean = false
+  ) {
+    this.validateExceedTotalPages();
+    this.validateExceedCount();
   }
-}
 
-export class ExceedTotalPages extends PaginationException {
-  public constructor(public readonly paginationResult: IPaginationResult) {
-    super("Pagination exceed total of pages");
+  public get hasNextPage(): boolean {
+    return this.page < this.totalPages;
+  }
+
+  public get hasPrevPage(): boolean {
+    return this.count > 0 && this.page > 1 && this.page <= this.totalPages + 1;
+  }
+
+  public get totalPages(): number {
+    return Math.ceil(this.count / this.limit);
+  }
+
+  private validateExceedTotalPages(): void {
+    if (this.exceedTotalPages && this.page > this.totalPages)
+      throw new ExceedTotalPages(this);
+  }
+
+  private validateExceedCount(): void {
+    if (this.exceedCount && this.limit * this.page > this.count)
+      throw new ExceedCount(this);
+  }
+
+  public static extractCount(count: any): number {
+    return typeof count === "number"
+      ? count
+      : count?._all || count?._count || NaN;
+  }
+
+  public static offset(
+    limit: number,
+    { page, pageIndex }: PaginateArgs
+  ): number {
+    return (
+      limit *
+      (typeof page === "number"
+        ? page > 0
+          ? page - 1
+          : page
+        : typeof pageIndex === "number"
+        ? pageIndex
+        : 0)
+    );
+  }
+
+  public static initialPage({ page, pageIndex }: PaginateArgs): number {
+    return typeof page === "number"
+      ? page === 0
+        ? 1
+        : page
+      : typeof pageIndex === "number"
+      ? pageIndex + 1
+      : 1;
   }
 }

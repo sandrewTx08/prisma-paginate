@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { ExceedCount, ExceedTotalPages, extension } from "../src";
+import { ExceedCount, ExceedTotalPages, Pagination, extension } from "../src";
 import { createRandomArray, randomIds } from "./utils";
 import { PaginationResult } from "../src/result";
 
@@ -29,6 +29,7 @@ describe("extension", () => {
           })
           .then((result) => {
             expect(result.exceedCount).toBe(true);
+            expect(result.totalPages).toBe(false);
             return result;
           })
       ).rejects.toThrow(ExceedCount),
@@ -174,17 +175,19 @@ describe("extension", () => {
     const data = await prisma.$queryRawUnsafe<unknown[]>(
       'SELECT name FROM "Model3" LIMIT $1 OFFSET $2;',
       limit,
-      PaginationResult.pageOffset(limit, { page })
+      Pagination.offset(limit, { page })
     );
 
     const result = new PaginationResult(
-      Number(count),
-      { page },
-      limit,
-      false,
-      false,
+      new Pagination(
+        Number(count),
+        Pagination.initialPage({ page }),
+        limit,
+        false,
+        false
+      ),
       data,
-      Object()
+      prisma.model3
     );
 
     expect(result.result.at(0)).toStrictEqual({ name: "40" });
