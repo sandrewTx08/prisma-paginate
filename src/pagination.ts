@@ -61,40 +61,40 @@ export type PageArgs =
   | number;
 
 export class Pagination implements IPagination {
-  public constructor(
+  constructor(
     public limit: number = NaN,
     public page: number = 1,
     public count: number = NaN,
-    public readonly exceedCount: boolean = false,
-    public readonly exceedTotalPages: boolean = false
+    readonly exceedCount: boolean = false,
+    readonly exceedTotalPages: boolean = false
   ) {
-    this.validateExceedTotalPages();
-    this.validateExceedCount();
+    this.#validateExceedTotalPages();
+    this.#validateExceedCount();
   }
 
-  public get hasNextPage(): boolean {
+  get hasNextPage(): boolean {
     return this.page < this.totalPages;
   }
 
-  public get hasPrevPage(): boolean {
+  get hasPrevPage(): boolean {
     return this.count > 0 && this.page > 1 && this.page <= this.totalPages + 1;
   }
 
-  public get totalPages(): number {
+  get totalPages(): number {
     return Math.ceil(this.count / this.limit);
   }
 
-  private validateExceedTotalPages(): void {
+  #validateExceedTotalPages(): void {
     if (this.exceedTotalPages && this.page > this.totalPages)
       throw new ExceedTotalPages(this);
   }
 
-  private validateExceedCount(): void {
+  #validateExceedCount(): void {
     if (this.exceedCount && this.limit * this.page > this.count)
       throw new ExceedCount(this);
   }
 
-  public static extractCount(count: any): number {
+  static extractCount(count: any): number {
     return typeof count === "number"
       ? count
       : Array.isArray(count)
@@ -102,23 +102,23 @@ export class Pagination implements IPagination {
       : count?._all || count?._count || NaN;
   }
 
-  public static offsetPage(page: PageArgs): number {
+  static #offsetPage(page: PageArgs): number {
     return typeof page === "number"
       ? page > 0
         ? page - 1
         : page
       : typeof page.page === "number"
-      ? Pagination.offsetPage(page.page)
+      ? Pagination.#offsetPage(page.page)
       : typeof page.pageIndex === "number"
       ? page.pageIndex
       : 0;
   }
 
-  public static offset(limit: number, page: PageArgs): number {
-    return limit * Pagination.offsetPage(page);
+  static offset(limit: number, page: PageArgs): number {
+    return limit * Pagination.#offsetPage(page);
   }
 
-  public static initialPage(page: PageArgs): number {
+  static initialPage(page: PageArgs): number {
     return typeof page === "number"
       ? page === 0
         ? 1

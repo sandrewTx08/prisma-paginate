@@ -182,6 +182,7 @@ describe("extension", () => {
     );
 
     const result = new PaginationResult(
+      prisma.model3,
       limit,
       page,
       Number(count),
@@ -189,11 +190,8 @@ describe("extension", () => {
       false
     );
 
-    result.result = data;
-    result.model = prisma.model3;
-
-    expect(result.result.at(0)).toStrictEqual({ name: "40" });
-    expect(result.result.at(-1)).toStrictEqual({ name: "49" });
+    expect(data.at(0)).toStrictEqual({ name: "40" });
+    expect(data.at(-1)).toStrictEqual({ name: "49" });
     expect(result.page).toBe(page);
     expect(result.totalPages).toBe(10);
 

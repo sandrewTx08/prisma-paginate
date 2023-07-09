@@ -4,16 +4,16 @@ import type { IPaginationResult } from "./result";
 import { Pagination } from "./pagination";
 import type { PaginationArgs } from "./pagination";
 
-type PaginateArgs<Model, Args> = Prisma.Exact<
+export type PaginateArgs<Model, Args> = Prisma.Exact<
   Args,
   Omit<Prisma.Args<Model, "findMany">, "skip" | "take">
 >;
 
-type PaginateResult<Model, Args> = Promise<
+export type PaginateResult<Model, Args> = Promise<
   IPaginationResult<Prisma.Result<Model, Args, "findMany">>
 >;
 
-interface PrismaPaginateExtension {
+export interface PrismaPaginateExtension {
   name: "prisma-paginate";
   model: {
     $allModels: {
@@ -57,6 +57,7 @@ export const extension: PrismaPaginateExtension =
           const pagination = new PaginationResult<
             Prisma.Result<Model, Args, "findMany">
           >(
+            _model,
             _args.limit,
             Pagination.initialPage(_args),
             Pagination.extractCount(count),
@@ -64,7 +65,7 @@ export const extension: PrismaPaginateExtension =
             _args.exceedTotalPages
           );
 
-          const result = await _model.findMany({
+          pagination.result = await _model.findMany({
             skip: Pagination.offset(_args.limit, _args),
             distinct: _args.distinct,
             orderBy: _args.orderBy,
@@ -74,9 +75,6 @@ export const extension: PrismaPaginateExtension =
             where: _args.where,
             take: _args.limit,
           });
-
-          pagination.model = _model;
-          pagination.result = result;
 
           return pagination;
         },
