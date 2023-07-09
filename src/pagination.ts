@@ -56,13 +56,15 @@ export interface IPagination
   count: number;
 }
 
-export type PaginateArgs = Partial<Pick<PaginationArgs, "page" | "pageIndex">>;
+export type PageArgs =
+  | Partial<Pick<PaginationArgs, "page" | "pageIndex">>
+  | number;
 
 export class Pagination implements IPagination {
   public constructor(
-    public readonly count: number,
-    public readonly page: number = 1,
-    public readonly limit: number,
+    public limit: number = NaN,
+    public page: number = 1,
+    public count: number = NaN,
     public readonly exceedCount: boolean = false,
     public readonly exceedTotalPages: boolean = false
   ) {
@@ -95,32 +97,36 @@ export class Pagination implements IPagination {
   public static extractCount(count: any): number {
     return typeof count === "number"
       ? count
+      : Array.isArray(count)
+      ? Number(count.at(0)?.count)
       : count?._all || count?._count || NaN;
   }
 
-  public static offset(
-    limit: number,
-    { page, pageIndex }: PaginateArgs
-  ): number {
-    return (
-      limit *
-      (typeof page === "number"
-        ? page > 0
-          ? page - 1
-          : page
-        : typeof pageIndex === "number"
-        ? pageIndex
-        : 0)
-    );
+  public static offsetPage(page: PageArgs): number {
+    return typeof page === "number"
+      ? page > 0
+        ? page - 1
+        : page
+      : typeof page.page === "number"
+      ? Pagination.offsetPage(page.page)
+      : typeof page.pageIndex === "number"
+      ? page.pageIndex
+      : 0;
   }
 
-  public static initialPage({ page, pageIndex }: PaginateArgs): number {
+  public static offset(limit: number, page: PageArgs): number {
+    return limit * Pagination.offsetPage(page);
+  }
+
+  public static initialPage(page: PageArgs): number {
     return typeof page === "number"
       ? page === 0
         ? 1
         : page
-      : typeof pageIndex === "number"
-      ? pageIndex + 1
+      : typeof page.page === "number"
+      ? Pagination.initialPage(page.page)
+      : typeof page.pageIndex === "number"
+      ? page.pageIndex + 1
       : 1;
   }
 }

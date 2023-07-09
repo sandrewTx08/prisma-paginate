@@ -78,6 +78,24 @@ xprisma.model1
   });
 ```
 
+## Paginating SQL queries
+
+```ts
+const [{ count }] = await prisma.$queryRawUnsafe<[{ count: bigint }]>(
+  'SELECT COUNT(*) FROM "Model3";'
+);
+
+const pagination = new Pagination(limit, page, Number(count));
+```
+
+```ts
+const data = await prisma.$queryRawUnsafe<unknown[]>(
+  'SELECT name FROM "Model3" LIMIT $1 OFFSET $2;',
+  limit,
+  Pagination.offset(limit, page)
+);
+```
+
 ## Parameters
 
 - `findManyArgs` {Object}

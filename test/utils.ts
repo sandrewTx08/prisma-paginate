@@ -1,7 +1,3 @@
-export const randomArray = createRandomArray();
-
-export const randomIds = randomArray.map((id) => ({ id }));
-
-export function createRandomArray() {
-  return Array.from({ length: 100 }, (_, i) => i);
+export function createRandomArray(length = 100) {
+  return Array.from({ length }, (_, i) => i);
 }

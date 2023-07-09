@@ -4,9 +4,9 @@ export {
   PaginationException,
 } from "./exceptions";
 export {
+  PageArgs,
   Pagination,
   IPagination,
-  PaginateArgs,
   PaginationArgs,
   PaginationOptions,
 } from "./pagination";

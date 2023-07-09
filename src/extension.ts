@@ -40,12 +40,13 @@ export const extension: PrismaPaginateExtension =
           args: PaginateArgs<Model, Args> & PaginationArgs,
           paginationArgs?: PaginationArgs
         ): PaginateResult<Model, Args> {
-          // eslint-disable-next-line @typescript-eslint/no-this-alias
-          const _model: any = this;
           const _args: { [args: string]: any } & PaginationArgs = {
-            ...(args as any),
+            ...(args as PaginationArgs),
             ...paginationArgs,
           };
+
+          // eslint-disable-next-line @typescript-eslint/no-this-alias
+          const _model: any = this;
 
           const count = await _model.count({
             orderBy: _args.orderBy,
@@ -53,10 +54,12 @@ export const extension: PrismaPaginateExtension =
             where: _args.where,
           });
 
-          const pagination = new Pagination(
-            Pagination.extractCount(count),
-            Pagination.initialPage(_args),
+          const pagination = new PaginationResult<
+            Prisma.Result<Model, Args, "findMany">
+          >(
             _args.limit,
+            Pagination.initialPage(_args),
+            Pagination.extractCount(count),
             _args.exceedCount,
             _args.exceedTotalPages
           );
@@ -72,14 +75,11 @@ export const extension: PrismaPaginateExtension =
             take: _args.limit,
           });
 
-          return new PaginationResult<Prisma.Result<Model, Args, "findMany">>(
-            pagination,
-            result,
-            _model
-          );
+          pagination.model = _model;
+          pagination.result = result;
+
+          return pagination;
         },
       },
     },
   });
-
-export default extension;

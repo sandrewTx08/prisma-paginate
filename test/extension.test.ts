@@ -1,11 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 import { ExceedCount, ExceedTotalPages, Pagination, extension } from "../src";
-import { createRandomArray, randomIds } from "./utils";
+import { createRandomArray } from "./utils";
 import { PaginationResult } from "../src/result";
 
 describe("extension", () => {
   const prisma = new PrismaClient();
   const xprisma = prisma.$extends(extension);
+  const randomIds = createRandomArray(100).map((id) => ({
+    id,
+  }));
 
   beforeAll(async () => {
     await prisma.$connect();
@@ -157,8 +160,8 @@ describe("extension", () => {
       .finally(done);
   });
 
-  it("pageOffset", async () => {
-    const random = createRandomArray().map((randomId) => ({
+  it("offset", async () => {
+    const random = createRandomArray(100).map((randomId) => ({
       id: randomId,
       name: randomId.toString(),
     }));
@@ -166,29 +169,28 @@ describe("extension", () => {
     const limit = 10;
     const page = 5;
 
-    await prisma.model3.createMany({ data: random });
+    await xprisma.model3.createMany({ data: random });
 
-    const [{ count }] = await prisma.$queryRawUnsafe<[{ count: bigint }]>(
+    const [{ count }] = await xprisma.$queryRawUnsafe<[{ count: bigint }]>(
       'SELECT COUNT(*) FROM "Model3";'
     );
 
-    const data = await prisma.$queryRawUnsafe<unknown[]>(
+    const data = await xprisma.$queryRawUnsafe<unknown[]>(
       'SELECT name FROM "Model3" LIMIT $1 OFFSET $2;',
       limit,
-      Pagination.offset(limit, { page })
+      Pagination.offset(limit, page)
     );
 
     const result = new PaginationResult(
-      new Pagination(
-        Number(count),
-        Pagination.initialPage({ page }),
-        limit,
-        false,
-        false
-      ),
-      data,
-      prisma.model3
+      limit,
+      page,
+      Number(count),
+      false,
+      false
     );
+
+    result.result = data;
+    result.model = prisma.model3;
 
     expect(result.result.at(0)).toStrictEqual({ name: "40" });
     expect(result.result.at(-1)).toStrictEqual({ name: "49" });
