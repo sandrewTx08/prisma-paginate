@@ -8,12 +8,12 @@ export interface IPrismaPaginate {
 		$allModels: {
 			paginate<Model, Args>(
 				this: Model,
-				args: PrismaFindManyArgs<Model, Args> & PrismaPaginationArgs
+				args: PrismaFindManyArgs<Model, Args> & PrismaPaginationArgs,
 			): PrismaPaginateResult<Model, Args>;
 			paginate<Model, Args>(
 				this: Model,
 				args: PrismaFindManyArgs<Model, Args>,
-				paginationArgs: PrismaPaginationArgs
+				paginationArgs: PrismaPaginationArgs,
 			): PrismaPaginateResult<Model, Args>;
 		};
 	};

@@ -8,7 +8,7 @@ export class Pagination {
 		public page: number = 1,
 		public count: number = NaN,
 		readonly exceedCount: boolean = false,
-		readonly exceedTotalPages: boolean = false
+		readonly exceedTotalPages: boolean = false,
 	) {
 		this.#validateExceedTotalPages();
 		this.#validateExceedCount();

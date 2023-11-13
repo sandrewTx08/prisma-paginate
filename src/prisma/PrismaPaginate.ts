@@ -14,14 +14,14 @@ export class PrismaPaginate<Model, Args> {
 	constructor(
 		model: Model,
 		args: PrismaPaginationArgs & Record<string, any>,
-		paginationArgs?: PrismaPaginationArgs
+		paginationArgs?: PrismaPaginationArgs,
 	) {
 		this.#model = model;
 		this.args = { ...args, ...paginationArgs };
 	}
 
 	result(
-		count: number
+		count: number,
 	): PaginationResult<Prisma.Result<Model, Args, "findMany">> {
 		return new PaginationResult<Prisma.Result<Model, Args, "findMany">>(
 			this.#model,
@@ -29,7 +29,7 @@ export class PrismaPaginate<Model, Args> {
 			Pagination.initialPage(this.args),
 			Pagination.extractCount(count),
 			this.args.exceedCount,
-			this.args.exceedTotalPages
+			this.args.exceedTotalPages,
 		);
 	}
 
@@ -46,7 +46,7 @@ export class PrismaPaginate<Model, Args> {
 				"include",
 				"select",
 				"where",
-				"take"
+				"take",
 			),
 			skip: Pagination.offset(this.args.limit, this.args),
 			take: this.args.limit,
@@ -56,12 +56,12 @@ export class PrismaPaginate<Model, Args> {
 	static async paginate<Model, Args>(
 		this: Model,
 		args: PrismaFindManyArgs<Model, Args> & PrismaPaginationArgs,
-		paginationArgs?: PrismaPaginationArgs
+		paginationArgs?: PrismaPaginationArgs,
 	): PrismaPaginateResult<Model, Args> {
 		const paginateExtension = new PrismaPaginate<Model, Args>(
 			this,
 			args,
-			paginationArgs
+			paginationArgs,
 		);
 		const count = await paginateExtension.count();
 		const pagination = paginateExtension.result(count);

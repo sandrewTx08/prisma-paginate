@@ -18,7 +18,7 @@
 		"build": "tsc",
 		"docs": "typedoc src/index.ts",
 		"lint": "eslint . --ext .ts",
-		"prettier": "prettier 'src/**/*.ts' --write"
+		"prettier": "npx prettier 'src/**/*.{js,ts,mjs,cjs,json}' --write"
 	},
 	"repository": {
 		"type": "git",
