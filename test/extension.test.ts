@@ -39,7 +39,7 @@ describe("extension", () => {
 						expect(result.exceedCount).toBe(true);
 						expect(result.totalPages).toBe(false);
 						return result;
-					})
+					}),
 			).rejects.toThrow(ExceedCount),
 
 			expect(
@@ -53,7 +53,7 @@ describe("extension", () => {
 						expect(result.exceedCount).toBe(true);
 						expect(result.exceedTotalPages).toBe(false);
 						return result;
-					})
+					}),
 			).resolves.toBeTruthy(),
 		]).finally(done);
 	});
@@ -71,7 +71,7 @@ describe("extension", () => {
 						expect(result.exceedCount).toBe(true);
 						expect(result.exceedTotalPages).toBe(false);
 						return result;
-					})
+					}),
 			).rejects.toThrow(ExceedTotalPages),
 
 			expect(
@@ -85,7 +85,7 @@ describe("extension", () => {
 						expect(result.exceedCount).toBe(false);
 						expect(result.exceedTotalPages).toBe(true);
 						return result;
-					})
+					}),
 			).resolves.toBeTruthy(),
 		]).finally(done);
 	});
@@ -196,13 +196,13 @@ describe("extension", () => {
 		await xprisma.model3.createMany({ data: random });
 
 		const [{ count }] = await xprisma.$queryRawUnsafe<[{ count: bigint }]>(
-			'SELECT COUNT(*) FROM "Model3";'
+			'SELECT COUNT(*) FROM "Model3";',
 		);
 
 		const data = await xprisma.$queryRawUnsafe<unknown[]>(
 			'SELECT name FROM "Model3" LIMIT $1 OFFSET $2;',
 			limit,
-			Pagination.offset(limit, page)
+			Pagination.offset(limit, page),
 		);
 
 		const result = new PaginationResult(
@@ -211,7 +211,7 @@ describe("extension", () => {
 			page,
 			Number(count),
 			false,
-			false
+			false,
 		);
 
 		expect(data.at(0)).toStrictEqual({ name: "40" });

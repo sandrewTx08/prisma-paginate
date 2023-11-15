@@ -10,8 +10,6 @@ npm i prisma@>=4.9.0 @prisma/client@>=4.9.0 prisma-paginate@latest
 yarn add prisma@>=4.9.0 @prisma/client@>=4.9.0 prisma-paginate@latest
 ```
 
-⚠️ If you are using the **Prisma** version equal or greater than **>=4.9.0** add `clientExtensions` preview flag on schema file
-
 **`prisma/schema.prisma`**:
 
 ```ts
@@ -115,3 +113,5 @@ const data = await prisma.$queryRawUnsafe<unknown[]>(
 - `nextPage` {() => Promise}
 - `exceedCount` {Boolean}
 - `exceedTotalPages` {Boolean}
+- `onCount` {(pagination) => void}
+
