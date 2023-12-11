@@ -46,16 +46,16 @@ const prisma = new PrismaClient();
 const xprisma = prisma.$extends(extension);
 
 xprisma.model2
-  .paginate({ limit: 10, page: 1, select: { id: true } })
-  .then((result) => {
-    console.log(result);
-  });
+	.paginate({ limit: 10, page: 1, select: { id: true } })
+	.then((result) => {
+		console.log(result);
+	});
 
 xprisma.table1
-  .paginate({ where: { id: 5 } }, { limit: 10, page: 1 })
-  .then((result) => {
-    console.log(result);
-  });
+	.paginate({ where: { id: 5 } }, { limit: 10, page: 1 })
+	.then((result) => {
+		console.log(result);
+	});
 ```
 
 ## Paginating 100 rows
@@ -63,24 +63,24 @@ xprisma.table1
 ```js
 // on database = [ { id: 1 }, { id: 2 }, {...}, { id: 100 } ]
 xprisma.model1
-  .paginate(
-    {
-      where: {
-        // query stuff...
-      },
-    },
-    { page: 1, limit: 50 }
-  )
-  .then((result) => {
-    console.log(result.result); // [ {...}, { id: 48 }, { id: 49 }, { id: 50 } ]
-  });
+	.paginate(
+		{
+			where: {
+				// query stuff...
+			},
+		},
+		{ page: 1, limit: 50 },
+	)
+	.then((result) => {
+		console.log(result.result); // [ {...}, { id: 48 }, { id: 49 }, { id: 50 } ]
+	});
 ```
 
 ## Paginating SQL queries
 
 ```ts
 const [{ count }] = await prisma.$queryRawUnsafe<[{ count: bigint }]>(
-  'SELECT COUNT(*) FROM "Model3";'
+	'SELECT COUNT(*) FROM "Model3";',
 );
 
 const pagination = new Pagination(limit, page, Number(count));
@@ -88,9 +88,9 @@ const pagination = new Pagination(limit, page, Number(count));
 
 ```ts
 const data = await prisma.$queryRawUnsafe<unknown[]>(
-  'SELECT name FROM "Model3" LIMIT $1 OFFSET $2;',
-  limit,
-  Pagination.offset(limit, page)
+	'SELECT name FROM "Model3" LIMIT $1 OFFSET $2;',
+	limit,
+	Pagination.offset(limit, page),
 );
 ```
 
@@ -114,4 +114,3 @@ const data = await prisma.$queryRawUnsafe<unknown[]>(
 - `exceedCount` {Boolean}
 - `exceedTotalPages` {Boolean}
 - `onCount` {(pagination) => void}
-
