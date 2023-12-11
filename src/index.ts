@@ -7,7 +7,6 @@ export { IPagination } from "./pagination/IPagination";
 export { Pagination } from "./pagination/Pagination";
 export { PaginationArgs } from "./pagination/PaginationArgs";
 export { PaginationOptions } from "./pagination/PaginationOptions";
-export { NextPage } from "./pagination/result/NextPage";
 export { PageArgs } from "./pagination/result/PageArgs";
 export { PaginationResult } from "./pagination/result/PaginationResult";
 export { IPaginationResult } from "./pagination/result/IPaginationResult";

@@ -1,13 +1,12 @@
 import { Pagination } from "../Pagination";
 import { PaginationArgs } from "../PaginationArgs";
 import { IPaginationResult } from "./IPaginationResult";
-import { NextPage } from "./NextPage";
 
-export class PaginationResult<Result = unknown[]>
+export class PaginationResult<Result extends unknown[] = unknown[]>
 	extends Pagination
 	implements IPaginationResult<Result>
 {
-	result: Result = [] as Result;
+	result: Result = [] as unknown as Result;
 	readonly #model: any;
 
 	constructor(
@@ -18,7 +17,7 @@ export class PaginationResult<Result = unknown[]>
 		this.#model = model;
 	}
 
-	nextPage(): NextPage<Result> {
+	nextPage(): Promise<this> {
 		return this.#model.paginate(this.#nextPagePaginateArgs());
 	}
 
