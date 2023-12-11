@@ -17,7 +17,7 @@
 		"test": "jest",
 		"build": "tsc",
 		"docs": "typedoc src/index.ts",
-		"lint": "eslint . --ext .ts",
+		"lint": "eslint ./src ./test --ext .ts",
 		"prettier": "npx prettier 'src/**/*.{js,ts,mjs,cjs,json}' --write"
 	},
 	"repository": {
