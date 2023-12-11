@@ -97,7 +97,7 @@ const data = await prisma.$queryRawUnsafe<unknown[]>(
 ## Parameters
 
 - `findManyArgs` {Object}
-- `paginationArgs` {Pagination}
+- `paginationArgs` {Pagination&onCount?(pagination) => void}
 
 ---
 
@@ -113,4 +113,3 @@ const data = await prisma.$queryRawUnsafe<unknown[]>(
 - `nextPage` {() => Promise}
 - `exceedCount` {Boolean}
 - `exceedTotalPages` {Boolean}
-- `onCount` {(pagination) => void}
