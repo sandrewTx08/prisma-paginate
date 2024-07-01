@@ -41,7 +41,7 @@
 		"prisma": ">=5.7.1",
 		"ts-jest": "^29.1.5",
 		"typedoc": "^0.25.13",
-		"typescript": "^5.5.2"
+		"typescript": "^5.5.3"
 	},
 	"peerDependencies": {
 		"@prisma/client": ">=4.9.0",
