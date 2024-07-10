@@ -2933,10 +2933,10 @@ ts-api-utils@^1.0.1:
   resolved "https://registry.yarnpkg.com/ts-api-utils/-/ts-api-utils-1.0.1.tgz#8144e811d44c749cd65b2da305a032510774452d"
   integrity sha512-lC/RGlPmwdrIBFTX59wwNzqh7aR2otPNPR/5brHZm/XKFYKsfqxihXUe9pU3JI+3vGkl+vyCoNNnPhJn3aLK1A==
 
-ts-jest@^29.2.1:
-  version "29.2.1"
-  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.2.1.tgz#9a460bb27446d141c48a17cf24f060dbe9b58254"
-  integrity sha512-7obwtH5gw0b0XZi0wmprCSvGSvHliMBI47lPnU47vmbxWS6B+v1X94yWFo1f1vt9k/he+gttsrXjkxmgY41XNQ==
+ts-jest@^29.2.2:
+  version "29.2.2"
+  resolved "https://registry.yarnpkg.com/ts-jest/-/ts-jest-29.2.2.tgz#0d2387bb04d39174b20a05172a968f258aedff4d"
+  integrity sha512-sSW7OooaKT34AAngP6k1VS669a0HdLxkQZnlC7T76sckGCokXFnvJ3yRlQZGRTAoV5K19HfSgCiSwWOSIfcYlg==
   dependencies:
     bs-logger "0.x"
     ejs "^3.0.0"
