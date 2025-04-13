@@ -6,8 +6,8 @@
 # Install
 
 ```shell
-npm i prisma@>=4.9.0 @prisma/client@>=4.9.0 prisma-paginate@latest
-yarn add prisma@>=4.9.0 @prisma/client@>=4.9.0 prisma-paginate@latest
+npm i prisma @prisma/client prisma-paginate@latest
+yarn add prisma @prisma/client prisma-paginate@latest
 ```
 
 **`prisma/schema.prisma`**:
@@ -15,11 +15,8 @@ yarn add prisma@>=4.9.0 @prisma/client@>=4.9.0 prisma-paginate@latest
 ```ts
 generator client {
   provider      = "prisma-client-js"
-  previewFeatures = ["clientExtensions"]
 }
 ```
-
-⚠️ These steps no longer required for versions starting from **4.16.0**
 
 # Documentation and usage
 
@@ -32,7 +29,7 @@ http://sandrewtx08.github.io/prisma-paginate/
 ```js
 // ESM
 import { PrismaClient } from "@prisma/client";
-import extension from "prisma-paginate";
+import { extension } from "prisma-paginate";
 
 // Commonjs
 const { PrismaClient } = require("@prisma/client");
