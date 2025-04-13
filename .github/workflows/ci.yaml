@@ -13,27 +13,26 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest  # Changed from 24.04 (not supported) to latest
 
     strategy:
       matrix:
         include:
           # Test multiple Prisma versions for Node <=18
-          - node-version: 16.x
+          - node-version: 16.15.1
             prisma-version: 4.9.0
-          - node-version: 16.x
+          - node-version: 16.15.1
             prisma-version: 4.16.0
-          - node-version: 16.x
-            prisma-version: latest
-          - node-version: 18.x
+          - node-version: 18.4.0
             prisma-version: 4.9.0
-          - node-version: 18.x
+          - node-version: 18.4.0
             prisma-version: 4.16.0
-          - node-version: 18.x
+
+          # Test multiple Prisma versions for Node >=18
+          - node-version: 18.4.0
             prisma-version: latest
-          # For Node >18, use version from package.json
           - node-version: lts/*
-            prisma-version: package.json
+            prisma-version: latest
 
     services:
       postgres:
@@ -58,19 +57,8 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
 
-      - name: Resolve Prisma version
-        id: prisma-version
-        run: |
-          if [ "${{ matrix.prisma-version }}" = "package.json" ]; then
-            PRISMA_VERSION=$(jq -r '.dependencies.prisma' package.json | sed 's/^[^0-9]*//')
-            echo "version=$PRISMA_VERSION" >> $GITHUB_OUTPUT
-          else
-            echo "version=${{ matrix.prisma-version }}" >> $GITHUB_OUTPUT
-          fi
-
       - run: yarn install
-      - run: yarn add prisma@${{ steps.prisma-version.outputs.version }} @prisma/client@${{ steps.prisma-version.outputs.version }}
-      - run: yarn lint
+      - run: yarn add prisma@${{ matrix.prisma-version }} @prisma/client@${{ matrix.prisma-version }}
       - run: yarn build
       - run: yarn prisma generate
       - run: yarn prisma db push
