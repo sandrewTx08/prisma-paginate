@@ -13,18 +13,15 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Changed from 24.04 (not supported) to latest
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
         include:
-          # Test multiple Prisma versions for Node <=18
           - node-version: 18.18.0
             prisma-version: 4.9.0
           - node-version: 18.18.0
             prisma-version: 4.16.0
-
-          # Test multiple Prisma versions for Node >=18
           - node-version: 18.18.0
             prisma-version: latest
           - node-version: lts/*
@@ -56,6 +53,17 @@ jobs:
       - run: yarn add prisma@${{ matrix.prisma-version }} @prisma/client@${{ matrix.prisma-version }}
       - run: yarn install
       - run: yarn build
-      - run: yarn prisma generate
-      - run: yarn prisma db push
+
+      # Set schema flag for older Prisma versions
+      - name: Set schema path
+        id: set-schema
+        run: |
+          if [[ "${{ matrix.prisma-version }}" == "4.9.0" || "${{ matrix.prisma-version }}" == "4.16.0" ]]; then
+            echo "schema=--schema ./prisma/schema-4-9-0.prisma" >> $GITHUB_OUTPUT
+          else
+            echo "schema=" >> $GITHUB_OUTPUT
+          fi
+
+      - run: yarn prisma generate ${{ steps.set-schema.outputs.schema }}
+      - run: yarn prisma db push ${{ steps.set-schema.outputs.schema }}
       - run: yarn test
