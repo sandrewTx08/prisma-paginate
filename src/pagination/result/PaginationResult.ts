@@ -2,11 +2,11 @@ import { Pagination } from "../Pagination";
 import { PaginationArgs } from "../PaginationArgs";
 import { IPaginationResult } from "./IPaginationResult";
 
-export class PaginationResult<Result extends unknown[] = unknown[]>
+export class PaginationResult<Result extends unknown[]>
 	extends Pagination
 	implements IPaginationResult<Result>
 {
-	result: Result = [] as unknown as Result;
+	result!: Result;
 	readonly #model: any;
 
 	constructor(
@@ -18,10 +18,9 @@ export class PaginationResult<Result extends unknown[] = unknown[]>
 	}
 
 	nextPage(): Promise<this> {
-		return this.#model.paginate(this.#nextPagePaginateArgs());
-	}
-
-	#nextPagePaginateArgs(): PaginationArgs {
-		return { ...this, page: (this.page || 0) + 1 };
+		return this.#model.paginate({
+			...this,
+			page: (this.page || 0) + 1,
+		} as PaginationArgs);
 	}
 }

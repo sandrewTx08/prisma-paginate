@@ -1,3 +1,4 @@
+import util from "util";
 import { ExceedCount } from "../exceptions/ExceedCount";
 import { ExceedTotalPages } from "../exceptions/ExceedTotalPages";
 import { PageArgs } from "./result/PageArgs";
@@ -14,8 +15,8 @@ export class Pagination {
 		this.#validateExceedCount();
 	}
 
-	toString(): string {
-		return JSON.stringify(this.toJSON());
+	[util.inspect.custom]() {
+		return this.toJSON();
 	}
 
 	toJSON(): Omit<this, "toJSON"> {
