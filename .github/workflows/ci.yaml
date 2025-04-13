@@ -52,8 +52,7 @@ jobs:
 
       - run: yarn add prisma@${{ matrix.prisma-version }} @prisma/client@${{ matrix.prisma-version }}
       - run: yarn install
-      - run: yarn build
-
+      
       # Set schema flag for older Prisma versions
       - name: Set schema path
         id: set-schema
@@ -63,7 +62,8 @@ jobs:
           else
             echo "schema=" >> $GITHUB_OUTPUT
           fi
-
       - run: yarn prisma generate ${{ steps.set-schema.outputs.schema }}
       - run: yarn prisma db push ${{ steps.set-schema.outputs.schema }}
+
+      - run: yarn build
       - run: yarn test
