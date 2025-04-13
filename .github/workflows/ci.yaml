@@ -19,17 +19,13 @@ jobs:
       matrix:
         include:
           # Test multiple Prisma versions for Node <=18
-          - node-version: 16.15.1
+          - node-version: 18.18.0
             prisma-version: 4.9.0
-          - node-version: 16.15.1
-            prisma-version: 4.16.0
-          - node-version: 18.4.0
-            prisma-version: 4.9.0
-          - node-version: 18.4.0
+          - node-version: 18.18.0
             prisma-version: 4.16.0
 
           # Test multiple Prisma versions for Node >=18
-          - node-version: 18.4.0
+          - node-version: 18.18.0
             prisma-version: latest
           - node-version: lts/*
             prisma-version: latest
