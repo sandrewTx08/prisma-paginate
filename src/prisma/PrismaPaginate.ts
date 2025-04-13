@@ -34,7 +34,7 @@ export class PrismaPaginate<Model, Args> {
 	}
 
 	count() {
-		return this.#model.count(Utils.pick(this.args, "orderBy", "cursor", "where"));
+		return this.#model.count(Utils.pick(this.args, "cursor", "where"));
 	}
 
 	findMany() {
