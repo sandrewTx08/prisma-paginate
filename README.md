@@ -10,14 +10,6 @@ npm i prisma @prisma/client prisma-paginate@latest
 yarn add prisma @prisma/client prisma-paginate@latest
 ```
 
-**`prisma/schema.prisma`**:
-
-```ts
-generator client {
-  provider      = "prisma-client-js"
-}
-```
-
 # Documentation and usage
 
 For more details and type definitions see:
