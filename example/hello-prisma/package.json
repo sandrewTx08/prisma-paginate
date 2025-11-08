@@ -1,0 +1,23 @@
+{
+  "name": "hello-prisma",
+  "license": "MIT",
+  "scripts": {
+    "queries": "ts-node ./src/queries.ts",
+    "caching": "ts-node ./src/caching.ts",
+    "pagination": "ts-node ./src/pagination.ts"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "latest",
+    "@prisma/client": "latest",
+    "dotenv": "latest",
+    "pg": "latest",
+    "prisma-paginate": "file:../../"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/pg": "latest",
+    "prisma": "latest",
+    "ts-node": "latest",
+    "typescript": "latest"
+  }
+}
