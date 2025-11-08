@@ -1,10 +1,10 @@
-import { Prisma } from "@prisma/client";
+// Type-only import for types
+import type { Prisma } from "@prisma/client";
 import { Utils } from "../Utils";
 import { PaginationResult } from "../pagination/result/PaginationResult";
 import { Pagination } from "../pagination/Pagination";
 import { PrismaPaginateResult } from "./PrismaPaginateResult";
 import { PrismaFindManyArgs } from "./PrismaFindManyArgs";
-import { IPrismaPaginate } from "./IPrismaPaginate";
 import { PrismaPaginationArgs } from "./PrismaPaginationArgs";
 
 export class PrismaPaginate<Model, Args> {
@@ -70,14 +70,4 @@ export class PrismaPaginate<Model, Args> {
 		pagination.result = await paginateExtension.findMany();
 		return pagination;
 	}
-
-	static extension: IPrismaPaginate =
-		Prisma.getExtensionContext<IPrismaPaginate>({
-			name: "prisma-paginate",
-			model: {
-				$allModels: {
-					paginate: PrismaPaginate.paginate,
-				},
-			},
-		});
 }

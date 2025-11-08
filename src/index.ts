@@ -1,3 +1,5 @@
+// Import Prisma from extension subpath - this works with any Prisma client instance
+import { Prisma } from "@prisma/client/extension";
 import { PrismaPaginate } from "./prisma/PrismaPaginate";
 
 export { ExceedCount } from "./exceptions/ExceedCount";
@@ -11,5 +13,13 @@ export { PageArgs } from "./pagination/result/PageArgs";
 export { PaginationResult } from "./pagination/result/PaginationResult";
 export { IPaginationResult } from "./pagination/result/IPaginationResult";
 
-export default PrismaPaginate.extension;
-export const extension = PrismaPaginate.extension;
+export const extension = Prisma.defineExtension({
+	name: "prisma-paginate",
+	model: {
+		$allModels: {
+			paginate: PrismaPaginate.paginate,
+		},
+	},
+});
+
+export default extension;

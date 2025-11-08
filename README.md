@@ -19,14 +19,20 @@ http://sandrewtx08.github.io/prisma-paginate/
 ## Importing
 
 ```js
-// ESM
+// ESM - works with standard Prisma client
 import { PrismaClient } from "@prisma/client";
+import { extension } from "prisma-paginate";
+
+// ESM - also works with custom Prisma client paths
+import { PrismaClient } from "./generated/client";
 import { extension } from "prisma-paginate";
 
 // Commonjs
 const { PrismaClient } = require("@prisma/client");
 const { extension } = require("prisma-paginate");
 ```
+
+**Note:** The extension works with any Prisma client instance, regardless of the import path. No configuration needed!
 
 ## Applying extension
 
