@@ -1,5 +1,5 @@
 // Type-only import for types
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client/extension";
 import { Utils } from "../Utils";
 import { PaginationResult } from "../pagination/result/PaginationResult";
 import { Pagination } from "../pagination/Pagination";
