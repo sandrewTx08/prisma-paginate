@@ -54,8 +54,8 @@ export class Pagination {
 		return typeof count === "number"
 			? count
 			: Array.isArray(count)
-			? Number(count.at(0)?.count)
-			: count?._all || count?._count || NaN;
+				? Number(count.at(0)?.count)
+				: count?._all || count?._count || NaN;
 	}
 
 	static #offsetPage(page: PageArgs): number {
@@ -64,10 +64,10 @@ export class Pagination {
 				? page - 1
 				: page
 			: typeof page.page === "number"
-			? Pagination.#offsetPage(page.page)
-			: typeof page.pageIndex === "number"
-			? page.pageIndex
-			: 0;
+				? Pagination.#offsetPage(page.page)
+				: typeof page.pageIndex === "number"
+					? page.pageIndex
+					: 0;
 	}
 
 	static offset(limit: number, page: PageArgs): number {
@@ -80,9 +80,9 @@ export class Pagination {
 				? 1
 				: page
 			: typeof page.page === "number"
-			? Pagination.initialPage(page.page)
-			: typeof page.pageIndex === "number"
-			? page.pageIndex + 1
-			: 1;
+				? Pagination.initialPage(page.page)
+				: typeof page.pageIndex === "number"
+					? page.pageIndex + 1
+					: 1;
 	}
 }

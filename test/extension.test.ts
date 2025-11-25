@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../src/db";
 import {
 	ExceedCount,
 	ExceedTotalPages,
@@ -9,16 +9,21 @@ import {
 import { createRandomArray } from "./utils";
 
 describe("extension", () => {
-	const prisma = new PrismaClient();
 	const xprisma = prisma.$extends(extension);
 	const randomIds = createRandomArray(100).map((id) => ({
 		id,
 	}));
 
 	beforeAll(async () => {
-		await prisma.$connect();
-		await prisma.model.deleteMany();
-		await prisma.model.createMany({ data: randomIds });
+		try {
+			await prisma.$connect();
+			await prisma.model.deleteMany();
+			await prisma.model.createMany({ data: randomIds });
+
+		} catch (error) {
+			console.log(error);
+
+		}
 	});
 
 	afterAll(async () => {

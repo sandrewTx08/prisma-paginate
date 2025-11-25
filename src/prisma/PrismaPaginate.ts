@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client/extension";
 import { Utils } from "../Utils";
 import { PaginationResult } from "../pagination/result/PaginationResult";
 import { Pagination } from "../pagination/Pagination";
