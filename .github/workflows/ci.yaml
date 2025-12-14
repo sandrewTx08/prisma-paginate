@@ -21,9 +21,6 @@ jobs:
           - node-version: 18.18.0
             prisma-version: 4.16.0
 
-          - node-version: 18.18.0
-            prisma-version: latest
-
           - node-version: lts/*
             prisma-version: latest
 
