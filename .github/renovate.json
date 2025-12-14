@@ -1,23 +1,15 @@
 {
-  "extends": ["config:base"],
-  "labels": ["dependencies"],
-  "rangeStrategy": "bump",
-  "packageRules": [
-    {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "automerge": true
-    },
-    {
-      "matchDepTypes": ["devDependencies"],
-      "automerge": true
-    },
-    {
-      "enabled": false,
-      "matchDepTypes": ["peerDependencies"]
-    }
-  ],
-  "assignees": ["sandrewTx08"],
-  "reviewers": ["sandrewTx08"],
-  "assignAutomerge": false,
-  "automergeType": "branch"
+	"extends": ["config:base"],
+	"labels": ["dependencies"],
+	"rangeStrategy": "bump",
+	"packageRules": [
+		{
+			"enabled": false,
+			"matchDepTypes": ["peerDependencies"]
+		}
+	],
+	"assignees": ["sandrewTx08"],
+	"reviewers": ["sandrewTx08"],
+	"assignAutomerge": false,
+	"automergeType": "branch"
 }
