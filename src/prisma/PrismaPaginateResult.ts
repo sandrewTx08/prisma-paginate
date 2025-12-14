@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client/extension";
 import { PaginationResult } from "../pagination/result/PaginationResult";
 
 export type PrismaPaginateResult<Model, Args> = Promise<

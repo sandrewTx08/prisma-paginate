@@ -1,4 +1,7 @@
+import "dotenv/config";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
+import { env } from "prisma/config";
 import {
 	ExceedCount,
 	ExceedTotalPages,
@@ -9,7 +12,8 @@ import {
 import { createRandomArray } from "./utils";
 
 describe("extension", () => {
-	const prisma = new PrismaClient();
+	const adapter = new PrismaPg({ connectionString: env("DATABASE_URL") });
+	const prisma = new PrismaClient({ adapter });
 	const xprisma = prisma.$extends(extension);
 	const randomIds = createRandomArray(100).map((id) => ({
 		id,

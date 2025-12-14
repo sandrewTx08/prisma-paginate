@@ -1,10 +1,10 @@
-import { Prisma } from "@prisma/client";
-import { Utils } from "../Utils";
-import { PaginationResult } from "../pagination/result/PaginationResult";
+import { Prisma } from "@prisma/client/extension";
 import { Pagination } from "../pagination/Pagination";
-import { PrismaPaginateResult } from "./PrismaPaginateResult";
-import { PrismaFindManyArgs } from "./PrismaFindManyArgs";
+import { PaginationResult } from "../pagination/result/PaginationResult";
+import { pick } from "../Utils";
 import { IPrismaPaginate } from "./IPrismaPaginate";
+import { PrismaFindManyArgs } from "./PrismaFindManyArgs";
+import { PrismaPaginateResult } from "./PrismaPaginateResult";
 import { PrismaPaginationArgs } from "./PrismaPaginationArgs";
 
 export class PrismaPaginate<Model, Args> {
@@ -34,12 +34,12 @@ export class PrismaPaginate<Model, Args> {
 	}
 
 	count() {
-		return this.#model.count(Utils.pick(this.args, "cursor", "where"));
+		return this.#model.count(pick(this.args, "cursor", "where"));
 	}
 
 	findMany() {
 		return this.#model.findMany({
-			...Utils.pick(
+			...pick(
 				this.args,
 				"distinct",
 				"orderBy",
