@@ -18,12 +18,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - node-version: 18.18.0
-            prisma-version: 4.9.0
-          - node-version: 18.18.0
-            prisma-version: 4.16.0
-          - node-version: 18.18.0
-            prisma-version: latest
           - node-version: lts/*
             prisma-version: latest
 
@@ -48,22 +42,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "yarn"
+          cache: yarn
 
       - run: yarn add prisma@${{ matrix.prisma-version }} @prisma/client@${{ matrix.prisma-version }}
       - run: yarn install
-      
-      # Set schema flag for older Prisma versions
-      - name: Set schema path
-        id: set-schema
-        run: |
-          if [[ "${{ matrix.prisma-version }}" == "4.9.0" || "${{ matrix.prisma-version }}" == "4.16.0" ]]; then
-            echo "schema=--schema ./prisma/schema-4-9-0.prisma" >> $GITHUB_OUTPUT
-          else
-            echo "schema=" >> $GITHUB_OUTPUT
-          fi
-      - run: yarn prisma generate ${{ steps.set-schema.outputs.schema }}
-      - run: yarn prisma db push ${{ steps.set-schema.outputs.schema }}
+
+      - run: yarn prisma generate
+      - run: yarn prisma db push
 
       - run: yarn build
       - run: yarn test
