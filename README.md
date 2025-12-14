@@ -16,6 +16,13 @@ yarn add prisma @prisma/client prisma-paginate
 pnpm add prisma @prisma/client prisma-paginate
 ```
 
+## 📋 Version compatibility
+
+| Prisma   | prisma-paginate |
+| -------- | --------------- |
+| 7.0.0>=  | 6.0.0           |
+| 4.16.0<= | 5.2.2           |
+
 ## 📚 Documentation
 
 For comprehensive API documentation and type definitions, visit:
