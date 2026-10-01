@@ -31,8 +31,8 @@
 	},
 	"homepage": "https://github.com/sandrewTx08/prisma-paginate#readme",
 	"devDependencies": {
-		"@prisma/adapter-pg": "^7.1.0",
-		"@prisma/client": "7.1.0",
+		"@prisma/adapter-pg": "^7.10.0",
+		"@prisma/client": "7.10.0",
 		"@types/jest": "^30.0.0",
 		"@types/node": "^25.0.1",
 		"@typescript-eslint/eslint-plugin": "^8.49.0",
