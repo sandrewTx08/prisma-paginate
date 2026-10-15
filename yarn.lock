@@ -1008,12 +1008,13 @@
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.2.9.tgz#d229a7b7f9dac167a156992ef23c7f023653f53b"
   integrity sha512-QNqXyfVS2wm9hweSYD2O7F0G06uurj9kZ96TRQE5Y9hU7+tgdZwIkbAKc5Ocy1HxEY2kuDQa6cQ1WRs/O5LFKA==
 
-"@prisma/adapter-pg@^7.1.0":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@prisma/adapter-pg/-/adapter-pg-7.1.0.tgz#5d65dcb1a4fb6170dacb2d6a8ce61e8400efe6cd"
-  integrity sha512-DSAnUwkKfX4bUzhkrjGN4IBQzwg0nvFw2W17H0Oa532I5w9nLtTJ9mAEGDs1nUBEGRAsa0c7qsf8CSgfJ4DsBQ==
+"@prisma/adapter-pg@^7.10.1":
+  version "7.10.1"
+  resolved "https://registry.yarnpkg.com/@prisma/adapter-pg/-/adapter-pg-7.10.1.tgz#7cfcbaa00bb620bc4530df80220de7b5795b90d3"
+  integrity sha512-EP9ruPYHjKP80WZlb5qVaEXKgZjJieBFjAxcBtQnDAHD6+16UN4keVmBh6L/RUpuDQT2FQRbvKNgq5d4Ix+IkQ==
   dependencies:
-    "@prisma/driver-adapter-utils" "7.1.0"
+    "@prisma/driver-adapter-utils" "7.10.1"
+    "@types/pg" "^8.16.0"
     pg "^8.16.3"
     postgres-array "3.0.4"
 
@@ -1049,6 +1050,11 @@
   resolved "https://registry.yarnpkg.com/@prisma/debug/-/debug-7.1.0.tgz#09b202381fc37f7ed9f6332f13b4ecc7ceb1d1ab"
   integrity sha512-pPAckG6etgAsEBusmZiFwM9bldLSNkn++YuC4jCTJACdK5hLOVnOzX7eSL2FgaU6Gomd6wIw21snUX2dYroMZQ==
 
+"@prisma/debug@7.10.1":
+  version "7.10.1"
+  resolved "https://registry.yarnpkg.com/@prisma/debug/-/debug-7.10.1.tgz#6ef089971593d98668e762c5810ea335461773e8"
+  integrity sha512-eFCAkGZ13D/qPg48JBlG5IWi9cSBBOC7oG3abDPcAkYioDWlIjh0YJJLK2J7qo5S+xWWD8I6egAN/8KbCaiMCA==
+
 "@prisma/dev@0.15.0":
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/@prisma/dev/-/dev-0.15.0.tgz#8ff35539fe1566f85a35af8cf70218f8033351f5"
@@ -1072,12 +1078,12 @@
     valibot "1.2.0"
     zeptomatch "2.0.2"
 
-"@prisma/driver-adapter-utils@7.1.0":
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/@prisma/driver-adapter-utils/-/driver-adapter-utils-7.1.0.tgz#fa6eb6653e90a8ce844e30a9fb762d7f5201e8df"
-  integrity sha512-AlVLzeXkw81+47MvQ9M8DvTiHkRfJ8xzklTbYjpskb0cTTDVHboTI/OVwT6Wcep/bNvfLKJYO0nylBiM5rxgww==
+"@prisma/driver-adapter-utils@7.10.1":
+  version "7.10.1"
+  resolved "https://registry.yarnpkg.com/@prisma/driver-adapter-utils/-/driver-adapter-utils-7.10.1.tgz#72c9bc9f5a7489e15ca7aefd1c195643924d42a3"
+  integrity sha512-DJ4c6xvVnm3s9ZUyql9nCUicADSqyvH+CjXRCM9L6m5zJxCNmebCElG6X4irICq3rosBwlX+S19Dxq/4IrZk3A==
   dependencies:
-    "@prisma/debug" "7.1.0"
+    "@prisma/debug" "7.10.1"
 
 "@prisma/engines-version@7.1.0-6.ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba":
   version "7.1.0-6.ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba"
@@ -1308,6 +1314,15 @@
   integrity sha512-czWPzKIAXucn9PtsttxmumiQ9N0ok9FrBwgRWrwmVLlp86BrMExzvXRLFYRJ+Ex3g6yqj+KuaxfX1JTgV2lpfg==
   dependencies:
     undici-types "~7.16.0"
+
+"@types/pg@^8.16.0":
+  version "8.23.1"
+  resolved "https://registry.yarnpkg.com/@types/pg/-/pg-8.23.1.tgz#7e712ce02cf44ad100862127f10f52e9c6b9d227"
+  integrity sha512-fKVHpikPdg4GKks3JuLEhvwSyvwzF23hnabPy6DD8ljVbC7+6J5dQzdv4arV6jqq57djnMgs1HKBxX4P8aBI3A==
+  dependencies:
+    "@types/node" "*"
+    pg-protocol "*"
+    pg-types "^2.2.0"
 
 "@types/stack-utils@^2.0.3":
   version "2.0.3"
@@ -3441,12 +3456,17 @@ pg-pool@^3.10.1:
   resolved "https://registry.yarnpkg.com/pg-pool/-/pg-pool-3.10.1.tgz#481047c720be2d624792100cac1816f8850d31b2"
   integrity sha512-Tu8jMlcX+9d8+QVzKIvM/uJtp07PKr82IUOYEphaWcoBhIYkoHpLXN3qO59nAI11ripznDsEzEv8nUxBVWajGg==
 
+pg-protocol@*:
+  version "1.16.1"
+  resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.16.1.tgz#87a3951b57002682d63166c029859bd834e64bf1"
+  integrity sha512-p9VOFMiHB/ZbJATetbg+99PxssTVSQRnyuPSQ67mN1+1KBOjZaZ83ZQzltnxPhJwSsC3nwVjJ10DVJlerbFzLg==
+
 pg-protocol@^1.10.3:
   version "1.10.3"
   resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.10.3.tgz#ac9e4778ad3f84d0c5670583bab976ea0a34f69f"
   integrity sha512-6DIBgBQaTKDJyxnXaLiLR8wBpQQcGWuAESkRBX/t6OwA8YsqP+iVSiond2EDy6Y/dsGk8rh/jtax3js5NeV7JQ==
 
-pg-types@2.2.0:
+pg-types@2.2.0, pg-types@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/pg-types/-/pg-types-2.2.0.tgz#2d0250d636454f7cfa3b6ae0382fdfa8063254a3"
   integrity sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==
